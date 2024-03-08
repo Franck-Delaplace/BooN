@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Franck Delaplace</author>
+ <class>Boonify</class>
+ <widget class="QMainWindow" name="Boonify">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>528</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>BooN</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <widget class="QWidget" name="Main">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAsNeeded</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAsNeeded</enum>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>418</width>
+           <height>366</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" name="DesignCanvas">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="ToolBarNetwork">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>55</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>ToolBar</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">spacing:15px;
+                </string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>50</width>
+     <height>50</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="ActionView"/>
+   <addaction name="ActionStableStates"/>
+   <addaction name="ActionModel"/>
+   <addaction name="ActionControllability"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="ToolBarUtilities">
+   <property name="maximumSize">
+    <size>
+     <width>95</width>
+     <height>150</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="ActionUndo"/>
+   <addaction name="ActionRedo"/>
+   <addaction name="ActionHelp"/>
+  </widget>
+  <widget class="QMenuBar" name="MainMenuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>528</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="MenuFile">
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="ActionOpen"/>
+    <addaction name="ActionSave"/>
+    <addaction name="ActionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="ActionImport"/>
+    <addaction name="ActionExport"/>
+    <addaction name="separator"/>
+    <addaction name="ActionQuit"/>
+   </widget>
+   <widget class="QMenu" name="MenuNetwork">
+    <property name="title">
+     <string>&amp;Network</string>
+    </property>
+    <addaction name="ActionView"/>
+    <addaction name="ActionStableStates"/>
+    <addaction name="ActionModel"/>
+    <addaction name="ActionControllability"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="ActionUndo"/>
+    <addaction name="ActionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="ActionHelp"/>
+   </widget>
+   <addaction name="MenuFile"/>
+   <addaction name="MenuNetwork"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="ActionOpen">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/open.svg</normaloff>:/icon/resources/open.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open BooN</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="ActionSave">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/save.svg</normaloff>:/icon/resources/save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the current BooN into file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="ActionImport">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/import.svg</normaloff>:/icon/resources/import.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Import BooN from text file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="ActionExport">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/export.svg</normaloff>:/icon/resources/export.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Export BooN to text file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="ActionQuit">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/close.svg</normaloff>:/icon/resources/close.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="ActionHelp">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/help.svg</normaloff>:/icon/resources/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Help...</string>
+   </property>
+  </action>
+  <action name="ActionUndo">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/undo.svg</normaloff>:/icon/resources/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="ActionRedo">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/redo.svg</normaloff>:/icon/resources/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="ActionView">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/formula.svg</normaloff>:/icon/resources/formula.svg</iconset>
+   </property>
+   <property name="text">
+    <string>View BooN</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="ActionControllability">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/game.svg</normaloff>:/icon/resources/game.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Controllability</string>
+   </property>
+   <property name="toolTip">
+    <string>Controllability analysis</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
+   </property>
+  </action>
+  <action name="ActionSaveAs">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/saveas.svg</normaloff>:/icon/resources/saveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save as</string>
+   </property>
+   <property name="toolTip">
+    <string>Save as ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
+   </property>
+  </action>
+  <action name="ActionStableStates">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/yin-yang.svg</normaloff>:/icon/resources/yin-yang.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Stable States</string>
+   </property>
+  </action>
+  <action name="ActionModel">
+   <property name="icon">
+    <iconset resource="booneries.qrc">
+     <normaloff>:/icon/resources/model.svg</normaloff>:/icon/resources/model.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Model and Equilibria</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="booneries.qrc"/>
+ </resources>
+ <connections/>
+ <slots>
+  <slot>load()</slot>
+  <slot>save()</slot>
+  <slot>import()</slot>
+  <slot>export()</slot>
+  <slot>view()</slot>
+  <slot>stable_states()</slot>
+  <slot>controllability()</slot>
+  <slot>asynchronous()</slot>
+  <slot>synchronous()</slot>
+  <slot>undo()</slot>
+  <slot>help()</slot>
+  <slot>redo()</slot>
+  <slot>quit()</slot>
+ </slots>
+</ui>
