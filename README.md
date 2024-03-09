@@ -16,8 +16,8 @@ The project includes:
 
 The BooN project comprises 3 modules:
 <ul>
-<li> <B>boon</B> module is related to the manipulation of Boolean network named BooN which is an object.</li>
-<li>  <B>logic</B> module includes basic functions on propositional formula,
+<li> <code>boon</code> module is related to the manipulation of Boolean network named BooN which is an object.</li>
+<li>  <code>logic</code> module includes basic functions on propositional formula,
 as well as more advanced features like CNF conversion for large formulas, CNF conversion using Tseitin's method, 
 and prime implicant calculation. These functions are used in the BooN module. </li>
 <li> <B>boonify</B> module is the graphical interface including all the functionalities of BooN:
@@ -25,9 +25,10 @@ computation of dynamical model for synchronous and asynchronous mode, the comput
 the controllability analysis.</li>
 </ul>
 
-The distribution includes examples to illustrate the different functionalities (c.f. <b> example.py</b>).
-It also contains a real case study on breast cancer (<b>breast-cancer-study.py</b> and <b>breast-cancer.boon</b> for the network)
+The distribution includes examples to illustrate the different functionalities (c.f. <code> example.py</code>).
+It also contains a real case study on breast cancer (<code>breast-cancer-study.py</code> and <code>breast-cancer.boon</code> for the network)
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
+For exploring BooN run <code> boonify.py </code>
 
 
 <H3> To cite this work</H3>
