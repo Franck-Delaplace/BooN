@@ -42,4 +42,4 @@ IEEE/ACM Trans Comput Biol Bioinform
 . 2019 Sep-Oct;16(5):1574-1585. 
 <br>
 PMID: 30582550 - DOI: 10.1109/TCBB.2018.2889102
-<H3>Used Python modules </H3> pulp, z3-solver, sympy tqdm, pickle, netgraph, networkx.
+
