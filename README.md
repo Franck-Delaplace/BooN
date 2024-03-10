@@ -1,7 +1,11 @@
-<h1> BooN </h1>
-The BooN project provides a complete set of functionalities for Boolean network analysis. 
+<style>
+h1 {text-align: center;}
+p {text-align:justify;}
+</style>
+<h1 > BooN </h1>
+<p>The BooN project provides a complete set of functionalities for Boolean network analysis. 
 It was originally designed to explore the modeling of genetic networks by Boolean networks. 
-The project includes:
+The project includes:</p>
  <ul>
  <li> the definition of a <b>Boolean network</b> with the possibility to load and save it; </li>
  <li> the computation of the <b>model of dynamics</b> with respect to a <b>mode</b> policy; </li>
@@ -13,27 +17,28 @@ The project includes:
  <li>also different basic functionalities are included as: variable renaming, delete variable,
  update formula and importing/exporting to a text file the Boolean network. </li>
  </ul>
-
-The BooN project comprises 3 modules:
+<h3> BooN functionnalities </h3>
+<p>The BooN project comprises 3 modules:</p>
 <ul>
 <li> <code>boon</code> module is related to the manipulation of Boolean network named BooN which is an object.</li>
 <li> <code>logic</code> module includes basic functions on propositional formula,
 as well as more advanced features like CNF conversion for large formulas, CNF conversion using Tseitin's method, 
-and prime implicant calculation. These functions are used in the BooN module. </li>
-<li> <code>boonify</code> module is the graphical interface including all the functionalities of BooN:
+and prime implicant calculation. These functions are used in the BooN modules. </li>
+<li> The <code>boonify</code> module is the graphical interface for accessing project functions in BooN:
 computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and 
 the controllability analysis.</li>
 </ul>
 
+<p>
 <code>example.py</code> illustrates the different functionalities of BooN.
 It also contains a real case study on breast cancer (<code>breast-cancer-study.py</code> and <code>breast-cancer.boon</code> for the network)
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
-For exploring BooN interactively run <code>boonify.py</code>
+For exploring BooN interactively run <code>boonify.py</code></p>
 
-To install all necessary modules for BooN, type: <code>pip install -r boon_requirements.txt</code>.
+<p>To install all necessary modules for BooN, type: <code>pip install -r boon_requirements.txt</code>.</p>
 
 <H3> To cite this work</H3>
-If you wish to cite this work, please use the following citation:
+If you wish to cite this work, please use the following citation:<br>
 <a href="https://pubmed.ncbi.nlm.nih.gov/30582550/"> Causal Reasoning on Boolean Control Networks Based on Abduction: Theory and Application to Cancer Drug Discovery</a>
 <br/>
 <i> Celia Biane, Franck Delaplace</i>
