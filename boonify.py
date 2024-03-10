@@ -382,10 +382,8 @@ class Help(QMainWindow):
         self.CloseButton.clicked.connect(lambda _: self.close())
         self.web =QWebEngineView(self)
         self.WebContainer.addWidget(self.web)
-        print("web")
         with open('BooNGui/Help.html', 'r') as f:
             html = f.read()
-            print("view")
             self.web.setHtml(html)
 
 
