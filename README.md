@@ -6,8 +6,8 @@ The project includes:
  <li> the definition of a <b>Boolean network</b> with the possibility to load and save it; </li>
  <li> the computation of the <b>model of dynamics</b> with respect to a <b>mode</b> policy; </li>
  <li> the definition of the <b>interaction graph</b> including a modular decomposition of the interaction; </li>
- <li> the computation of all equilibria based on dynamics model; </li>
- <li> the efficient symbolic computation of stable states based on SAT solver; </li>
+ <li> the computation of <b> equilibria</b> based on dynamics model; </li>
+ <li> the efficient symbolic computation of <b>stable states</b> based on SAT solver; </li>
  <li> the <b>controllability</b> analysis predicting which variables must be frozen 
   to reach the expected goal at stable states based on possibility and necessity query;</li>
  <li>also different basic functionalities are included as: variable renaming, delete variable,
