@@ -28,7 +28,7 @@ the controllability analysis.</li>
 <code>example.py</code> illustrates the different functionalities of BooN.
 It also contains a real case study on breast cancer (<code>breast-cancer-study.py</code> and <code>breast-cancer.boon</code> for the network)
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
-For exploring BooN run <code>boonify.py</code>
+For exploring BooN interactively run <code>boonify.py</code>
 
 To install all necessary modules for BooN, type: <code>pip install -r boon_requirements.txt</code>.
 
