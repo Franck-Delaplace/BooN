@@ -20,7 +20,7 @@ The BooN project comprises 3 modules:
 <li>  <code>logic</code> module includes basic functions on propositional formula,
 as well as more advanced features like CNF conversion for large formulas, CNF conversion using Tseitin's method, 
 and prime implicant calculation. These functions are used in the BooN module. </li>
-<li> <B>boonify</B> module is the graphical interface including all the functionalities of BooN:
+<li> <code>boonify</code> module is the graphical interface including all the functionalities of BooN:
 computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and 
 the controllability analysis.</li>
 </ul>
@@ -30,6 +30,7 @@ It also contains a real case study on breast cancer (<code>breast-cancer-study.p
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
 For exploring BooN run <code> boonify.py </code>
 
+To install the required modules for BooN type: <code>pip install -r requirements.txt</code>.
 
 <H3> To cite this work</H3>
 <a href="https://pubmed.ncbi.nlm.nih.gov/30582550/"> Causal Reasoning on Boolean Control Networks Based on Abduction: Theory and Application to Cancer Drug Discovery</a>
