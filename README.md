@@ -30,7 +30,7 @@ It also contains a real case study on breast cancer (<code>breast-cancer-study.p
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
 For exploring BooN run <code> boonify.py </code>
 
-To install the required modules for BooN type: <code>pip install -r requirements.txt</code>.
+To install the required modules for BooN, type: <code>pip install -r requirements.txt</code>.
 
 <H3> To cite this work</H3>
 <a href="https://pubmed.ncbi.nlm.nih.gov/30582550/"> Causal Reasoning on Boolean Control Networks Based on Abduction: Theory and Application to Cancer Drug Discovery</a>
