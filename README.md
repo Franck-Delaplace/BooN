@@ -33,6 +33,7 @@ For exploring BooN interactively run <code>boonify.py</code>
 To install all necessary modules for BooN, type: <code>pip install -r boon_requirements.txt</code>.
 
 <H3> To cite this work</H3>
+If you wish to cite this work, please use the following citation:
 <a href="https://pubmed.ncbi.nlm.nih.gov/30582550/"> Causal Reasoning on Boolean Control Networks Based on Abduction: Theory and Application to Cancer Drug Discovery</a>
 <br/>
 <i> Celia Biane, Franck Delaplace</i>
