@@ -32,6 +32,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+
 mpl.use("Qt5Agg")
 
 HSIZE: int = 10  # size of the history
@@ -121,11 +122,10 @@ class Boonify(QMainWindow):
 
         # STEP: Extend this network by adding the interaction graph of the current BooN.
         ig = self.boon.interaction_graph  # Get the IG.
-        for node in ig.nodes(): # Copy the nodes in the Editable graph
+        for node in ig.nodes():  # Copy the nodes in the Editable graph
             g.add_node(node)
         for edge in ig.edges():  # Copy the edges in the Editable graph
             g.add_edge(edge[0], edge[1])
-
 
         # STEP: find the edge color from signs.
         signs = nx.get_edge_attributes(ig, 'sign')
@@ -380,12 +380,11 @@ class Help(QMainWindow):
         loadUi('BooNGui/help.ui', self)
         self.setMinimumSize(QSize(600, 600))
         self.CloseButton.clicked.connect(lambda _: self.close())
-        self.web =QWebEngineView(self)
+        self.web = QWebEngineView(self)
         self.WebContainer.addWidget(self.web)
         with open('BooNGui/Help.html', 'r') as f:
             html = f.read()
             self.web.setHtml(html)
-
 
 
 class View(QDialog):
@@ -774,13 +773,13 @@ class Controllability(QMainWindow):
             possibility = True
 
         if self.Necessity.isChecked():
-            necessity = boonctrl.necessary(formula, trace = self.Trace)
+            necessity = boonctrl.necessary(formula, trace=self.Trace)
         else:
             necessity = True
         destiny = And(possibility, necessity)
 
         # Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
-        core = BooN.destify(destiny, trace = self.Trace)
+        core = BooN.destify(destiny, trace=self.Trace)
         self.actions = core2actions(core)
         # print("actions>",self.actions)
 
