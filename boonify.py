@@ -774,13 +774,13 @@ class Controllability(QMainWindow):
             possibility = True
 
         if self.Necessity.isChecked():
-            necessity = boonctrl.necessary(formula)
+            necessity = boonctrl.necessary(formula, trace = self.Trace)
         else:
             necessity = True
         destiny = And(possibility, necessity)
 
         # Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
-        core = BooN.destify(destiny)
+        core = BooN.destify(destiny, trace = self.Trace)
         self.actions = core2actions(core)
         # print("actions>",self.actions)
 

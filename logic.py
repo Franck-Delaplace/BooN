@@ -17,19 +17,20 @@ from tqdm import tqdm
 # Dictionary defining the output style of the formula, see prettyform
 LOGICAL: dict = {'type': 'infix', And: '\u2227', Or: '\u2228', Implies: '\u21D2', Equivalent: '\u21D4', Xor: '\u22BB', Not: '\u00AC', False: 'false', True: 'true'}
 MATHEMATICA: dict = {'type': 'prefix', '(': "[", ')': "]",
-                     And: '&&', Or: '||', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
+                     And: '&&', Or: 'DEF:', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
 SYMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
                And: '&', Or: '|', Implies: 'Implies', Xor: 'Xor', Xnor: 'Xnor', Equivalent: 'Equivalent', Not: '~', False: 'False', True: 'True'}
-JAVA: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: 'false', True: 'true'}
-C: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: '0', True: '1'}
+JAVA: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: 'false', True: 'true'}
+C: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: '0', True: '1'}
 
-SOLVER = PULP_CBC_CMD  # Default solver
+SOLVER = PULP_CBC_CMD  # Default PULP solver
 PATHSEP: str = "\\"  # Separator in the file path.
 
 prime_implicants_problem = None  # Global variable storing the last prime implicants problem specification.
-
-
-# || Basic functions
+trc_clauses = 0  # global variables counting the number of CNF clauses in supercnf function
+trc_cnf = 0 # global variables counting the number of clauses converted to CNF in supercnf function
+trc_implicants = 0 # global variables counting the number of prime implicants in prime_implicants
+# DEF: Basic functions
 def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     """Display an error message and exit in case of error (keyword ERROR).
     :param msg: the error message.
@@ -49,7 +50,7 @@ def firstsymbol(formula):
         return next(iter(formula.free_symbols))
 
 
-# || Functions decomposing a formula.
+# DEF: Functions decomposing a formula.
 def cnf2clauses(cnf):
     """ Decomposition of a CNF into a sequence of clauses.
     :param cnf: CNF formula
@@ -76,7 +77,7 @@ def clause2literals(clause) -> set:
     return literals_clause
 
 
-# || Functions converting the formula into another style.
+# DEF: Functions converting the formula into another style.
 def prettyform(formula, style: dict = LOGICAL, depth=0):
     """Return a string of a formula in nice form.
     :param formula: the input formula.
@@ -133,16 +134,16 @@ def sympy2z3(formula):
         errmsg("a piece of the formula is not recognized", formula)
 
 
-# || Advanced functionalities: fast CNF conversion, prime implicants computation.
+# DEF: Advanced functionalities: fast CNF conversion, prime implicants computation.
 TEITSIN: str = "_t6n"  # prefix of the new variables introduced in Teitsin conversion
-_varcounter = 0  # counter used in newvar.
+_varcounter = 0  # counter1 used in newvar.
 
 
 def newvar(initialize: int | None = None):
     """Create a new sympy symbol of the form <prefix><number>.
        The prefix is given by TSEITIN constant.
-     :param initialize: initialize the counter if the value is an integer
-     or let the counter increment by 1 if it is set to None (Default value = None)
+     :param initialize: initialize the counter1 if the value is an integer
+     or let the counter1 increment by 1 if it is set to None (Default value = None)
      :return: a Sympy symbol."""
     global _varcounter
     if initialize is not None:
@@ -199,7 +200,7 @@ def tseitin_cnf(formula):
     """Convert a formula to CNF using Tseitin method.
     :param formula: the formula to be converted.
     :return: CNF formula."""
-    newvar(0)  # initialize the counter
+    newvar(0)  # initialize the counter1
     p, f = tseitin(formula)
     return And(p, f)
 
@@ -216,18 +217,19 @@ def supercnf(formula, trace: bool = False):
     # Let f be a formula, we compute all the models for ¬f. For each datamodel if x = True then return ~x and x if x=False.
     # The SAT solver must necessarily admit non CNF formula and be efficient. We use z3 solver which answers to these requirements.
     # This was really challenging to find an efficient method to convert very large formula in CNF, Yep ! I did it :-)
-
+    global trc_clauses
+    global trc_cnf
     solver = z3.Solver()  # initialize Z3 solver
     solver.add(sympy2z3(Not(formula)))  # add the negation of the formula.
 
     # Enumerate all models
     models = []
-    counter = 0
+    trc_clauses = 0
     while solver.check() == z3.sat:
         model = solver.model()
+        trc_clauses = trc_clauses + 1
         if trace:
-            counter = counter + 1
-            tqdm.write(f'\r>> # clauses:[{counter:5d}]', end='')
+            tqdm.write(f'\r>> # models:[{trc_clauses:5d}]', end='')
         models.append(model)
         # Block the current datamodel to enable the finding of another datamodel.
         block = [sol() != model[sol] for sol in model]
@@ -236,12 +238,12 @@ def supercnf(formula, trace: bool = False):
     # Convert the models into a CNF by negating the datamodel: x=True -> ~x, x=False -> x
     if trace:
         tqdm.write('')
-        cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol()))) if model[sol] else symbols(str(sol())), model))
-                    for model in tqdm(models, file=sys.stdout, ascii=False, desc='>> CNF formatting', ncols=80,
+        cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
+                    for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='>> CNF formatting', ncols=80,
                                       bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')])
     else:
-        cnf = And(*map(lambda model:
-                       Or(*map(lambda sol: Not(symbols(str(sol()))) if model[sol] else symbols(str(sol())), model)), models))
+        cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
+                    for trc_cnf in range(len(models))])
     return cnf
 
 
@@ -253,6 +255,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     :param solver: the solver to use (Default: Pulp solver).
     :return: all the prime implicants in the form of a set of sets where each subset represent one prime implicant filtered by kept."""
     global prime_implicants_problem
+    global trc_implicants
     cnf = formula if is_cnf(formula) else tseitin_cnf(formula)  # Convert the dnf into CNF by the Tseitin method if needed.
 
     #  Gather all literals from CNF
@@ -292,18 +295,18 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     # Find all the solutions until no solutions are found.
     solutions = set()
     status = pulp.LpStatusOptimal
-    step = 0
+    trc_implicants = 0
     while status == pulp.LpStatusOptimal:
         primes.solve(solver(msg=0))  # Quiet solving
         status = primes.status
         if status == pulp.LpStatusOptimal:
-            step = step + 1
-            if trace: tqdm.write(f'\r>> # solutions:[{step:3d}]', end='')
+            trc_implicants = trc_implicants + 1
+            if trace: tqdm.write(f'\r>> # solutions:[{trc_implicants:3d}]', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 
             # Add the constraint discarding the found solution, e.g.  s = {x, ~y, z} --> x+~y+z <= 2 s.t. len(s)-1 = 2.
-            discard_solution = pulp.lpSum(map(lambda lit: vlit[lit], solution)) <= len(solution) - 1, "OUT_" + str(step)
+            discard_solution = pulp.lpSum(map(lambda lit: vlit[lit], solution)) <= len(solution) - 1, "OUT_" + str(trc_implicants)
             primes += discard_solution
     prime_implicants_problem = primes  # keep the specification of the problem in a global variable.
     if trace: tqdm.write('')

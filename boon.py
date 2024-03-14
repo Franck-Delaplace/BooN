@@ -147,10 +147,11 @@ class BooN:
     def __str__(self) -> str:
         return BOONSEP.join([f"{str(var)} = {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
-    def __eq__(self, other:BooN) -> bool:
+    def __eq__(self, other: BooN) -> bool:
         if not isinstance(other, BooN):
             return NotImplemented
         return self.desc == other.desc
+
     @property
     def variables(self) -> set:
         """Return the set of variables."""
@@ -291,7 +292,7 @@ class BooN:
 
         self.desc = desc
         ig = self.interaction_graph
-        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()], origin = (0.1,0.15), scale =(0.8,0.8))
+        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()], origin=(0.1, 0.15), scale=(0.8, 0.8))
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
 
     # || NORMAL FORM CONVERSION
@@ -426,6 +427,7 @@ class BooN:
                  **module_args,
                  **kwargs)
         return ig
+
     def from_ig(self, IG: nx.DiGraph):
         """Define the descriptor of a BooN from an interaction graph.
         :param IG:  interaction graph."""
@@ -452,7 +454,6 @@ class BooN:
 
         # convert into formula
         self.desc = {node: Or(*(And(*clause) for clause in nodes[node])) for node in nodes}
-
 
     # || DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
