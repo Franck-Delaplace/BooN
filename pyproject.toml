@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "BooN"
+version = "1.01"
+authors = [
+  { name = "Franck Delaplace", email = "franck.delaplace@univ-evry.fr" },
+]
+description = "Boolean network analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+"matplotlib",
+"netgraph @ https://github.com/paulbrodersen/netgraph/archive/dev.zip#sha256=f3a42cddf4efc40d594d847d6d9c396ddabdd9e5a5ba58855d6e71ced360dc8a",
+"networkx",
+"PuLP",
+"PyQt5",
+"PyQt5-Qt5",
+"PyQt5-sip",
+"PyQtWebEngine",
+"sympy",
+"tabulate",
+"tqdm"
+"z3-solver"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Franck-Delaplace/BooN"
+"Bug Tracker" = "https://github.com/Franck-Delaplace/BooN/issues/"
