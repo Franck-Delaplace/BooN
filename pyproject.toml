@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "BooN"
 version = "1.01"
 authors = [
-  { name = "Franck Delaplace", email = "franck.delaplace@univ-evry.fr" },
+  { name = "Franck Delaplace", email = "franck.delaplace@univ-evry.fr" }
 ]
 description = "Boolean network analysis"
 readme = "README.md"
