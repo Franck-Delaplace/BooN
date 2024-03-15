@@ -17,6 +17,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 keywords = ["Boolean network", "Gene network modelling", "Controllability", "Abduction", "Dynamical system"]
+
 dependencies = [
 "matplotlib",
 "netgraph @ https://github.com/paulbrodersen/netgraph/archive/dev.zip#sha256=f3a42cddf4efc40d594d847d6d9c396ddabdd9e5a5ba58855d6e71ced360dc8a",
