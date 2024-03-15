@@ -25,6 +25,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
@@ -69,7 +70,7 @@ class Boonify(QMainWindow):
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
-        self.QControllability = None  # Widget of the controllability
+        self.QControllability = None # Widget of the controllability
         self.editgraph = None  # Graph for edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled because the editgraph is not set up.
 
@@ -91,13 +92,17 @@ class Boonify(QMainWindow):
         self.ActionStableStates.triggered.connect(self.stablestates)
         self.ActionControllability.triggered.connect(self.controllability)
 
+        # STEP: initialization of a thread for long run application --> controllability
+        # the thread will be created and started.
+        self.worker = Threader()
+
         # STEP: Initialize the Canvas for network design
         fig = plt.figure()  # plt.figure is used to create a manager
         manager = fig.canvas.manager
         self.canvas = FigureCanvas(fig)
         self.canvas.axes = self.canvas.figure.add_subplot(111)
         self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # adjust the window
-        self.canvas.figure.canvas.manager = manager  # assign the manager in the figure to be accessible by EditGraph.
+        self.canvas.figure.canvas.manager = manager  # assign the manager in the canvas to be accessible by EditGraph.
 
         # STEP: Enable key_press_event events for using EditGraph:
         self.canvas.setFocusPolicy(QtCore.Qt.ClickFocus)
@@ -342,8 +347,11 @@ class Boonify(QMainWindow):
             self.QStableStates.stablestates()
         if self.QModel and self.QModel.isVisible():
             self.QModel.modeling()
+        if self.QControllability and self.QControllability.isVisible():
+            print("CT")
+            self.QControllability.initialize_controllability()
 
-    # DEF: WINDGETS OPENING
+    # DEF: WIDGETS OPENING
     def help(self):
         thehelp = Help(self)
         thehelp.show()
@@ -366,8 +374,8 @@ class Boonify(QMainWindow):
         self.QModel.show()
 
     def controllability(self):
-        controllability = Controllability(self)
-        controllability.show()
+        self.QControllability = Controllability(self)
+        self.QControllability.show()
 
 
 # DEF:  WIDGET CLASSES
@@ -648,6 +656,9 @@ class Controllability(QMainWindow):
         variables = theboon.variables
         nbrow = len(theboon.desc)
 
+        #STEP : set the controllability as the function of the thread
+        self.parent.worker.apply(self.controllability)
+
         # STEP: Initialize Destiny page
         self.Destiny.setRowCount(nbrow)
         self.Destiny.resizeColumnToContents(0)
@@ -694,7 +705,7 @@ class Controllability(QMainWindow):
 
         # STEP: Define signals
         self.Observers.itemClicked.connect(self.observer_change)
-        self.ControlButton.clicked.connect(self.controllability)
+        self.ControlButton.clicked.connect(self.parent.worker.run)
         self.ControlActions.clicked.connect(self.select_action)
         self.ActButton.clicked.connect(self.actupon)
 
@@ -830,7 +841,31 @@ class Controllability(QMainWindow):
             self.close()
             # print("Boon:")
             # print(self.parent.boon)
+class Threader(QObject):
+    """Class running an application in a thread."""
+    finished = pyqtSignal()
+    def __init__(self, app=None):
+        super().__init__()
+        if app:
+            self.app = app
+        else:
+            self.app = lambda: None  # null application
 
+        # Create the thread
+        self.thread = QThread()
+        self.moveToThread(self.thread)
+        self.thread.start()
+
+    def run(self):
+        """run the application"""
+        self.app()  # run the application
+        self.finished.emit()  # Emit the end signal
+
+    def apply(self,app):
+        self.app = app
+    def quit(self):
+        """terminate the thread"""
+        self.thread.quit()
 
 # DEF:  MAIN
 if __name__ == "__main__":
