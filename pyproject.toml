@@ -12,10 +12,11 @@ description = "Boolean network analysis"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+keywords = ["Boolean network", "Gene network modelling", "Controllability", "Abduction", "Dynamical system"]
 dependencies = [
 "matplotlib",
 "netgraph @ https://github.com/paulbrodersen/netgraph/archive/dev.zip#sha256=f3a42cddf4efc40d594d847d6d9c396ddabdd9e5a5ba58855d6e71ced360dc8a",
@@ -31,6 +32,10 @@ dependencies = [
 "z3-solver"
 ]
 
+[project.optional-dependencies]
+gui = ["PyQt5"]
+
 [project.urls]
-"Homepage" = "https://github.com/Franck-Delaplace/BooN"
-"Bug Tracker" = "https://github.com/Franck-Delaplace/BooN/issues/"
+Homepage = "https://github.com/Franck-Delaplace/BooN"
+Issues = "https://github.com/Franck-Delaplace/BooN/issues/"
+Repository = "https://github.com/Franck-Delaplace/BooN"

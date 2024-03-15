@@ -35,7 +35,8 @@ It also contains a real case study on breast cancer (<code>breast-cancer-study.p
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
 For exploring BooN interactively run <code>boonify.py</code></p>
 
-<p>To install all necessary modules for BooN, type: <code>pip install -r boon_requirements.txt</code>.</p>
+<H3>BooN installation</H3>
+Go in the directory of BooN and type: <code>pip install .</code> or <code> python -m pip install .</code>.</p>
 
 <H3> To cite this work</H3>
 If you wish to cite this work, please use the following citation:<br>
