@@ -296,7 +296,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     solutions = set()
     status = pulp.LpStatusOptimal
     trc_implicants = 0
-    while status == pulp.LpStatusOptimal:
+    while status == pulp.LpStatusOptimal:   # while a solution is found
         primes.solve(solver(msg=0))  # Quiet solving
         status = primes.status
         if status == pulp.LpStatusOptimal:
