@@ -28,7 +28,7 @@ dependencies = [
 "PyQtWebEngine",
 "sympy",
 "tabulate",
-"tqdm"
+"tqdm",
 "z3-solver"
 ]
 
