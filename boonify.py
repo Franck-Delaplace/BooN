@@ -291,6 +291,10 @@ class Boonify(QMainWindow):
                 case _:
                     pass
 
+    def closeEvent(self, _event):
+        """Close window"""
+        self.quit()
+
     # DEF: HISTORY MANAGEMENT
     def undo(self):
         """Undo operation."""
