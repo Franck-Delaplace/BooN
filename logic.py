@@ -301,7 +301,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
         status = primes.status
         if status == pulp.LpStatusOptimal:
             trc_implicants = trc_implicants + 1
-            if trace: tqdm.write(f'\r>> # solutions:[{trc_implicants:3d}]', end='')
+            if trace: tqdm.write(f'\r>> # solutions:[{trc_implicants:3d}]     ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 
