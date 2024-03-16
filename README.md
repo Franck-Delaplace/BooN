@@ -33,7 +33,11 @@ to identify the causes of the cancer and to predict the therapeutic targets of c
 For exploring BooN interactively run <code>boonify.py</code></p>
 
 <H3>BooN installation</H3>
-Go in the directory of BooN and type: <code>pip install .</code> or <code> python -m pip install .</code>.</p>
+Go in the directory of BooN and type: 
+<ul>
+<li> <code>pip install .</code>  </li>
+<li> or,  <code> python -m pip install .</code></li>
+</ul>
 
 <H3> To cite this work</H3>
 If you wish to cite this work, please use the following citation:<br>
