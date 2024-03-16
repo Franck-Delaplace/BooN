@@ -28,8 +28,8 @@ the controllability analysis.</li>
 
 <p style="text-align:justify">
 <code>example.py</code> illustrates the different functionalities of BooN.
-A real case study on breast cancer (<code>breast-cancer-study.py</code> and <code>breast-cancer.boon</code> for the network)
-is also available. This example aims to identify the causes of the cancer and to predict the therapeutic targets of cancer.
+A real case study on breast cancer <code>breast-cancer-study.py</code>  
+is also available. This example aims to identify the causes of breast cancer and to predict the therapeutic targets of cancer.
 For exploring BooN interactively run <code>boonify.py</code></p>
 
 <H3>BooN installation</H3>
