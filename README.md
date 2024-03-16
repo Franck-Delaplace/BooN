@@ -1,9 +1,6 @@
-<style>
-h1 {text-align: center;}
-p {text-align:justify;}
-</style>
-<h1 > BooN </h1>
-<p>The BooN project provides a complete set of functionalities for Boolean network analysis. 
+
+<h1 style="text-align:center">BooN</h1>
+<p style="text-align:justify">The BooN project provides a complete set of functionalities for Boolean network analysis. 
 It was originally designed to explore the modeling of genetic networks by Boolean networks. 
 The project includes:</p>
  <ul>
@@ -29,7 +26,7 @@ computation of dynamical model for synchronous and asynchronous mode, the comput
 the controllability analysis.</li>
 </ul>
 
-<p>
+<p style="text-align:justify">
 <code>example.py</code> illustrates the different functionalities of BooN.
 It also contains a real case study on breast cancer (<code>breast-cancer-study.py</code> and <code>breast-cancer.boon</code> for the network)
 to identify the causes of the cancer and to predict the therapeutic targets of cancer.
