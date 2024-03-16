@@ -28,8 +28,10 @@ PATHSEP: str = "\\"  # Separator in the file path.
 
 prime_implicants_problem = None  # Global variable storing the last prime implicants problem specification.
 trc_clauses = 0  # global variables counting the number of CNF clauses in supercnf function
-trc_cnf = 0 # global variables counting the number of clauses converted to CNF in supercnf function
-trc_implicants = 0 # global variables counting the number of prime implicants in prime_implicants
+trc_cnf = 0  # global variables counting the number of clauses converted to CNF in supercnf function
+trc_implicants = 0  # global variables counting the number of prime implicants in prime_implicants
+
+
 # DEF: Basic functions
 def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     """Display an error message and exit in case of error (keyword ERROR).
@@ -240,7 +242,7 @@ def supercnf(formula, trace: bool = False):
         tqdm.write('')
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
                     for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='>> CNF formatting', ncols=80,
-                                      bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')])
+                                        bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')])
     else:
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
                     for trc_cnf in range(len(models))])
@@ -296,7 +298,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     solutions = set()
     status = pulp.LpStatusOptimal
     trc_implicants = 0
-    while status == pulp.LpStatusOptimal:   # while a solution is found
+    while status == pulp.LpStatusOptimal:  # while a solution is found
         primes.solve(solver(msg=0))  # Quiet solving
         status = primes.status
         if status == pulp.LpStatusOptimal:
