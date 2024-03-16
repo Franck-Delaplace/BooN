@@ -17,7 +17,7 @@ from tqdm import tqdm
 # Dictionary defining the output style of the formula, see prettyform
 LOGICAL: dict = {'type': 'infix', And: '\u2227', Or: '\u2228', Implies: '\u21D2', Equivalent: '\u21D4', Xor: '\u22BB', Not: '\u00AC', False: 'false', True: 'true'}
 MATHEMATICA: dict = {'type': 'prefix', '(': "[", ')': "]",
-                     And: '&&', Or: 'DEF:', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
+                     And: '&&', Or: '||', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
 SYMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
                And: '&', Or: '|', Implies: 'Implies', Xor: 'Xor', Xnor: 'Xnor', Equivalent: 'Equivalent', Not: '~', False: 'False', True: 'True'}
 JAVA: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: 'false', True: 'true'}
