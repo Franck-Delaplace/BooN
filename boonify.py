@@ -70,7 +70,7 @@ class Boonify(QMainWindow):
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
-        self.QControllability = None # Widget of the controllability
+        self.QControllability = None  # Widget of the controllability
         self.editgraph = None  # Graph for edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled because the editgraph is not set up.
 
@@ -659,7 +659,7 @@ class Controllability(QMainWindow):
         variables = theboon.variables
         nbrow = len(theboon.desc)
 
-        #STEP : set the controllability as the function of the thread
+        # STEP : set the controllability as the function of the thread
         self.parent.worker.apply(self.controllability)
 
         # STEP: Initialize Destiny page
@@ -844,9 +844,12 @@ class Controllability(QMainWindow):
             self.close()
             # print("Boon:")
             # print(self.parent.boon)
+
+
 class Threader(QObject):
     """Class running an application in a thread."""
     finished = pyqtSignal()
+
     def __init__(self, app=None):
         super().__init__()
         if app:
@@ -864,11 +867,13 @@ class Threader(QObject):
         self.app()  # run the application
         self.finished.emit()  # Emit the end signal
 
-    def apply(self,app):
+    def apply(self, app):
         self.app = app
+
     def quit(self):
         """terminate the thread"""
         self.thread.quit()
+
 
 # DEF:  MAIN
 if __name__ == "__main__":
