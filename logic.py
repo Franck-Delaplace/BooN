@@ -20,8 +20,8 @@ MATHEMATICA: dict = {'type': 'prefix', '(': "[", ')': "]",
                      And: '&&', Or: '||', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
 SYMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
                And: '&', Or: '|', Implies: 'Implies', Xor: 'Xor', Xnor: 'Xnor', Equivalent: 'Equivalent', Not: '~', False: 'False', True: 'True'}
-JAVA: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: 'false', True: 'true'}
-C: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: '0', True: '1'}
+JAVA: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: 'false', True: 'true'}
+C: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: '0', True: '1'}
 
 SOLVER = PULP_CBC_CMD  # Default PULP solver
 PATHSEP: str = "\\"  # Separator in the file path.

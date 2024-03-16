@@ -352,7 +352,6 @@ class Boonify(QMainWindow):
         if self.QModel and self.QModel.isVisible():
             self.QModel.modeling()
         if self.QControllability and self.QControllability.isVisible():
-            print("CT")
             self.QControllability.initialize_controllability()
 
     # DEF: WIDGETS OPENING
