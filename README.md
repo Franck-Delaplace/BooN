@@ -11,10 +11,9 @@ The project includes:</p>
  <li> the efficient symbolic computation of <b>stable states</b> based on SAT solver; </li>
  <li> the <b>controllability</b> analysis predicting which variables must be frozen 
   to reach the expected goal at stable states based on possibility and necessity query;</li>
- <li>also different basic functionalities are included as: variable renaming, delete variable,
- update formula and importing/exporting to a text file the Boolean network. </li>
+ <li>also different basic functionalities are included as: update formula and importing/exporting to a text file the Boolean network. </li>
  </ul>
-<h3> BooN functionnalities </h3>
+<h3> BooN functionalities </h3>
 <p>The BooN project comprises 3 modules:</p>
 <ul>
 <li> <code>boon</code> module is related to the manipulation of Boolean network named BooN which is an object.</li>
