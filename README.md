@@ -35,7 +35,7 @@ A real case study on breast cancer is available.
 <code>breast-cancer.boon</code> contains the Boolean network related to breast cancer study that can be used interactively with <code>boonify.py</code>.
 The analysis is decomposed in two phases: first, predicting mutations causing breast cancer, and next predicting therapeutic actions by cancer type 
 to facilitate a cure. In this section, we detail the operations to apply with <code>boonify.py</code> to achieve these predictions. 
-Following and testing this scenario will certainly contribute to deeply understand the potentiality of BooN for Boolean network analysis.
+Following and testing this scenario will certainly contribute to deeply understand the potentiality of BooN for Boolean network analysis and its philosophy.
 <h4> Start the analysis </h4>
 <ul>
 <li> first open <code>breast-cancer.boon</code> file. The model depicts a regulatory network in normal cell conditions.</li>
