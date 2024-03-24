@@ -22,14 +22,60 @@ as well as more advanced features like CNF conversion for large formulas, CNF co
 and prime implicant calculation. These functions are used in the BooN modules. </li>
 <li> The <code>boonify</code> module is the graphical interface for accessing project functions in BooN:
 computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and 
-the controllability analysis.</li>
+the controllability analysis. For exploring BooN interactively run <code>boonify.py</code></li>
 </ul>
 
 <p style="text-align:justify">
 <code>example.py</code> illustrates the different functionalities of BooN.
-A real case study on breast cancer <code>breast-cancer-study.py</code>  
-is also available. This example aims to identify the causes of breast cancer and to predict the therapeutic targets of cancer.
-For exploring BooN interactively run <code>boonify.py</code></p>
+
+<h3> Real case study </h3>
+A real case study on breast cancer is available.
+<code>breast-cancer-study.py</code>  is a python program defining all the steps of the analysis using <code>boon.py</code> library.
+ This example aims to identify the causes of breast cancer and to predict the therapeutic targets of cancer.
+<code>breast-cancer.boon</code> contains the Boolean network related to breast cancer study that can be used interactively with <code>boonify.py</code>.
+The analysis is decomposed in two phases: first, predicting mutations causing breast cancer, and next predicting therapeutic actions by cancer type 
+to facilitate a cure. In this section, we detail the operations to apply with <code>boonify.py</code> to achieve these predictions. 
+Following and testing this scenario will certainly contribute to deeply understand the potentiality of BooN for Boolean network analysis.
+<h4> Start the analysis </h4>
+<ul>
+<li> first open <code>breast-cancer.boon</code> file. The model depicts a regulatory network in normal cell conditions.</li>
+<li> Compute the stable stables. Two possible stable states are shown which respectively correspond to the apoptosis and the cellular division initiation.
+Recall that each stable state is presumably associated to a characteristic phenotype. </li>
+</ul>
+
+<h4> Predicting mutations causing breast cancer</h4>
+<ul>
+<li> A cancerous situation corresponds here to a particular hallmark of cancer which is the loss of apoptosis. 
+Cell division thus becomes the only phenotype describing the development of metastases.</li>
+<li> The biomarkers are CyC1 and Bax. When <code>CycD1=False, Bax=True</code> at stable state, such situation corresponds to apoptosis. 
+By contrast, when <code>CycD1=True, Bax=False</code> the stable state represents the cell division. 
+Please check these bio-marking at stable states 
+for the initial normal cell condition.</li>
+<li>The onset of cancer is thus linked to the inhibition of apoptosis,
+which is indicated by the absence of its respective marking at stable state, namely:<code>CycD1=False, Bax=True</code>.
+<li> To describe cancerous conditions, open the controllability window and set Cyc1 to False and Bax to True in the <b>Destiny</b> sheet. </li>
+<li> Then, select <b>[Avoid]</b>  and <b>[Necessity]</b>. The programmed query is thus: <i>'There is never a stable state where <code>Cyc1=False, Bax=True</code>.</i>'
+  </li>
+<li> Execute this query. 3469 Models are produced and 9 solutions are found. 
+Note that a large number of models may require significant computational time.</li>
+<li> The mutations required to trigger breast cancer are described by the solutions. 
+Please check the validity of these predictions in literature.  </li>
+</ul>
+
+<h4>Predicting therapeutic actions</h4>
+<ul>
+<li> Among the solutions describing mutation causing cancer, we do focus on BRCA1 mutation. 
+Hence, select BRCA1=False (Solution 4) and apply it. Normally, the Controllability window closes.  </li>
+<li> You can check that the modification is applied by opening the booN View window. </li>
+<li> Now, we examine the conditions for curing BRCA1-cancer. Open the Controllability window again. </li>
+<li> The therapeutic actions thus must recover the apoptosis.</li>
+<li> Again, fix Cyc1 to False and Bax to True. </li>
+<li> Moreover, open the <b>observer</b> sheet and also check BRCA1 for excluding it to the potential targets since the mutation definitively freezes its state. </li>
+<li> Select  <b>[Reach]</b> and <b>[Possibility]</b>. The programmed query is thus: <i>'There exists a stable state having <code>Cyc1=False, Bax=True</code>'</i>.</li>
+<li> Execute this query. Notice that the Possibility is always far faster then the necessity. Three solutions are available. Please check their validity in literature.</li>
+<li> Note that among the solutions, the controllability discover that inhibiting PARP1 is a potential therapeutic target. Actually, PARP1 is the lethal partner of BRCA1 
+enabling targeted cancerous therapy, and the lethal partners are hard to discover. </li>
+</ul>
 
 <H3>BooN installation</H3>
 Go in the directory of BooN and type: 
@@ -44,7 +90,7 @@ If you wish to cite this work, please use the following citation:<br>
 <br/>
 <i> Celia Biane, Franck Delaplace</i>
 <br>
-IEEE/ACM Trans Comput Biol Bioinform
+IEEE/ACM Trans Comput. Biol. Bioinform.
 . 2019 Sep-Oct;16(5):1574-1585. 
 <br>
 PMID: 30582550 - DOI: 10.1109/TCBB.2018.2889102
