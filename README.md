@@ -53,7 +53,7 @@ Please check these bio-marking at stable states
 for the initial normal cell condition.</li>
 <li>The onset of cancer is thus linked to the inhibition of apoptosis,
 which is indicated by the absence of its respective marking at stable state, namely:<code>CycD1=False, Bax=True</code>.
-<li> To describe cancerous conditions, open the controllability window and set Cyc1 to False and Bax to True in the <b>Destiny</b> sheet. </li>
+<li> To describe cancerous conditions, open the <b>Controllability</b> window and set Cyc1 to False and Bax to True in the <b>Destiny</b> sheet. </li>
 <li> Then, select <b>[Avoid]</b>  and <b>[Necessity]</b>. The programmed query is thus: <i>'There is never a stable state where <code>Cyc1=False, Bax=True</code>.</i>'
   </li>
 <li> Execute this query. 3469 Models are produced and 9 solutions are found. 
@@ -65,9 +65,9 @@ Please check the validity of these predictions in literature.  </li>
 <h4>Predicting therapeutic actions</h4>
 <ul>
 <li> Among the solutions describing mutation causing cancer, we do focus on BRCA1 mutation. 
-Hence, select BRCA1=False (Solution 4) and apply it. Normally, the Controllability window closes.  </li>
-<li> You can check that the modification is applied by opening the booN View window. </li>
-<li> Now, we examine the conditions for curing BRCA1-cancer. Open the Controllability window again. </li>
+Hence, select BRCA1=False (Solution 4) and apply it. Normally, the <b>Controllability</b> window closes.  </li>
+<li> You can check that the modification is applied by opening the <b>BooN View</b> window. </li>
+<li> Now, we examine the conditions for curing BRCA1-cancer. Open the <b>Controllability</b> window again. </li>
 <li> The therapeutic actions thus must recover the apoptosis.</li>
 <li> Again, fix Cyc1 to False and Bax to True. </li>
 <li> Moreover, open the <b>observer</b> sheet and also check BRCA1 for excluding it to the potential targets since the mutation definitively freezes its state. </li>
