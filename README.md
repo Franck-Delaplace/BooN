@@ -59,14 +59,15 @@ which is indicated by the absence of its respective marking at stable state, nam
 <li> Execute this query. 3469 Models are produced and 9 solutions are found. 
 Note that a large number of models may require significant computational time.</li>
 <li> The mutations required to trigger breast cancer are described by the solutions. 
-Please check the validity of these predictions in literature.  </li>
+Please check the validity of these predictions in literature.  Some corresponds to a single mutation (Solution 1 to  </li>
 </ul>
 
 <h4>Predicting therapeutic actions</h4>
 <ul>
 <li> Among the solutions describing mutation causing cancer, we do focus on BRCA1 mutation. 
 Hence, select BRCA1=False (Solution 4) and apply it. Normally, the <b>Controllability</b> window closes.  </li>
-<li> You can check that the modification is applied by opening the <b>BooN View</b> window. </li>
+<li> You can check that the modification is applied by opening the <b>BooN View</b> window, and you can also verify that the stable states have changed.
+ <code>Cyc1=False,Bax=True</code> has disappeared.</li>
 <li> Now, we examine the conditions for curing BRCA1-cancer. Open the <b>Controllability</b> window again. </li>
 <li> The therapeutic actions thus must recover the apoptosis.</li>
 <li> Again, fix Cyc1 to False and Bax to True. </li>

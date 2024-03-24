@@ -46,11 +46,6 @@ REG: str = '\u03b1'  # lambda
 POS: str = '\u03b2'  # alpha
 NEG: str = '\u03bb'  # beta
 
-# Flags for history update
-NOCHNG: int = 0  # No changes.
-NODESCCHNG: int = 1  # There is a change but the descriptor is not changed.
-DESCCHNG: int = 2  # The descriptor is changed.
-
 
 class Boonify(QMainWindow):
     """Main Class of the GUI"""
@@ -64,9 +59,9 @@ class Boonify(QMainWindow):
         self.boon = BooN()  # Current BooN
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history
-        self.hupdate = 0  # Flag determining whether the history is updated  0: no update ,1 : the position are updated, 2: the descriptor is updated
+        self.hupdate = False  # Flag determining whether the history is updated
         self.filename = ""  # Last filename
-        self.saved = False  # Flag determining whether a BooN is saved.
+        self.saved = True  # Flag determining whether a BooN is saved.
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
@@ -223,7 +218,7 @@ class Boonify(QMainWindow):
 
         # STEP: Update the history and refresh the open windows.
         self.add_history()
-        if self.hupdate == DESCCHNG:
+        if self.hupdate:
             self.refresh()
 
     # DEF: FILE MANAGEMENT
@@ -259,7 +254,6 @@ class Boonify(QMainWindow):
         filename = QFileDialog.getOpenFileName(self, "", "Import from text file.", "", "Text Files (*.txt);; All Files (*);;")
         if filename:
             self.boon.from_textfile(filename[0])
-            self.saved = False
             self.refresh()
             self.setup_design()
             self.add_history()
@@ -273,8 +267,9 @@ class Boonify(QMainWindow):
     def quit(self):
         """Quit application."""
         # check if the BooN is saved
+
         if self.saved:
-            app.quit()
+            quitting = True
         else:  # Otherwise ask whether it must be saved.
             reply = QMessageBox.question(
                 self,
@@ -285,15 +280,24 @@ class Boonify(QMainWindow):
             match reply:
                 case QMessageBox.Save:
                     self.save()
-                    app.quit()
+                    quitting = True
                 case QMessageBox.Close:
+                    quitting = True
                     app.quit()
+                case QMessageBox.Cancel:
+                    quitting = False
                 case _:
-                    pass
+                    quitting = False
+        if quitting:
+            app.quit()
 
-    def closeEvent(self, _event):
+        return quitting
+
+    def closeEvent(self, event):
         """Close window"""
-        self.quit()
+        quitting = self.quit()
+        if not quitting:
+            event.ignore()
 
     # DEF: HISTORY MANAGEMENT
     def undo(self):
@@ -319,20 +323,33 @@ class Boonify(QMainWindow):
     def add_history(self):
         """Add current BooN to the history."""
         hindex = self.hindex
-        if self.boon != self.history[hindex]:  # The BooN comparison operates on descriptors only.
+        if self.boon != self.history[hindex]:  # WARNING: The BooN comparison operates on descriptors only.
+
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
-            if self.history[hindex] and self.boon.desc == self.history[hindex].desc:
-                self.hupdate = NODESCCHNG  # Descriptor is not changed.
-            else:
-                self.hupdate = DESCCHNG  # Descriptor is changed.
+            self.hupdate = True  # Descriptor is changed.
+
+            if self.history[hindex] and self.history[hindex].desc:  # The current descriptor is not empty.
+                self.saved = False
+
             self.disablecallback = False  # Enable the design callback
 
             hindex = (hindex + 1) % HSIZE  # Update the history
             self.history[hindex] = self.boon.copy()
             self.hindex = hindex
-            self.saved = False
+
         else:
-            self.hupdate = NOCHNG  # No changes.
+            self.hupdate = False  # No changes.
+
+        # DEF: PRINT THE HISTORY
+        # for i,h in enumerate(self.history):
+        #    if i == self.hindex:
+        #        print(f"*{i}:",end="")
+        #    else:
+        #        print(f" {i}:",end="")
+        #    if h:
+        #        print(f'[{h}]')
+        #    else:
+        #        print("[NONE]")
 
     def show_history(self):
         """Show the history."""
