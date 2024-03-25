@@ -39,7 +39,7 @@ mpl.use("Qt5Agg")
 HSIZE: int = 10  # size of the history
 STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SYMPY, "Mathematica": MATHEMATICA}
 ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.svg", False: ":/icon/resources/false.svg"}  # True/False icons
-MODELBOUND: int = 8  # Size  bound of the dynamics model in terms of variables.
+MODELBOUND: int = 8  # Size bound of the dynamics model in terms of variables.
 
 # Node names for the pattern network
 REG: str = '\u03b1'  # lambda
