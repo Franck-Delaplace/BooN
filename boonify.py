@@ -371,13 +371,13 @@ class Boonify(QMainWindow):
 
     def refresh(self):
         """Refresh the opened widgets."""
-        if self.QView and self.QView.isVisible(): # Refresh the BooN View if opened.
+        if self.QView and self.QView.isVisible():  # Refresh the BooN View if opened.
             self.QView.initialize_view()
-        if self.QStableStates and self.QStableStates.isVisible(): # Refresh the stable states View if opened.
+        if self.QStableStates and self.QStableStates.isVisible():  # Refresh the stable states View if opened.
             self.QStableStates.stablestates()
-        if self.QModel and self.QModel.isVisible(): # Refresh the Model view if opened.
+        if self.QModel and self.QModel.isVisible():  # Refresh the Model view if opened.
             self.QModel.modeling()
-        if self.QControllability and self.QControllability.isVisible(): # Refresh the Controllabilitt View if opened.
+        if self.QControllability and self.QControllability.isVisible():  # Refresh the Controllabilitt View if opened.
             self.QControllability.initialize_controllability()
 
     # DEF: WIDGETS OPENING
