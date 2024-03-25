@@ -371,30 +371,33 @@ class Boonify(QMainWindow):
 
     def refresh(self):
         """Refresh the opened widgets."""
-        if self.QView and self.QView.isVisible():
+        if self.QView and self.QView.isVisible(): # Refresh the BooN View if opened.
             self.QView.initialize_view()
-        if self.QStableStates and self.QStableStates.isVisible():
+        if self.QStableStates and self.QStableStates.isVisible(): # Refresh the stable states View if opened.
             self.QStableStates.stablestates()
-        if self.QModel and self.QModel.isVisible():
+        if self.QModel and self.QModel.isVisible(): # Refresh the Model view if opened.
             self.QModel.modeling()
-        if self.QControllability and self.QControllability.isVisible():
+        if self.QControllability and self.QControllability.isVisible(): # Refresh the Controllabilitt View if opened.
             self.QControllability.initialize_controllability()
 
     # DEF: WIDGETS OPENING
     def help(self):
+        """Help View"""
         thehelp = Help(self)
         thehelp.show()
 
-    # BOOLEAN NETWORK ANALYSIS
     def view(self):
+        """BooN View"""
         self.QView = View(self)
         self.QView.show()
 
     def stablestates(self):
+        """Stable States View"""
         self.QStableStates = StableStates(self)
         self.QStableStates.show()
 
     def model(self):
+        """Model View"""
         if len(self.boon.variables) > MODELBOUND:
             QMessageBox.critical(self, "NOP", f"The number of variables exceeds {MODELBOUND}. The model cannot be computed.")
             return
@@ -403,6 +406,7 @@ class Boonify(QMainWindow):
         self.QModel.show()
 
     def controllability(self):
+        """Controllability View"""
         self.QControllability = Controllability(self)
         self.QControllability.show()
 
@@ -552,7 +556,7 @@ class StableStates(QDialog):
         self.stablestates()
 
     def cb_styling(self):
-        """Style from statusbox selection"""
+        """Style from combo box selection"""
         self.style = self.Style.currentText()
         self.stablestates()  # Refresh the stable states view.
 
@@ -635,7 +639,7 @@ class Model(QMainWindow):
         self.modeling()
 
     def cb_network_layout(self):
-        """ Determine the layout of the network model."""
+        """ Determine the layout of the network model from combo box."""
         layout = self.NetworkLayout.currentText()
         match layout:
             case "Hypercube":
