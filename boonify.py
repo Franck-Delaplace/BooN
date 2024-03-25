@@ -57,10 +57,10 @@ class Boonify(QMainWindow):
 
         # STEP: initialize the Gui state
         self.boon = BooN()  # Current BooN
+        self.filename = ""  # Last filename
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history
         self.hupdate = False  # Flag determining whether the history is updated
-        self.filename = ""  # Last filename
         self.saved = True  # Flag determining whether a BooN is saved.
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
@@ -231,6 +231,7 @@ class Boonify(QMainWindow):
 
             self.refresh()
             self.setup_design()
+            self.history_raz()
             self.add_history()
 
     def save(self):
@@ -251,11 +252,12 @@ class Boonify(QMainWindow):
 
     def importation(self):
         """Import file dialog."""
-        filename = QFileDialog.getOpenFileName(self, "", "Import from text file.", "", "Text Files (*.txt);; All Files (*);;")
+        filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text Files (*.txt);; All Files (*);;")
         if filename:
             self.boon.from_textfile(filename[0])
             self.refresh()
             self.setup_design()
+            self.history_raz()
             self.add_history()
 
     def exportation(self):
@@ -283,7 +285,6 @@ class Boonify(QMainWindow):
                     quitting = True
                 case QMessageBox.Close:
                     quitting = True
-                    app.quit()
                 case QMessageBox.Cancel:
                     quitting = False
                 case _:
@@ -293,6 +294,7 @@ class Boonify(QMainWindow):
 
         return quitting
 
+    # noinspection PyMethodOverriding
     def closeEvent(self, event):
         """Close window"""
         quitting = self.quit()
@@ -300,6 +302,13 @@ class Boonify(QMainWindow):
             event.ignore()
 
     # DEF: HISTORY MANAGEMENT
+    def history_raz(self):
+        """Clear the history and initialize self.saved flag."""
+        self.history = [None] * HSIZE  # History
+        self.hindex = 0  # Index of the last BooN added in the  history
+        self.hupdate = False  # Flag determining whether the history is updated
+        self.saved = True  # Flag determining whether a BooN is saved.
+
     def undo(self):
         """Undo operation."""
         hindex = (self.hindex - 1) % HSIZE
@@ -340,7 +349,7 @@ class Boonify(QMainWindow):
         else:
             self.hupdate = False  # No changes.
 
-        # DEF: PRINT THE HISTORY
+        # PRINT THE HISTORY
         # for i,h in enumerate(self.history):
         #    if i == self.hindex:
         #        print(f"*{i}:",end="")
@@ -591,7 +600,7 @@ class Model(QMainWindow):
     """Class to handle model of dynamics."""
 
     def __init__(self, parent=None):
-        super(Model, self).__init__()  # ici remettre (parent)
+        super(Model, self).__init__(parent)
         loadUi('BooNGui/model.ui', self)
         self.setGeometry(300, 300, 600, 600)
         self.CloseButton.clicked.connect(lambda _: self.close())
@@ -737,7 +746,7 @@ class Controllability(QMainWindow):
         for i in range(self.ControlPanel.count()):
             self.ControlPanel.widget(i).adjustSize()
 
-        # fit to contennt for ControlActions
+        # fit to content for ControlActions
         header = self.ControlActions.header()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)

@@ -1,4 +1,5 @@
-v = (x & y) | (z & ~v & ~x)
+# EXAMPLE OF BOON WITH NON DNF EQUATIONS.
+v = (~x & y) | (z & ~v & ~x)
 x = (y | x) & (z | ~v)
 z = (v >> y) |( ~x & z)
 y = x & z

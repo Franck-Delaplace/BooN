@@ -449,7 +449,7 @@ class BooN:
                         lit = Not(node)
                     else:
                         lit = None
-                        errmsg("Internal error module coding - Please call the Software Development Team. ")
+                        errmsg("Internal error module coding - Please call the Software Development Team. ",[node,target,module])
                     nodes[target][abs(module) - 1].add(lit)
 
         # convert into formula
