@@ -57,17 +57,17 @@ class Boonify(QMainWindow):
 
         # STEP: initialize the Gui state
         self.boon = BooN()  # Current BooN
-        self.filename = ""  # Last filename
+        self.filename = ""  # Current filename
         self.history = [None] * HSIZE  # History
-        self.hindex = 0  # Index of the last BooN added in the  history
-        self.hupdate = False  # Flag determining whether the history is updated
-        self.saved = True  # Flag determining whether a BooN is saved.
+        self.hindex = 0  # Index of the last BooN added in the  history.
+        self.hupdate = False  # Flag determining whether the history is updated.
+        self.saved = True  # Flag determining whether the current BooN is saved.
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
         self.QControllability = None  # Widget of the controllability
         self.editgraph = None  # Graph for edition
-        self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled because the editgraph is not set up.
+        self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.
 
         # STEP:  File menu connected to callback functions
         # File
@@ -88,11 +88,11 @@ class Boonify(QMainWindow):
         self.ActionControllability.triggered.connect(self.controllability)
 
         # STEP: initialization of a thread for long run application --> controllability
-        # the thread will be created and started.
+        # The thread will be created and started.
         self.worker = Threader()
 
         # STEP: Initialize the Canvas for network design
-        fig = plt.figure()  # plt.figure is used to create a manager
+        fig = plt.figure()  # plt.figure is necessary to create a manager
         manager = fig.canvas.manager
         self.canvas = FigureCanvas(fig)
         self.canvas.axes = self.canvas.figure.add_subplot(111)
@@ -114,7 +114,7 @@ class Boonify(QMainWindow):
         """Set up of the editable graph."""
         self.disablecallback = True  # Disable the design callback during the set-up.
 
-        # STEP: Creation of the style network used for edge styling.
+        # STEP: Creation of the style-network used for edge styling.
         # To prevent its inclusion in the BooN, the variable names are string while the other nodes are integers or symbols.
         g = nx.DiGraph([(REG, NEG), (REG, POS), (POS, POS), (NEG, NEG)])
         edge_color = {(REG, NEG): SIGNCOLOR[-1], (REG, POS): SIGNCOLOR[1], (POS, POS): SIGNCOLOR[1], (NEG, NEG): SIGNCOLOR[-1]}
@@ -132,7 +132,7 @@ class Boonify(QMainWindow):
         edge_color.update({edge: SIGNCOLOR[signs[edge]] for edge in signs})  # Define edge colors of editable graph from the IG.
         positions.update(self.boon.pos)  # Complete the position.
 
-        # STEP: transfer the module ids and convert them to string labels.
+        # STEP: Convert the module labels to string.
         modules = nx.get_edge_attributes(ig, 'module')
         modules = {edge: " ".join([str(abs(module)) for module in modules[edge]]) for edge in modules}
 
@@ -142,12 +142,12 @@ class Boonify(QMainWindow):
                                        node_labels=True,
                                        node_color='antiquewhite',
                                        node_edge_color='black',
-                                       node_size=2.5,
-                                       node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold', size=11),
+                                       node_size=2.,
+                                       node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold', fontsize=11),
                                        node_layout=positions,
                                        arrows=True,
                                        edge_labels=modules,
-                                       edge_width=1.2,
+                                       edge_width=1.,
                                        node_label_offset=(0., 0.05),
                                        edge_label_position=0.75,
                                        edge_label_fontdict=dict(family='sans-serif', fontweight='bold', fontsize=8, color='royalblue'),
@@ -158,8 +158,7 @@ class Boonify(QMainWindow):
     def design(self):
         """interaction graph design callback."""
 
-        if self.disablecallback:  # Check whether the callback is enabled otherwise return.
-            return
+        if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
 
         # STEP: Find consistent nodes corresponding to the variables in the BooN.
         # The type of consistent nodes is symbol or integer with a label.
@@ -179,7 +178,8 @@ class Boonify(QMainWindow):
         edit_pos = self.editgraph.node_positions
         pos = {idvar[idt]: edit_pos[idt] for idt in idvar}
 
-        # STEP: Interpret the colors to signs. WARNING: The face color is (r,g,b,a) while the sign colors are (r,g,b).
+        # STEP: Interpret the colors to signs.
+        # WARNING: The face color is (r,g,b,a) while the sign colors are (r,g,b).
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
 
@@ -231,7 +231,7 @@ class Boonify(QMainWindow):
 
             self.refresh()
             self.setup_design()
-            self.history_raz()
+            self.history_raz()  # clear history
             self.add_history()
 
     def save(self):
@@ -257,7 +257,7 @@ class Boonify(QMainWindow):
             self.boon.from_textfile(filename[0])
             self.refresh()
             self.setup_design()
-            self.history_raz()
+            self.history_raz()  # clear history
             self.add_history()
 
     def exportation(self):
@@ -276,7 +276,7 @@ class Boonify(QMainWindow):
             reply = QMessageBox.question(
                 self,
                 "Quit",
-                "Are you sure you want to quit? the BooN is not saved.",
+                "Are you sure you want to quit? \nThe BooN is not saved.",
                 QMessageBox.Save | QMessageBox.Close | QMessageBox.Cancel,
                 QMessageBox.Save)
             match reply:
@@ -292,22 +292,19 @@ class Boonify(QMainWindow):
         if quitting:
             app.quit()
 
-        return quitting
-
     # noinspection PyMethodOverriding
     def closeEvent(self, event):
         """Close window"""
-        quitting = self.quit()
-        if not quitting:
-            event.ignore()
+        self.quit()
+        event.ignore()
 
     # DEF: HISTORY MANAGEMENT
     def history_raz(self):
-        """Clear the history and initialize self.saved flag."""
+        """Clear the history."""
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history
         self.hupdate = False  # Flag determining whether the history is updated
-        self.saved = True  # Flag determining whether a BooN is saved.
+        self.saved = True  # Flag determining whether the BooN is saved.
 
     def undo(self):
         """Undo operation."""
@@ -340,11 +337,11 @@ class Boonify(QMainWindow):
             if self.history[hindex] and self.history[hindex].desc:  # The current descriptor is not empty.
                 self.saved = False
 
-            self.disablecallback = False  # Enable the design callback
-
             hindex = (hindex + 1) % HSIZE  # Update the history
             self.history[hindex] = self.boon.copy()
             self.hindex = hindex
+
+            self.disablecallback = False  # Enable the design callback
 
         else:
             self.hupdate = False  # No changes.
@@ -377,7 +374,7 @@ class Boonify(QMainWindow):
             self.QStableStates.stablestates()
         if self.QModel and self.QModel.isVisible():  # Refresh the Model view if opened.
             self.QModel.modeling()
-        if self.QControllability and self.QControllability.isVisible():  # Refresh the Controllabilitt View if opened.
+        if self.QControllability and self.QControllability.isVisible():  # Refresh the Controllability View if opened.
             self.QControllability.initialize_controllability()
 
     # DEF: WIDGETS OPENING
@@ -399,7 +396,7 @@ class Boonify(QMainWindow):
     def model(self):
         """Model View"""
         if len(self.boon.variables) > MODELBOUND:
-            QMessageBox.critical(self, "NOP", f"The number of variables exceeds {MODELBOUND}. The model cannot be computed.")
+            QMessageBox.critical(self, "No Model", f"The number of variables exceeds {MODELBOUND}.\nThe model cannot be drawn.")
             return
 
         self.QModel = Model(self)
@@ -556,7 +553,7 @@ class StableStates(QDialog):
         self.stablestates()
 
     def cb_styling(self):
-        """Style from combo box selection"""
+        """Select style from combo box selection"""
         self.style = self.Style.currentText()
         self.stablestates()  # Refresh the stable states view.
 
@@ -653,7 +650,7 @@ class Model(QMainWindow):
             case "Random":
                 self.layout = nx.random_layout
             case _:
-                logic.errmsg("Internal Error - Unknown layout", "cb_network_layout")
+                logic.errmsg("Internal Error - Unknown layout - Please contact the development team", "cb_network_layout")
         self.modeling()
 
     def modeling(self):
@@ -680,7 +677,7 @@ class Controllability(QMainWindow):
 
         self.parent = parent
         self.actions = None  # current control actions
-        self.row = None  # row number corresponding to the selected solutions
+        self.row = None      # row number corresponding to the selected solutions
         self.initialize_controllability()
 
     def initialize_controllability(self):
@@ -694,7 +691,7 @@ class Controllability(QMainWindow):
 
         # STEP: Initialize Destiny page
         self.Destiny.setRowCount(nbrow)
-        self.Destiny.resizeColumnToContents(0)
+        self.Destiny.resizeColumnToContents(0) # fit size to content
         self.Destiny.horizontalHeader().setStretchLastSection(True)
 
         # fill the destiny table
@@ -722,7 +719,7 @@ class Controllability(QMainWindow):
 
             # insert the status box in the table and connect it
             self.Destiny.setCellWidget(row, 1, statusbox)
-            statusbox.currentTextChanged.connect(self.destiny_change)
+            statusbox.currentTextChanged.connect(self.destiny_to_observers)
 
         # STEP: Initialize the observer page
         self.Observers.setRowCount(nbrow)
@@ -737,7 +734,7 @@ class Controllability(QMainWindow):
             self.Observers.setItem(row, 0, obschkbox)
 
         # STEP: Define signals
-        self.Observers.itemClicked.connect(self.observer_change)
+        self.Observers.itemClicked.connect(self.observers_to_destiny)
         self.ControlButton.clicked.connect(self.parent.worker.run)
         self.ControlActions.clicked.connect(self.select_action)
         self.ActButton.clicked.connect(self.actupon)
@@ -755,7 +752,7 @@ class Controllability(QMainWindow):
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
 
-    def destiny_change(self, label: str):
+    def destiny_to_observers(self, label: str):
         """Modify the observer w.r.t. the destiny change."""
         row = self.Destiny.currentRow()
         item = self.Observers.item(row, 0)
@@ -765,7 +762,7 @@ class Controllability(QMainWindow):
         else:
             item.setCheckState(Qt.Checked)
 
-    def observer_change(self, chkitem):
+    def observers_to_destiny(self, chkitem):
         """ Modify the destiny w.r.t. the observer change"""
         row = chkitem.row()
         if chkitem.checkState() == Qt.Unchecked:
@@ -825,7 +822,6 @@ class Controllability(QMainWindow):
         # Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
         core = BooN.destify(destiny, trace=self.Trace)
         self.actions = core2actions(core)
-        # print("actions>",self.actions)
 
         # Define tree model to show the actions.
         treemodel = QStandardItemModel(0, 2)  # Add 2 columns
@@ -872,20 +868,14 @@ class Controllability(QMainWindow):
             self.parent.setup_design()
             self.parent.refresh()
             self.close()
-            # print("Boon:")
-            # print(self.parent.boon)
-
 
 class Threader(QObject):
-    """Class running an application in a thread."""
+    """Class executing a thread to run an application."""
     finished = pyqtSignal()
 
-    def __init__(self, app=None):
+    def __init__(self, app=lambda: None):
         super().__init__()
-        if app:
-            self.app = app
-        else:
-            self.app = lambda: None  # null application
+        self.app = app
 
         # Create the thread
         self.thread = QThread()
@@ -898,6 +888,7 @@ class Threader(QObject):
         self.finished.emit()  # Emit the end signal
 
     def apply(self, app):
+        """Fix the application running in the thread."""
         self.app = app
 
     def quit(self):
