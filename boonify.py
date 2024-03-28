@@ -677,7 +677,7 @@ class Controllability(QMainWindow):
 
         self.parent = parent
         self.actions = None  # current control actions
-        self.row = None      # row number corresponding to the selected solutions
+        self.row = None  # row number corresponding to the selected solutions
         self.initialize_controllability()
 
     def initialize_controllability(self):
@@ -691,7 +691,7 @@ class Controllability(QMainWindow):
 
         # STEP: Initialize Destiny page
         self.Destiny.setRowCount(nbrow)
-        self.Destiny.resizeColumnToContents(0) # fit size to content
+        self.Destiny.resizeColumnToContents(0)  # fit size to content
         self.Destiny.horizontalHeader().setStretchLastSection(True)
 
         # fill the destiny table
@@ -868,6 +868,7 @@ class Controllability(QMainWindow):
             self.parent.setup_design()
             self.parent.refresh()
             self.close()
+
 
 class Threader(QObject):
     """Class executing a thread to run an application."""
