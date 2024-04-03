@@ -3,6 +3,7 @@
 # Creation date: February 2024
 import sys
 import os
+import math
 from tabulate import tabulate
 import BooNGui.booneries_rc  # resources
 
@@ -36,6 +37,7 @@ from matplotlib.figure import Figure
 
 mpl.use("Qt5Agg")
 
+# Parameters
 HSIZE: int = 10  # size of the history
 STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SYMPY, "Mathematica": MATHEMATICA}
 ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.svg", False: ":/icon/resources/false.svg"}  # True/False icons
@@ -68,8 +70,10 @@ class Boonify(QMainWindow):
         self.QControllability = None  # Widget of the controllability
         self.editgraph = None  # Graph for edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.
+        self.designsize = 2.  # Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.
 
         # STEP:  File menu connected to callback functions
+
         # File
         self.ActionOpen.triggered.connect(self.open)
         self.ActionSave.triggered.connect(self.save)
@@ -77,10 +81,12 @@ class Boonify(QMainWindow):
         self.ActionImport.triggered.connect(self.importation)
         self.ActionExport.triggered.connect(self.exportation)
         self.ActionQuit.triggered.connect(self.quit)
+
         # Help
         self.ActionHelp.triggered.connect(self.help)
         self.ActionUndo.triggered.connect(self.undo)
         self.ActionRedo.triggered.connect(self.redo)
+
         # Network
         self.ActionView.triggered.connect(self.view)
         self.ActionModel.triggered.connect(self.model)
@@ -142,13 +148,14 @@ class Boonify(QMainWindow):
                                        node_labels=True,
                                        node_color='antiquewhite',
                                        node_edge_color='black',
-                                       node_size=2.,
                                        node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold', fontsize=11),
                                        node_layout=positions,
+                                       node_size=self.designsize,
+                                       node_edge_width=self.designsize / 4,
+                                       edge_width=self.designsize / 2,
+                                       node_label_offset=(0., 0.025 * self.designsize),
                                        arrows=True,
                                        edge_labels=modules,
-                                       edge_width=1.,
-                                       node_label_offset=(0., 0.05),
                                        edge_label_position=0.75,
                                        edge_label_fontdict=dict(family='sans-serif', fontweight='bold', fontsize=8, color='royalblue'),
                                        edge_color=edge_color,
@@ -174,7 +181,7 @@ class Boonify(QMainWindow):
         # STEP: Find the edges having consistent nodes.
         edges = {(src, tgt) for src, tgt in self.editgraph.edge_artists.keys() if src in idvar and tgt in idvar}
 
-        # STEP: Get the positions.
+        # STEP: set the positions of nodes.
         edit_pos = self.editgraph.node_positions
         pos = {idvar[idt]: edit_pos[idt] for idt in idvar}
 
@@ -220,6 +227,45 @@ class Boonify(QMainWindow):
         self.add_history()
         if self.hupdate:
             self.refresh()
+
+    def resizeEvent(self, event, **kwargs):
+        """ Modify the parameter of the graph to let the node and edge size invariant to the window scaling."""
+        # STEP: Fix the size related to the network design
+        width = self.frameGeometry().width()
+        height = self.frameGeometry().height()
+        self.designsize = min(round(1350 / min(width, height), 1), 2.5)
+
+        # STEP: retrieve all parameters of editgraph
+        positions = self.editgraph.node_positions
+        edge_color = {edge: self.editgraph.edge_artists[edge].get_facecolor() for edge in self.editgraph.edge_artists}
+        modules = {edge: self.editgraph.edge_label_artists[edge].get_text() for edge in self.editgraph.edge_label_artists}
+        node_labels = {idt: "" if text.get_text().isdigit() else text.get_text() for idt, text in
+                       self.editgraph.node_label_artists.items()}  # remove the label if it is an integer.
+        nodes = self.editgraph.nodes
+        edges = self.editgraph.edges
+
+        # STEP: Define a new Editable graph with size updated.
+        g = nx.DiGraph()
+        g.add_edges_from(edges)
+        g.add_nodes_from(nodes)
+        self.canvas.axes.clear()
+        # WARNING : the definition of EditableGraph is the same as the definition in setup_design function. Any modification of one must be reported to the other.
+        self.editgraph = EditableGraph(g,
+                                       node_labels=node_labels,  # node labels must be explicitly defined
+                                       node_color='antiquewhite',
+                                       node_edge_color='black',
+                                       node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold', fontsize=11),
+                                       node_layout=positions,
+                                       node_size=self.designsize,
+                                       node_edge_width=self.designsize / 4,
+                                       edge_width=self.designsize / 2,
+                                       node_label_offset=(0., 0.025 * self.designsize),
+                                       arrows=True,
+                                       edge_labels=modules,
+                                       edge_label_position=0.75,
+                                       edge_label_fontdict=dict(family='sans-serif', fontweight='bold', fontsize=8, color='royalblue'),
+                                       edge_color=edge_color,
+                                       ax=self.canvas.axes)
 
     # DEF: FILE MANAGEMENT
     def open(self):
@@ -805,9 +851,11 @@ class Controllability(QMainWindow):
             case "Avoid":
                 formula = Not(formula)
 
+        # Add control
         boonctrl = theboon.copy()
         boonctrl.control(controlledvars, controlledvars)
 
+        # Interpret the modality of the query
         if self.Possibility.isChecked():
             possibility = boonctrl.possibly(formula)
         else:
@@ -834,7 +882,7 @@ class Controllability(QMainWindow):
                 item = QStandardItem("No action found.")
                 root.appendRow(item)
             case [[]]:  # The destiny profile is already obtained
-                item = QStandardItem("The profile already exists.")
+                item = QStandardItem("The marking profile already exists.")
                 root.appendRow(item)
             case _:  # Compute the control actions.
                 for i, actions in enumerate(self.actions, 1):
@@ -842,7 +890,7 @@ class Controllability(QMainWindow):
                     rootactions = QStandardItem("Solution {:2d}".format(i))
                     # add the control actions of this solution
                     for action in actions:
-                        # a control action is shown by : variable + Boolean icon + a value
+                        # a control action is displayed as: variable + Boolean icon + Boolean value
                         variable = QStandardItem(str(action[0]))
                         icon = QIcon(ICON01[action[1]])
                         icon.pixmap(QSize(64, 64))
@@ -851,7 +899,7 @@ class Controllability(QMainWindow):
                     # append the solution to the tree model
                     root.appendRow(rootactions)
 
-        self.ControlActions.setModel(treemodel)
+        self.ControlActions.setModel(treemodel)  # set the data model to tree widget enabling its display.
         self.ControlActions.expandAll()
 
     def select_action(self, arg):
