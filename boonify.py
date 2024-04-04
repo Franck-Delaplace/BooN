@@ -63,7 +63,8 @@ class Boonify(QMainWindow):
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history.
         self.hupdate = False  # Flag determining whether the history is updated.
-        self.saved = True  # Flag determining whether the current BooN is saved.
+        self.saved = True  # Flag determining whether the current BooN is saved, initially False
+        self.boonsaved()  # also pen the status bar
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
@@ -102,7 +103,7 @@ class Boonify(QMainWindow):
         manager = fig.canvas.manager
         self.canvas = FigureCanvas(fig)
         self.canvas.axes = self.canvas.figure.add_subplot(111)
-        self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # adjust the window
+        self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # adjust the window s.t. the network fully fill it.
         self.canvas.figure.canvas.manager = manager  # assign the manager in the canvas to be accessible by EditGraph.
 
         # STEP: Enable key_press_event events for using EditGraph:
@@ -283,7 +284,7 @@ class Boonify(QMainWindow):
         """Save file dialog."""
         if self.filename:
             self.boon.save(self.filename)
-            self.saved = True
+            self.boonsaved()
         else:
             self.saveas()
 
@@ -293,7 +294,7 @@ class Boonify(QMainWindow):
         if filename:
             self.filename = filename[0]
             self.boon.save(self.filename)
-            self.saved = True
+            self.boonsaved()
 
     def importation(self):
         """Import file dialog."""
@@ -349,7 +350,7 @@ class Boonify(QMainWindow):
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history
         self.hupdate = False  # Flag determining whether the history is updated
-        self.saved = True  # Flag determining whether the BooN is saved.
+        self.boonsaved()  # The BooN is saved.
 
     def undo(self):
         """Undo operation."""
@@ -379,12 +380,12 @@ class Boonify(QMainWindow):
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
             self.hupdate = True  # Descriptor is changed.
 
-            if self.history[hindex] and self.history[hindex].desc:  # The current descriptor is not empty.
-                self.saved = False
-
             hindex = (hindex + 1) % HSIZE  # Update the history
             self.history[hindex] = self.boon.copy()
             self.hindex = hindex
+
+            if self.history[hindex] and self.history[hindex].desc:  # The current descriptor is not empty.
+                self.boonsaved(False)
 
             self.disablecallback = False  # Enable the design callback
 
@@ -392,15 +393,7 @@ class Boonify(QMainWindow):
             self.hupdate = False  # No changes.
 
         # PRINT THE HISTORY
-        # for i,h in enumerate(self.history):
-        #    if i == self.hindex:
-        #        print(f"*{i}:",end="")
-        #    else:
-        #        print(f" {i}:",end="")
-        #    if h:
-        #        print(f'[{h}]')
-        #    else:
-        #        print("[NONE]")
+        # self.show_history()
 
     def show_history(self):
         """Show the history."""
@@ -451,6 +444,15 @@ class Boonify(QMainWindow):
         """Controllability View"""
         self.QControllability = Controllability(self)
         self.QControllability.show()
+
+    def boonsaved(self, val: bool = True):
+        NOTSAVED: str = '\u2B24'
+        SAVED: str = '\u25CB'
+        self.saved = val
+        if self.saved:
+            self.statusBar().showMessage(SAVED)
+        else:
+            self.statusBar().showMessage(NOTSAVED)
 
 
 # DEF:  WIDGET CLASSES
