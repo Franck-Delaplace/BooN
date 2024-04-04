@@ -144,6 +144,7 @@ class Boonify(QMainWindow):
 
         # STEP: Define the editgraph.
         self.canvas.axes.clear()
+        # WARNING : the definition of EditableGraph is the same as the definition in resizeEvent function. Any modification of one must be reported to the other.
         self.editgraph = EditableGraph(g,
                                        node_labels=True,
                                        node_color='antiquewhite',
@@ -239,19 +240,17 @@ class Boonify(QMainWindow):
         positions = self.editgraph.node_positions
         edge_color = {edge: self.editgraph.edge_artists[edge].get_facecolor() for edge in self.editgraph.edge_artists}
         modules = {edge: self.editgraph.edge_label_artists[edge].get_text() for edge in self.editgraph.edge_label_artists}
-        node_labels = {idt: "" if text.get_text().isdigit() else text.get_text() for idt, text in
-                       self.editgraph.node_label_artists.items()}  # remove the label if it is an integer.
-        nodes = self.editgraph.nodes
-        edges = self.editgraph.edges
+        node_labels = {idt: text.get_text() for idt, text in self.editgraph.node_label_artists.items()}
 
         # STEP: Define a new Editable graph with size updated.
         g = nx.DiGraph()
-        g.add_edges_from(edges)
-        g.add_nodes_from(nodes)
+        g.add_nodes_from(self.editgraph.nodes)
+        g.add_edges_from(self.editgraph.edges)
+
         self.canvas.axes.clear()
         # WARNING : the definition of EditableGraph is the same as the definition in setup_design function. Any modification of one must be reported to the other.
         self.editgraph = EditableGraph(g,
-                                       node_labels=node_labels,  # node labels must be explicitly defined
+                                       node_labels=node_labels,  # node labels must be explicitly defined to avoid spurious labeling.
                                        node_color='antiquewhite',
                                        node_edge_color='black',
                                        node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold', fontsize=11),
