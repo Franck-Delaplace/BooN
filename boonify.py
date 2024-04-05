@@ -122,7 +122,7 @@ class Boonify(QMainWindow):
 
         # STEP: Creation of the style-network used for edge styling.
         # To prevent its inclusion in the BooN, the variable names are string while the other nodes are integers or symbols.
-        g = nx.DiGraph([(REG, POS), (REG, NEG),  (NEG, NEG), (POS, POS)])
+        g = nx.DiGraph([(REG, POS), (REG, NEG), (NEG, NEG), (POS, POS)])
         edge_color = {(REG, POS): SIGNCOLOR[1], (REG, NEG): SIGNCOLOR[-1], (NEG, NEG): SIGNCOLOR[-1], (POS, POS): SIGNCOLOR[1]}
         positions = {NEG: (0.25, 0.045), REG: (0.5, 0.045), POS: (0.75, 0.045)}
 
@@ -168,7 +168,7 @@ class Boonify(QMainWindow):
         # The function captures the events of the EditableGraph and complete the BooN.
         if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
 
-        #DEF: Definition of the interaction graph of the network from the drawing.
+        # DEF: Definition of the interaction graph of the network from the drawing.
         # STEP: Find consistent nodes corresponding to the variables in the BooN.
         # The type of consistent nodes is symbol or integer with a label.
         # Dictionary of consistent nodes id:symbol, where the symbol is defined from the node label.
@@ -300,12 +300,11 @@ class Boonify(QMainWindow):
         """Import file dialog."""
         filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text Files (*.txt);; All Files (*);;")
         if filename:
-            self.filename = None # no file name since the BooN is not saved in the internal format.
+            self.filename = None  # no file name since the BooN is not saved in the internal format.
             self.boon.from_textfile(filename[0])
             self.refresh()
             self.setup_design()
             self.history_raz()  # clear history
-
 
     def exportation(self):
         """Export file dialog."""
