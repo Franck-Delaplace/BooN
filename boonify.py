@@ -59,7 +59,7 @@ class Boonify(QMainWindow):
 
         # STEP: initialize the Gui state
         self.boon = BooN()  # Current BooN
-        self.filename = ""  # Current filename
+        self.filename = None  # Current filename
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history.
         self.hupdate = False  # Flag determining whether the history is updated.
@@ -72,7 +72,6 @@ class Boonify(QMainWindow):
         self.editgraph = None  # Graph for edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.
         self.designsize = 2.  # Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.
-
         # STEP:  File menu connected to callback functions
 
         # File
@@ -95,7 +94,7 @@ class Boonify(QMainWindow):
         self.ActionControllability.triggered.connect(self.controllability)
 
         # STEP: initialization of a thread for long run application --> controllability
-        # The thread will be created and started.
+        # The thread is created and started.
         self.worker = Threader()
 
         # STEP: Initialize the Canvas for network design
@@ -123,8 +122,8 @@ class Boonify(QMainWindow):
 
         # STEP: Creation of the style-network used for edge styling.
         # To prevent its inclusion in the BooN, the variable names are string while the other nodes are integers or symbols.
-        g = nx.DiGraph([(REG, NEG), (REG, POS), (POS, POS), (NEG, NEG)])
-        edge_color = {(REG, NEG): SIGNCOLOR[-1], (REG, POS): SIGNCOLOR[1], (POS, POS): SIGNCOLOR[1], (NEG, NEG): SIGNCOLOR[-1]}
+        g = nx.DiGraph([(REG, POS), (REG, NEG),  (NEG, NEG), (POS, POS)])
+        edge_color = {(REG, POS): SIGNCOLOR[1], (REG, NEG): SIGNCOLOR[-1], (NEG, NEG): SIGNCOLOR[-1], (POS, POS): SIGNCOLOR[1]}
         positions = {NEG: (0.25, 0.045), REG: (0.5, 0.045), POS: (0.75, 0.045)}
 
         # STEP: Extend this network by adding the interaction graph of the current BooN.
@@ -139,7 +138,7 @@ class Boonify(QMainWindow):
         edge_color.update({edge: SIGNCOLOR[signs[edge]] for edge in signs})  # Define edge colors of editable graph from the IG.
         positions.update(self.boon.pos)  # Complete the position.
 
-        # STEP: Convert the module labels to string.
+        # STEP: Convert the module ids to string labeling the edge.
         modules = nx.get_edge_attributes(ig, 'module')
         modules = {edge: " ".join([str(abs(module)) for module in modules[edge]]) for edge in modules}
 
@@ -154,25 +153,27 @@ class Boonify(QMainWindow):
                                        node_layout=positions,
                                        node_size=self.designsize,
                                        node_edge_width=self.designsize / 4,
-                                       edge_width=self.designsize / 2,
                                        node_label_offset=(0., 0.025 * self.designsize),
+                                       edge_width=self.designsize / 2,
                                        arrows=True,
                                        edge_labels=modules,
                                        edge_label_position=0.75,
                                        edge_label_fontdict=dict(family='sans-serif', fontweight='bold', fontsize=8, color='royalblue'),
                                        edge_color=edge_color,
                                        ax=self.canvas.axes)
-        self.disablecallback = False  # Enable the callback.
+        self.disablecallback = False  # Enable the design callback.
 
     def design(self):
         """interaction graph design callback."""
-
+        # The function captures the events of the EditableGraph and complete the BooN.
         if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
 
+        #DEF: Definition of the interaction graph of the network from the drawing.
         # STEP: Find consistent nodes corresponding to the variables in the BooN.
         # The type of consistent nodes is symbol or integer with a label.
-        # WARNING: As nodes of the pattern network are strings, they are never selected as consistent nodes.
         # Dictionary of consistent nodes id:symbol, where the symbol is defined from the node label.
+        # Only the labeled nodes are kept in editgraph.node_label_artists.
+        # WARNING: As nodes of the pattern network are strings, they are never selected as consistent nodes.
 
         idvar = {idt: symbols(text.get_text()) for idt, text in self.editgraph.node_label_artists.items() if isinstance(idt, int | Symbol)}
 
@@ -180,7 +181,7 @@ class Boonify(QMainWindow):
         def symbolic(edge):
             return idvar[edge[0]], idvar[edge[1]]
 
-        # STEP: Find the edges having consistent nodes.
+        # STEP: Select the edges with consistent nodes. The other edges cannot be included in the IG.
         edges = {(src, tgt) for src, tgt in self.editgraph.edge_artists.keys() if src in idvar and tgt in idvar}
 
         # STEP: set the positions of nodes.
@@ -188,7 +189,7 @@ class Boonify(QMainWindow):
         pos = {idvar[idt]: edit_pos[idt] for idt in idvar}
 
         # STEP: Interpret the colors to signs.
-        # WARNING: The face color is (r,g,b,a) while the sign colors are (r,g,b).
+        # WARNING: The face color is (r,g,b,a) while the sign colors are (r,g,b). Hence a must be removed.
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
 
@@ -216,6 +217,7 @@ class Boonify(QMainWindow):
         for edge in signs:  # add edges
             ig.add_edge(edge[0], edge[1], sign=signs[edge], module=modules[edge])
 
+        # DEF conversion of the IG to BooN
         # STEP: Finally convert the ig to BooN.
         try:
             self.boon.from_ig(ig)  # Find the BooN from the ig.
@@ -231,7 +233,7 @@ class Boonify(QMainWindow):
             self.refresh()
 
     def resizeEvent(self, event, **kwargs):
-        """ Modify the parameter of the graph to let the node and edge size invariant to the window scaling."""
+        """ Modify the parameter of the graph to let the node and edge size invariant to window resizing."""
         # STEP: Fix the size related to the network design
         width = self.frameGeometry().width()
         height = self.frameGeometry().height()
@@ -251,15 +253,15 @@ class Boonify(QMainWindow):
         self.canvas.axes.clear()
         # WARNING : the definition of EditableGraph is the same as the definition in setup_design function. Any modification of one must be reported to the other.
         self.editgraph = EditableGraph(g,
-                                       node_labels=node_labels,  # node labels must be explicitly defined to avoid spurious labeling.
+                                       node_labels=node_labels,  # node labels must be explicitly defined to avoid unwanted integer labeling.
                                        node_color='antiquewhite',
                                        node_edge_color='black',
                                        node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold', fontsize=11),
                                        node_layout=positions,
                                        node_size=self.designsize,
                                        node_edge_width=self.designsize / 4,
-                                       edge_width=self.designsize / 2,
                                        node_label_offset=(0., 0.025 * self.designsize),
+                                       edge_width=self.designsize / 2,
                                        arrows=True,
                                        edge_labels=modules,
                                        edge_label_position=0.75,
@@ -274,11 +276,9 @@ class Boonify(QMainWindow):
         if filename:
             self.filename = filename[0]
             self.boon.load(filename[0])
-
             self.refresh()
             self.setup_design()
             self.history_raz()  # clear history
-            self.add_history()
 
     def save(self):
         """Save file dialog."""
@@ -300,11 +300,12 @@ class Boonify(QMainWindow):
         """Import file dialog."""
         filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text Files (*.txt);; All Files (*);;")
         if filename:
+            self.filename = None # no file name since the BooN is not saved in the internal format.
             self.boon.from_textfile(filename[0])
             self.refresh()
             self.setup_design()
             self.history_raz()  # clear history
-            self.add_history()
+
 
     def exportation(self):
         """Export file dialog."""
@@ -347,8 +348,9 @@ class Boonify(QMainWindow):
     # DEF: HISTORY MANAGEMENT
     def history_raz(self):
         """Clear the history."""
-        self.history = [None] * HSIZE  # History
+        self.history = [None] * HSIZE  # History cleaning
         self.hindex = 0  # Index of the last BooN added in the  history
+        self.add_history()  # Initialize the history with the current BooN
         self.hupdate = False  # Flag determining whether the history is updated
         self.boonsaved()  # The BooN is saved.
 
@@ -490,7 +492,7 @@ class View(QDialog):
         # STEP: Combox Box of style.
         self.Style.activated.connect(self.cb_styling)
 
-        # STEP: Block the edition of BooNContent.
+        # STEP: Forbid the edition of BooNContent.
         self.BooNContent.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
 
         # STEP: Resize columns of the table to content.
@@ -533,7 +535,7 @@ class View(QDialog):
             elif is_nnf(theboon.desc[var]):
                 form = "NNF"
             else:
-                form = "General"
+                form = "ALL"
             item = QTableWidgetItem(form)
             item.setTextAlignment(Qt.AlignHCenter)
             self.BooNContent.setItem(row, 2, item)
@@ -669,7 +671,7 @@ class Model(QMainWindow):
         # Network layout Combo box
         self.NetworkLayout.activated.connect(self.cb_network_layout)
 
-        # STEP: Modéling
+        # STEP: Modeling
         self.modeling()
 
     def rb_mode(self):
