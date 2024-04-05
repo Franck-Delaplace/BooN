@@ -915,7 +915,7 @@ class Controllability(QMainWindow):
             for action in self.actions[self.row]:
                 (variable, value) = action
                 self.parent.boon.desc[variable] = value
-
+            self.parent.add_history()
             self.parent.setup_design()
             self.parent.refresh()
             self.close()
