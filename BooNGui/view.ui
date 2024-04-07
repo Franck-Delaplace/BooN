@@ -67,7 +67,7 @@
        </attribute>
        <column>
         <property name="text">
-         <string notr="true">Variable</string>
+         <string notr="true">Var.</string>
         </property>
         <property name="font">
          <font>
@@ -195,7 +195,7 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset resource="booneries.qrc">
+          <iconset>
            <normaloff>:/icon/resources/dnf.svg</normaloff>:/icon/resources/dnf.svg</iconset>
          </property>
          <property name="iconSize">
@@ -215,7 +215,7 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset resource="booneries.qrc">
+          <iconset>
            <normaloff>:/icon/resources/close.svg</normaloff>:/icon/resources/close.svg</iconset>
          </property>
          <property name="iconSize">

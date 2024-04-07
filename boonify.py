@@ -508,7 +508,7 @@ class View(QDialog):
         """Fill the table."""
         theboon = self.parent.boon
 
-        # Initialize the formula fields.
+        # STEP: Initialize the formula fields.
         nbrow = len(theboon.desc)
         self.BooNContent.setRowCount(nbrow)
         self.formulas = [QLineEdit() for _ in range(nbrow)]
@@ -516,7 +516,7 @@ class View(QDialog):
             f.editingFinished.connect(self.change_formula)
             f.setFrame(False)
 
-        # Fill the table
+        # STEP: Fill the table
         for row, var in enumerate(theboon.desc):
             item = QTableWidgetItem(str(var))
             item.setTextAlignment(Qt.AlignCenter)
@@ -821,7 +821,7 @@ class Controllability(QMainWindow):
         theboon = self.parent.boon
         variables = list(theboon.variables)
 
-        # get the observers
+        # STEP: Get the observers
         controlledvars = set()
         for row in range(self.Observers.rowCount()):
             item = self.Observers.item(row, 0)
@@ -830,7 +830,7 @@ class Controllability(QMainWindow):
             else:
                 controlledvars.add(variables[row])
 
-        # Get the query formula
+        # STEP: Get the query formula
         query = {}
         for row in range(self.Destiny.rowCount()):
             combobox = self.Destiny.cellWidget(row, 1)
@@ -842,7 +842,7 @@ class Controllability(QMainWindow):
                 case "False":
                     query.update({variables[row]: False})
 
-        # convert the state profiles into minterm
+        # STEP: Convert the state profiles into minterm
         formula = SOPform(query.keys(), [query])
         # Check whether the query must be reached or avoid.
         match self.QueryType.currentText():
@@ -851,27 +851,27 @@ class Controllability(QMainWindow):
             case "Avoid":
                 formula = Not(formula)
 
-        # Add control
+        # STEP: Add control
         boonctrl = theboon.copy()
         boonctrl.control(controlledvars, controlledvars)
 
-        # Interpret the modality of the query
-        if self.Possibility.isChecked():
+        # STEP: Interpret the modality of the query (possibility, necessity).
+        if self.Possibility.isChecked():  # Possibility
             possibility = boonctrl.possibly(formula)
         else:
             possibility = True
 
-        if self.Necessity.isChecked():
+        if self.Necessity.isChecked():  # Necessity
             necessity = boonctrl.necessary(formula, trace=self.Trace)
         else:
             necessity = True
         destiny = And(possibility, necessity)
 
-        # Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
+        # STEP: Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
         core = BooN.destify(destiny, trace=self.Trace)
         self.actions = core2actions(core)
 
-        # Define tree model to show the actions.
+        # STEP: Define the tree model to show the resulting actions.
         treemodel = QStandardItemModel(0, 2)  # Add 2 columns
         treemodel.setHeaderData(0, Qt.Horizontal, "Variable")
         treemodel.setHeaderData(1, Qt.Horizontal, "Boolean value")
