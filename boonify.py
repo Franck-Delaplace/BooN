@@ -170,7 +170,7 @@ class Boonify(QMainWindow):
         # STEP: Find consistent nodes corresponding to the variables in the BooN.
         # The type of consistent nodes is symbol or integer with a label.
         # Dictionary of consistent nodes id:symbol, where the symbol is defined from the node label.
-        # Only the labeled nodes are kept in editgraph.node_label_artists.
+        # Recall that only the labeled nodes are kept in editgraph.node_label_artists.
         # WARNING: As nodes of the pattern network are strings, they are never selected as consistent nodes.
 
         idvar = {idt: symbols(text.get_text()) for idt, text in self.editgraph.node_label_artists.items() if isinstance(idt, int | Symbol)}
