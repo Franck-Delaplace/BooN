@@ -546,7 +546,6 @@ class View(QDialog):
             formula = parse_expr(text)  # parse the input
         except SyntaxError:
             QMessageBox.critical(self, "SYNTAX ERROR", "Syntax Error.\nThe formula is not changed.")
-            self.parent.refresh()
             return
 
         if isinstance(formula, bool):  # Determine whether a new variable is used.
@@ -556,16 +555,16 @@ class View(QDialog):
 
         diff = variables.difference(self.parent.boon.variables)
         if diff:
-            QMessageBox.critical(self, "VARIABLES ERROR", "The following variables do not exist: {}.\nThe formula is not changed.".format(diff))
-            self.parent.refresh()
+            QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{diff}\nThe formula is not changed.")
             return
 
         variable = list(self.parent.boon.desc.keys())[row]
         self.parent.boon.desc[variable] = formula  # update the BooN
 
         # Refresh open widgets and editgraph.
-        self.parent.setup_design()
         self.parent.refresh()
+        self.parent.setup_design()
+
 
     def cb_styling(self):
         """Style from combo box selection"""
