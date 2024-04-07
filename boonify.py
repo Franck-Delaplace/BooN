@@ -72,7 +72,7 @@ class Boonify(QMainWindow):
         self.editgraph = None  # Graph for edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.
         self.designsize = 2.  # Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.
-        # STEP:  File menu connected to callback functions
+        # STEP: Connect callback functions to Menu
 
         # File
         self.ActionOpen.triggered.connect(self.open)
@@ -93,7 +93,7 @@ class Boonify(QMainWindow):
         self.ActionStableStates.triggered.connect(self.stablestates)
         self.ActionControllability.triggered.connect(self.controllability)
 
-        # STEP: initialization of a thread for long run application --> controllability
+        # STEP: Initialization of a thread for long run application --> controllability
         # The thread is created and started.
         self.worker = Threader()
 
@@ -128,14 +128,12 @@ class Boonify(QMainWindow):
 
         # STEP: Extend this network by adding the interaction graph of the current BooN.
         ig = self.boon.interaction_graph  # Get the IG.
-        for node in ig.nodes():  # Copy the nodes in the Editable graph
-            g.add_node(node)
-        for edge in ig.edges():  # Copy the edges in the Editable graph
-            g.add_edge(edge[0], edge[1])
+        g.add_nodes_from(ig.nodes())
+        g.add_edges_from(ig.edges())
 
         # STEP: find the edge color from signs.
         signs = nx.get_edge_attributes(ig, 'sign')
-        edge_color.update({edge: SIGNCOLOR[signs[edge]] for edge in signs})  # Define edge colors of editable graph from the IG.
+        edge_color.update({edge: SIGNCOLOR[signs[edge]] for edge in signs})  # Transform sign in color.
         positions.update(self.boon.pos)  # Complete the position.
 
         # STEP: Convert the module ids to string labeling the edge.
@@ -233,7 +231,7 @@ class Boonify(QMainWindow):
             self.refresh()
 
     def resizeEvent(self, event, **kwargs):
-        """ Modify the parameter of the graph to let the node and edge size invariant to window resizing."""
+        """ Modify graph parameters so that node and edge widths are invariant to window resizing."""
         # STEP: Fix the size related to the network design
         width = self.frameGeometry().width()
         height = self.frameGeometry().height()
@@ -342,7 +340,7 @@ class Boonify(QMainWindow):
     def closeEvent(self, event):
         """Close window"""
         self.quit()
-        event.ignore()
+        event.ignore()  # WARNING: If the application is closed, this line will not be executed.
 
     # DEF: HISTORY MANAGEMENT
     def history_raz(self):
@@ -381,11 +379,9 @@ class Boonify(QMainWindow):
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
             self.hupdate = True  # Descriptor is changed.
 
-
             hindex = (hindex + 1) % HSIZE  # Update the history
             self.history[hindex] = self.boon.copy()
             self.hindex = hindex
-
 
             if self.history[hindex] and self.history[hindex].desc:  # The current BooN is modified
                 self.boonsaved(False)
@@ -399,7 +395,7 @@ class Boonify(QMainWindow):
         # self.show_history()
 
     def show_history(self):
-        """Show the history."""
+        """Display the history."""
         view = [([i] if i == self.hindex else i,
                  tabulate([(var, logic.prettyform(eq, theboon.style)) for var, eq in theboon.desc.items()], tablefmt='plain')
                  if theboon else '-') for i, theboon in enumerate(self.history)]
