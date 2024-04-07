@@ -84,8 +84,7 @@ syntax of a variable.</dd>
         <code>EditableGraph</code>  function of <code>Netgraph</code> module. Please refer to the
         documentation of this function for the commands related to the graph design. </li>
         <li> To prevent the GUI from becoming unresponsive, press <span class="cmd">[enter]</span>
-		   a second time to complete the labeling process. If forgotten, select the node or the edge where the label was
-            modified again and press <span class="cmd">[enter]</span> to end the labeling.
+		   a second time to complete the labeling process. If forgotten press again <span class="cmd">[enter]</span> to end the labeling.
         </li>
         <li> Nodes will only be integrated if they are named, so labeling a node is necessary to include it in the BooN.
         </li>
@@ -101,17 +100,30 @@ syntax of a variable.</dd>
     </ul>
 
     <h2 id="file"> File Menu </h2>
-    <p >You can load, save and import or export a BooN. The exportation or importation is defined from a text file
-        specification of a BooN.  The extension of a BooN file is <code>.boon</code> and it is
-        accessible by<span class="cmd"> [Open]</span>, <span class="cmd">[Save]</span> or <span class="cmd">[Save as]</span>
-        A text file specifying a Boolean network can be imported<span class="cmd">
-          [Import]</span> or exported <span class="cmd">[Export]</span>
-        with <code>.txt</code> as default extension.
-    </p>
-    <p class="info"><span class="info-title">INFO:</span><br>
-        The coordinates of the nodes are lost during the exportation, to keep them save the BooN before.
-        The nodes of an imported BooN are circularly arranged.
-    </p>
+    The different items are:
+    <dl>
+        <dt> <span class="cmd">[Open]</span></dt><dd>Open/load the file.</dd>
+        <dt> <span class="cmd">[Save]</span> </dt> <dd>Save the BooN with the current file name.</dd>
+        <dt> <span class="cmd">[Save as]</span> </dt> <dd>Save the BooN with a new file name.</dd>
+         <dt> <span class="cmd">[Import]</span> </dt> <dd>Import a text file containing the BooN description.</dd>
+         <dt> <span class="cmd">[Export]</span> </dt> <dd>Export the BooN as text</dd>
+    </dl>
+
+    <p class="info"><span class="info-title">INFO:</span></p>
+        <ul class="info">
+            <li> The extension of a BooN file is <code>.boon</code>.</li>
+            <li> The exportation or importation is defined from a text file
+                specification of a BooN  with <code>.txt</code> as default extension. </li>
+            <li>The coordinates of the nodes are lost during the exportation, to keep them save the BooN before. </li>
+            <li>The nodes of an imported BooN are circularly arranged The node layout computation may take time.</li>
+            <li>At the bottom-left a flag indicates whether the file is saved:
+                <ul>
+                    <li> &#9898; means the file is saved,</li>
+                    <li> &#9899; means the file is not saved.</li>
+                    </ul>
+            </li>
+        </ul>
+
     <h3>Syntax of the imported text BooN file</h3>
     <p> The file contains a set of
         equations where a Boolean equation must be written in the same
@@ -185,6 +197,7 @@ syntax of a variable.</dd>
 	 To impose a solution with a stable state, select both <span class="cmd">[Possibility]</span>and <span class="cmd">[Necessity]</span>.
     </p>
     <h2 id="utilities">Help and Utilities</h2>
+    The different items are:
     <dl>
         <dt> <span class="cmd">[Help]</span></dt><dd>Open this Help.</dd>
         <dt> <span class="cmd">[Undo]</span> </dt> <dd>Undo the current network to return to the previous version.
