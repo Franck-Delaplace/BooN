@@ -381,11 +381,13 @@ class Boonify(QMainWindow):
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
             self.hupdate = True  # Descriptor is changed.
 
+
             hindex = (hindex + 1) % HSIZE  # Update the history
             self.history[hindex] = self.boon.copy()
             self.hindex = hindex
 
-            if self.history[hindex] and self.history[hindex].desc:  # The current descriptor is not empty.
+
+            if self.history[hindex] and self.history[hindex].desc:  # The current BooN is modified
                 self.boonsaved(False)
 
             self.disablecallback = False  # Enable the design callback
