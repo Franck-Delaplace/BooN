@@ -142,6 +142,7 @@ class Boonify(QMainWindow):
 
         # STEP: Define the editgraph.
         self.canvas.axes.clear()
+        self.canvas.axes.set_xlim(-1000, 1000)
         # WARNING : the definition of EditableGraph is the same as the definition in resizeEvent function. Any modification of one must be reported to the other.
         self.editgraph = EditableGraph(g,
                                        node_labels=True,
@@ -564,7 +565,6 @@ class View(QDialog):
         # Refresh open widgets and editgraph.
         self.parent.refresh()
         self.parent.setup_design()
-
 
     def cb_styling(self):
         """Style from combo box selection"""

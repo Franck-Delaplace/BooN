@@ -203,7 +203,7 @@ class BooN:
         if source not in variables:
             errmsg("the variable to rename does not exist", source)
         if target in variables:
-            errmsg("the renaming variable cannot be in BooN variables", target)
+            errmsg("the renamed variable cannot be in BooN variables", target)
 
         for var in variables:
             if not isinstance(self.desc[var], bool):
@@ -331,7 +331,8 @@ class BooN:
     # || INTERACTION GRAPH
     @property
     def interaction_graph(self) -> nx.DiGraph:
-        """Return the interaction graph."""
+        """Build the interaction graph.
+        :return: the interaction graph."""
         all_dnf = all(map(is_dnf, self.desc.values()))  # Trace whether the formulas are in DNF.
         if all_dnf:
             net = self
@@ -394,7 +395,7 @@ class BooN:
     def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs):
         """Draw the interaction graph.
         :param IG: the interaction graph or None. If None, the interaction graph is generated from BooN (Default: None).
-        :param modular: Boolean to indicate whether the modular structure of interactions is depicted if True (Default: False)
+        :param modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
         :param kwargs: additional keyword arguments to pass to the interaction graph drawing"""
 
         ig = copy.deepcopy(IG) if IG else self.interaction_graph
@@ -449,7 +450,7 @@ class BooN:
                         lit = Not(node)
                     else:
                         lit = None
-                        errmsg("Internal error module coding - Please call the Software Development Team. ",[node,target,module])
+                        errmsg("Internal error module coding - Please call the Software Development Team. ", [node, target, module])
                     nodes[target][abs(module) - 1].add(lit)
 
         # convert into formula
