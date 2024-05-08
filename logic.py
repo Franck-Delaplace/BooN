@@ -17,10 +17,10 @@ from tqdm import tqdm
 # Dictionary defining the output style of the formula, see prettyform
 LOGICAL: dict = {'type': 'infix', And: '\u2227', Or: '\u2228', Implies: '\u21D2', Equivalent: '\u21D4', Xor: '\u22BB', Not: '\u00AC', False: 'false', True: 'true'}
 MATHEMATICA: dict = {'type': 'prefix', '(': "[", ')': "]",
-                     And: '&&', Or: 'DEF:', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
+                     And: '&&', Or: '||', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
 SYMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
                And: '&', Or: '|', Implies: 'Implies', Xor: 'Xor', Xnor: 'Xnor', Equivalent: 'Equivalent', Not: '~', False: 'False', True: 'True'}
-JAVA: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: 'false', True: 'true'}
+JAVA: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: 'false', True: 'true'}
 C: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: '0', True: '1'}
 
 SOLVER = PULP_CBC_CMD  # Default PULP solver
@@ -229,7 +229,7 @@ def supercnf(formula, trace: bool = False):
         model = solver.model()
         trc_clauses = trc_clauses + 1
         if trace:
-            tqdm.write(f'\r>> # models:[{trc_clauses:5d}]', end='')
+            tqdm.write(f'\rBooN >> # models:[{trc_clauses:5d}]', end='')
         models.append(model)
         # Block the current datamodel to enable the finding of another datamodel.
         block = [sol() != model[sol] for sol in model]
@@ -239,7 +239,7 @@ def supercnf(formula, trace: bool = False):
     if trace:
         tqdm.write('')
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
-                    for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='>> CNF formatting', ncols=80,
+                    for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='BooN >> CNF formatting', ncols=80,
                                       bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')])
     else:
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
@@ -271,7 +271,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     # This dictionary is used to convert the literals into pulp variables (vlit[lit])
     vlit = {lit: pulp.LpVariable(str(lit), lowBound=0, upBound=1, cat=pulp.LpInteger) for lit in literals}
 
-    if trace: tqdm.write(">> Initialize prime implicants solving.", end="")
+    if trace: tqdm.write("BooN >> Initialize prime implicants solving.", end="")
     # Initialize the prime implicants problem in pulp.
     primes = pulp.LpProblem("Prime_Implicants", pulp.LpMinimize)
 
@@ -301,7 +301,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
         status = primes.status
         if status == pulp.LpStatusOptimal:
             trc_implicants = trc_implicants + 1
-            if trace: tqdm.write(f'\r>> # solutions:[{trc_implicants:3d}]     ', end='')
+            if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]     ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 

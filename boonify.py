@@ -59,7 +59,7 @@ class Boonify(QMainWindow):
 
         # STEP: initialize the Gui state
         self.boon = BooN()  # Current BooN
-        self.filename = None  # Current filename
+        self.filename = ""  # Current filename
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history.
         self.hupdate = False  # Flag determining whether the history is updated.
