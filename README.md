@@ -31,11 +31,11 @@ the controllability analysis. For exploring BooN interactively run <code>boonify
 <h3> Real case study </h3>
 A real case study on breast cancer is available.
 <code>breast-cancer-study.py</code>  is a python program defining all the steps of the analysis using <code>boon.py</code> library.
- This example aims to identify the causes of breast cancer and to predict the therapeutic targets of cancer.
+ This example aims to identify the causes of breast cancer and to predict the therapeutic targets.
 <code>breast-cancer.boon</code> contains the Boolean network related to breast cancer study that can be used interactively with <code>boonify.py</code>.
-The analysis is decomposed in two phases: first, predicting mutations causing breast cancer, and next predicting therapeutic actions by cancer type 
-to facilitate a cure. In this section, we detail the operations to apply with <code>boonify.py</code> to achieve these predictions. 
-Following and testing this scenario will certainly contribute to deeply understand the potentiality of BooN for regulatory network analysis and its philosophy.
+The analysis is decomposed in two phases: first, we will consider the prediction of mutations causing breast cancer, 
+and then the prediction of therapeutic actions by cancer type in order to cure. In this section, we will detail the operations to apply with boonify.py in order to achieve these predictions. 
+Following and testing this scenario will contribute to a deeper understanding of the potentiality of BooN for regulatory network analysis and its philosophy.
 <h4> Start the analysis </h4>
 <ul>
 <li> first open <code>breast-cancer.boon</code> file. The model depicts a regulatory network in normal cell conditions.</li>
@@ -91,7 +91,7 @@ If you wish to cite this work, please use the following citation:<br>
 <br/>
 <i> Celia Biane, Franck Delaplace</i>
 <br>
-IEEE/ACM Trans Comput. Biol. Bioinform.
+IEEE/ACM Trans Computer  Biology & Bioinformatics
 . 2019 Sep-Oct;16(5):1574-1585. 
 <br>
 PMID: 30582550 - DOI: 10.1109/TCBB.2018.2889102
