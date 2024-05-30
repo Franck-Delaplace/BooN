@@ -47,18 +47,16 @@
         <li><a href="#utilities"> Help and Utilities </a></li>
 
     </ul>
-    <p> The graphical interface allows the creation and the analysis of Boolean networks called <b>BooN</b>
-        through two classes of methods: file and network. The file methods manage
-        files containing networks, while the network methods analyze the
-        network. The network methods are also available in the toolbar at left
-        hand side of the window. The last help menu also includes basic utilities
+    <p> The graphical interface enables the creation and analysis of Boolean networks, called <b>BooN</b>, through two classes of methods: file and network.
+        The file methods manage files containing networks, while the network methods analyze the network.
+        The network methods are also available in the toolbar on the left side of the window.
+        The last help menu also includes basic utilities.
 
     <h2 id="design"> Design network</h2>
-    <p > The
-        network is designed interactively.
-        At the bottom of the graph window, there is a pattern network  which is used to
-        select the edge style, either positive (<span style="color: Green;">Green</span>) or negative (<span style="color:red">Red</span>).&nbsp;
-        This network will never be included in the final BooN. Click on the appropriate edge in this network and all new edges will be of the same type as this edge.
+    <p > The network is designed interactively.
+        At the bottom of the graph window, there is a <i>pattern network</i>  which is used to
+        select the edge sign: either positive (<span style="color: Green;">Green</span>) or negative (<span style="color:red">Red</span>).&nbsp;
+        This network will never be included in the final BooN. When you select the appropriate edge by clicking on it in this network, all new edges will be of the same type as this edge.
         The selected node or edge is always emphasized. <br>
         The network design commands are: </p>
     <dl>
@@ -72,7 +70,7 @@
             or <span class="cmd">-</span>.</dd>
         <dt><b>Change edge direction:</b></dt><dd> pressing <span class="cmd">[@]</span>
             will reverse the direction of the selected edge.</dd>
-        <dt><b>Label node or edge:</b></dt><dd>select the node or edge, press <span class="cmd">[enter]</span>
+        <dt><b>Label node or edge:</b></dt><dd>click on the node or edge, press <span class="cmd">[enter]</span>
             , next type the label, and press <span class="cmd">[enter]</span> again. A label must follow the
 syntax of a variable.</dd>
     </dl>
@@ -81,7 +79,7 @@ syntax of a variable.</dd>
     <span class="info-title">INFO</span>
     <ul class="info">
 		<li>The network design is based on
-        <code>EditableGraph</code>  function of <code>Netgraph</code> module. Please refer to the
+        <code>EditableGraph</code>  function of <code>Netgraph</code> Python module. Please refer to the
         documentation of this function for the commands related to the graph design. </li>
         <li> To prevent the GUI from becoming unresponsive, press <span class="cmd">[enter]</span>
 		   a second time to complete the labeling process. If forgotten press again <span class="cmd">[enter]</span> to end the labeling.
@@ -94,8 +92,8 @@ syntax of a variable.</dd>
             included in the first module (ID = 1).
         </li>
         <li> The default formula for a newly created node is False when it is isolated. </li>
-		<li> It is also possible to create a network by directly specifying the formula related to a node
-            (See <span class="cmd">[View BooN]</span>).
+		<li> It is also possible to create a network by directly writing the formula of a node in the <b>BooN View</b> window
+            (See <span class="cmd">[View BooN]</span> in <a href="#analysis"> Boolean Network Analysis </a> section).
         <br>
     </ul>
 
@@ -150,7 +148,7 @@ syntax of a variable.</dd>
         </dd>
          <dt><span class="cmd">[Controllability]</span></dt>
          <dd>perform a controllability analysis to determine which variables must be frozen
-             to reach the expected goal identified by a variable marking.</dd>
+             to reach the expected goal identified by a variable marking. (see Section <a href="#controllability"> Controllability Analysis </a>) </dd>
           <dt><span class="cmd">[Model and Equilibria]</span></dt>
             <dd>Compute the dynamics following the asynchronous or synchronous mode.
                 In asynchronous mode, only one variable is updated per transition,
@@ -163,7 +161,7 @@ syntax of a variable.</dd>
 		and only use the already drawn nodes. Switching to Python style first is advisable to make these changes.
     </p>
 	 <h2 id="controllability"> Controllability analysis </h2>
-	 <p style="text-align: justify;"> Controllability analysis determines the variables that must be fixed to achieve a specific goal. 
+	 <p style="text-align: justify;"> Controllability analysis determines the variables that must be fixed/frozen to achieve a specific goal.
 	 The goal is either to reach or avoid a Boolean profile of variables as markers at steady-state.
 	The markers are purposely selected variables.
 	 The procedure is decomposed into the following steps:
@@ -178,7 +176,8 @@ syntax of a variable.</dd>
          The markers are always observers and implicitly set when their values are fixed.
 	 </dd>
 	 <dt><b>Choose the nature of the objective:</b> </dt> <dd> Choose either to <span class="cmd">[Reach]</span> or <span class="cmd">[Avoid]</span> the marking.
-         <span class="cmd">[Reach]</span> implies that the marking will be reached at stable state while  <span class="cmd">[Avoid]</span> means that the making will be avoided.
+         <span class="cmd">[Reach]</span> implies that the marking will be reached at stable state while  <span class="cmd">
+             [Avoid]</span> means that the marking will be avoided.
 	 <dt> 
 	 <dt><b>Determine the modality of the objective:</b></dt> <dd> There are two modalities: the <span class="cmd">[Possibility]</span>and the <span class="cmd">[Necessity]</span>.
 	 In the case of a marking profile to be reached, the possibility implies that this marking profile exists for at least one stable state.
