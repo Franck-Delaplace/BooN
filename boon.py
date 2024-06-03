@@ -292,7 +292,7 @@ class BooN:
 
         self.desc = desc
         ig = self.interaction_graph
-        circular_positions = ig.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()], origin=(0.1, 0.15), scale=(0.8, 0.8))
+        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()], origin=(0.1, 0.15), scale=(0.8, 0.8))
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
 
     # || NORMAL FORM CONVERSION
