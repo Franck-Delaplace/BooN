@@ -19,16 +19,17 @@ classifiers = [
 keywords = ["Boolean network", "Gene network modelling", "Controllability", "Abduction", "Dynamical system"]
 
 dependencies = [
-"matplotlib",
-"netgraph",
-"networkx",
-"PyQt5",
-"PyQtWebEngine",
-"sympy",
-"tabulate",
-"tqdm",
-"PuLP",
-"z3-solver"
+    "matplotlib",
+    "netgraph",
+    "networkx",
+    "PyQt5",
+    "PyQtWebEngine",
+    "sympy",
+    "tabulate",
+    "tqdm",
+    "PuLP",
+    "python-libsbml",
+    "z3-solver"
 ]
 
 [project.optional-dependencies]

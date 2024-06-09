@@ -56,6 +56,7 @@
     <p > The network is designed interactively.
         At the bottom of the graph window, there is a <i>pattern network</i>  which is used to
         select the edge sign: either positive (<span style="color: Green;">Green</span>) or negative (<span style="color:red">Red</span>).&nbsp;
+        If the interaction is not monotone, its definition will be achieved by modifying the formula directly.
         This network will never be included in the final BooN. When you select the appropriate edge by clicking on it in this network, all new edges will be of the same type as this edge.
         The selected node or edge is always emphasized. <br>
         The network design commands are: </p>
@@ -81,16 +82,19 @@ syntax of a variable.</dd>
 		<li>The network design is based on
         <code>EditableGraph</code>  function of <code>Netgraph</code> Python module. Please refer to the
         documentation of this function for the commands related to the graph design. </li>
+
         <li> To prevent the GUI from becoming unresponsive, press <span class="cmd">[enter]</span>
 		   a second time to complete the labeling process. If forgotten press again <span class="cmd">[enter]</span> to end the labeling.
         </li>
         <li> Nodes will only be integrated if they are named, so labeling a node is necessary to include it in the BooN.
         </li>
         <li> Edge labels correspond to module ID and must be integers, otherwise they are not considered.
-            If a variable occurs in several modules, separate the integer label of each module by a space.
-            If no labels is set for an edge, then the source node is implicitly
-            included in the first module (ID = 1).
-        </li>
+            A module is a set of co-expressed genes. The variables having the same module ID belong to the same clause for formula in DNF.
+        <li> For negative interactions, the labels are assumed to be negative (e.g., -1, -2) and for positive interactions, the labels are assumed to be positive (e.g., 1, 2).
+           However, if the sign of a label does not match the interaction sign, the label sign is automatically corrected appropriatly. </li>
+        <li> If a variable occurs in several modules, separate the integer label of each module by a space.</li>
+        <li>  If no labels is set for an edge, then the source node is implicitly
+            included in the first module (ID = 1). </li>
         <li> The default formula for a newly created node is False when it is isolated. </li>
 		<li> It is also possible to create a network by directly writing the formula of a node in the <b>BooN View</b> window
             (See <span class="cmd">[View BooN]</span> in <a href="#analysis"> Boolean Network Analysis </a> section).

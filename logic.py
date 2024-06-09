@@ -37,7 +37,8 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     :param arg: the argument of the error message (Default: "" no args).
     :param kind: type of error (Default: ERROR)."""
     print(f"** {kind}: {inspect.stack()[1].filename.split(PATHSEP)[-1]} - {inspect.stack()[1].function}: {msg}: {arg}")
-    if kind == "ERROR": exit()
+    if kind == "ERROR":
+        exit()
 
 
 def firstsymbol(formula):

@@ -2,7 +2,7 @@
 # Author: Franck Delaplace
 # Creation date: January 2024
 from __future__ import annotations
-
+import re
 import copy
 import datetime
 import pickle
@@ -23,10 +23,13 @@ from sympy.parsing.sympy_parser import parse_expr
 import logic
 from logic import LOGICAL, SYMPY, errmsg, firstsymbol
 
+import libsbml
+
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
 COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
 EXTBOON: str = ".boon"  # file extension for save and load.
 EXTXT: str = ".txt"  # file extension for to_textfile and from_textfile.
+EXTSBML: str = ".sbml" # file extension of SBML file for from_sbmlfile .
 CONTROL: str = "_u"  # prefix name of the controllers.
 BOONSEP: str = "\n"  # separator between the equations of a BooN.
 # color list for graph drawing
@@ -215,7 +218,7 @@ class BooN:
         """Perform a deep copy of the Boolean network."""
         return copy.deepcopy(self)
 
-    # || FILE
+    # DEF: FILE
     def save(self, filename: str = "BooN" + datetime.datetime.now().strftime("%d-%b-%y-%H") + EXTBOON) -> None:
         """Save the Boolean Network to file.  If the extension is missing then .boon is added.
         :param:filename, str: the name of the file to save the network (Default: BooN+date+hour.boon)"""
@@ -269,7 +272,7 @@ class BooN:
                     elif line == '':  # Skip empty line.
                         pass
                     else:
-                        try:  # Find = sign.
+                        try:  # Find '=' operator.
                             equal = line.index("=")
                         except ValueError:
                             errmsg(f"Syntax error, = is missing, line {i} in file", fullfilename, "READ ERROR")
@@ -292,10 +295,91 @@ class BooN:
 
         self.desc = desc
         ig = self.interaction_graph
-        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()], origin=(0.1, 0.15), scale=(0.8, 0.8))
+        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
+                                                    , origin=(0.1, 0.15)
+                                                    , scale=(0.8, 0.8)
+                                                    , reduce_edge_crossings=False)
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
 
-    # || NORMAL FORM CONVERSION
+    def from_sbmlfile(self, filename: str) -> None:
+        """Import the Boolean network from a sbml file. If the extension is missing then .xml is added.
+        The separator of formulas is defined by BOONSEP variable.
+        :param:filename: the file name to import the Boolean network.
+        :return BooN: the Boolean network where the nodes are circularly mapped."""
+        sbml_file = filename if "." in filename else filename + EXTSBML
+
+        # STEP: Open the SBML file and get the qualitative_model model
+        reader = libsbml.SBMLReader()
+        document = reader.readSBML(filename)
+
+        if document.getNumErrors() > 0:
+            errmsg("Error reading SBML file", document.getErrorLog().toString())
+
+        model = document.getModel()
+        if model is None:
+            errmsg("No model present in SBML file.", kind="WARNING")
+            return
+
+        qualitative_model = model.getPlugin("qual")  # Get the qualitative_model part of the model.
+        if qualitative_model is None:
+            errmsg("The model does not have the Qual plugin", kind="WARNING")
+            return
+
+        # make a dictionary associating a string name to its corresponding symbol.
+        vars_dic = {}
+        for species in qualitative_model.getListOfQualitativeSpecies():
+            species_name = species.getName() if species.isSetName() else species.getId()
+            vars_dic[species_name] = symbols(species_name)
+
+        # STEP: read the formulas from transitions and convert them to simpy format.
+        desc = {}
+        for transition in qualitative_model.getListOfTransitions():  # Scan all the transitions.
+            # Get the output variable
+            output = transition.getListOfOutputs()
+            if len(output) > 1:  # check whether there is a single output
+                errmsg("Multiple variables assigned. List of variables", output, kind="WARNING")
+                return
+            else:
+                variable = symbols(output[0].getQualitativeSpecies())
+
+            # Get the formula
+            logic_terms = transition.getListOfFunctionTerms()
+
+            if len(logic_terms) == 0:  # Empty transition in SBML -> skip it
+                continue
+
+            if len(logic_terms) > 1:  # check whether there exists a single formula only, error otherwise
+                errmsg("Multiple logic terms present. Number of terms", len(logic_terms), kind="WARNING")
+                return
+            else:
+                formula = libsbml.formulaToL3String(logic_terms[0].getMath())
+
+            # Convert the SBML QUAL formula into simpy syntax before parsing it.
+            normal_formula = re.sub(r'\|\|', '|', formula)  # convert || to |
+            normal_formula = re.sub(r'&&', '&', normal_formula)  # convert && to &
+            normal_formula = re.sub(r'\b(\w+)\s*==\s*1\b', r'\1', normal_formula)  # convert <var> == 1 to <var>
+            normal_formula = re.sub(r'\b(\w+)\s*==\s*0\b', r'~\1', normal_formula)  # convert <var> == 0 to ~ <var>
+            normal_formula = normal_formula
+            # Parse the formula to obtain a simpy formula and complete desc
+            try:
+                simpy_formula = parse_expr(normal_formula, vars_dic)
+            except SyntaxError:
+                errmsg("Syntax error in the following formula", normal_formula, "SYNTAX ERROR")
+                return
+
+            desc[variable] = simpy_formula
+
+        # STEP: define the BooN with a circular layout for nodes
+        self.desc = desc
+        ig = self.interaction_graph
+        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
+                                                    , origin=(0.1, 0.15)
+                                                    , scale=(0.8, 0.8)
+                                                    , reduce_edge_crossings=False)
+        self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+
+
+    # DEF: NORMAL FORM CONVERSION
     def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> None:
         """Convert the formulas of the Boolean network to CNF.
         :param: variable: the variable where the formula  is to be converted in CNF (Default None).
@@ -333,10 +417,10 @@ class BooN:
     def interaction_graph(self) -> nx.DiGraph:
         """Build the interaction graph.
         :return: the interaction graph."""
-        all_dnf = all(map(is_dnf, self.desc.values()))  # Trace whether the formulas are in DNF.
+        all_dnf = all(map(is_dnf, self.desc.values()))  # Check whether all the formulas are in DNF.
         if all_dnf:
             net = self
-        else:  # if the network formulas are not in DNF then convert them into DNF.
+        else:  # if some formulas are not in DNF then convert them into DNF.
             net = self.copy()
             net.dnf()
 
@@ -380,7 +464,7 @@ class BooN:
 
             for src in critical_variables:  # Define interaction for positive and negative variables.
                 module = set()
-                for i, lits in enumerate(all_literals_clauses, 1):
+                for i, lits in enumerate(all_literals_clauses, 1): # find the appropriate modules w.r.t. to literals
                     if src in lits:
                         module.add(i)
                     elif Not(src) in lits:
@@ -432,7 +516,7 @@ class BooN:
     def from_ig(self, IG: nx.DiGraph):
         """Define the descriptor of a BooN from an interaction graph.
         :param IG:  interaction graph."""
-        # Find the maximal number of modules for each source variable.
+        # Find the maximal number of modules for each targetvariable.
         max_nb_modules = {node: 0 for node in IG.nodes()}
         modules = nx.get_edge_attributes(IG, 'module')
         for source, target in modules:
@@ -450,7 +534,7 @@ class BooN:
                         lit = Not(node)
                     else:
                         lit = None
-                        errmsg("Internal error module coding - Please call the Software Development Team. ", [node, target, module])
+                        errmsg("Null module is not admitted - possible origin : non-monotone network", [node, target, module])
                     nodes[target][abs(module) - 1].add(lit)
 
         # convert into formula

@@ -4,11 +4,12 @@
 import sys
 import os
 import math
+import re
 from tabulate import tabulate
 import BooNGui.booneries_rc  # resources
 
 import boon
-from boon import BooN, SIGNCOLOR, COLORSIGN, core2actions
+from boon import BooN, SIGNCOLOR, COLORSIGN, EXTSBML, EXTXT
 import logic
 from logic import LOGICAL, SYMPY, MATHEMATICA, JAVA
 
@@ -22,7 +23,6 @@ from netgraph import EditableGraph
 import networkx as nx
 
 from PyQt5.QtWidgets import *
-
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt, QSize
@@ -47,6 +47,9 @@ MODELBOUND: int = 8  # Size bound of the dynamics model in terms of variables.
 REG: str = '\u03b1'  # lambda
 POS: str = '\u03b2'  # alpha
 NEG: str = '\u03bb'  # beta
+
+# Integer regular expression
+INTPAT: str = r"\s*-?[0-9]+\s*"  # signed integer pattern
 
 
 class Boonify(QMainWindow):
@@ -138,7 +141,7 @@ class Boonify(QMainWindow):
 
         # STEP: Convert the module ids to string labeling the edge.
         modules = nx.get_edge_attributes(ig, 'module')
-        modules = {edge: " ".join([str(abs(module)) for module in modules[edge]]) for edge in modules}
+        modules = {edge: " ".join([str(module) for module in modules[edge]]) for edge in modules}
 
         # STEP: Define the editgraph.
         self.canvas.axes.clear()
@@ -192,18 +195,28 @@ class Boonify(QMainWindow):
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
 
-        # STEP: Determination of the modules from edge label.
+        # STEP: Determination of the modules from edge label
         edge_labels = self.editgraph.edge_label_artists
         modules = {}
         for edge in edges:
             try:
                 label = edge_labels[edge].get_text()
-                modularity = {signs[edge] * int(module) for module in list(label.split(" ")) if module.isdigit()}
+                # retrieve the modules from the edge drawing. The module is alist of signed integers separated by spaces.
+                # modularity = {signs[edge] * int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
+                modularity = {int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
+                match signs[edge]:
+                    case 1:  # Positive
+                        modularity = {abs(module) for module in modularity}
+                    case -1: # Negative
+                        modularity = { -abs(module) for module in modularity}
+                    case 0: # undefined (both) - non-monotone interaction
+                        pass
+
                 if modularity:
                     modules.update({symbolic(edge): modularity})
                 else:
                     modules.update({symbolic(edge): {signs[edge]}})
-            except KeyError:  # No edge labels
+            except KeyError:  # No edge labels -  the module is the sign.
                 modules.update({symbolic(edge): {signs[edge]}})
 
         # STEP: Convert the edges symbolically for signs.
@@ -297,10 +310,21 @@ class Boonify(QMainWindow):
 
     def importation(self):
         """Import file dialog."""
-        filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text Files (*.txt);; All Files (*);;")
+        filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text or SBML Files (*.txt *.xml *.sbml);; All Files (*);;")
         if filename:
             self.filename = None  # no file name since the BooN is not saved in the internal format.
-            self.boon.from_textfile(filename[0])
+
+            _, extension = os.path.splitext(filename[0])
+            match extension:
+                case ".txt":
+                    self.boon.from_textfile(filename[0])
+                case ".sbml":
+                    self.boon.from_sbmlfile(filename[0])
+                case ".xml":
+                    self.boon.from_sbmlfile(filename[0])
+                case _:
+                    QMessageBox.warning(self, "File extension error", f"The extension is unknown (.txt, .sbml, .xml): {extension}", Q.MessageBoc.Ok)
+
             self.refresh()
             self.setup_design()
             self.history_raz()  # clear history
@@ -868,7 +892,7 @@ class Controllability(QMainWindow):
 
         # STEP: Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
         core = BooN.destify(destiny, trace=self.Trace)
-        self.actions = core2actions(core)
+        self.actions = boon.core2actions(core)
 
         # STEP: Define the tree model to show the resulting actions.
         treemodel = QStandardItemModel(0, 2)  # Add 2 columns
