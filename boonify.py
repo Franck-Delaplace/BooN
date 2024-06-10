@@ -746,7 +746,6 @@ class Model(QMainWindow):
 
 class Controllability(QMainWindow):
     """Controllability class"""
-
     def __init__(self, parent=None):
         super(Controllability, self).__init__(parent)
         loadUi('BooNGui/controllability.ui', self)
