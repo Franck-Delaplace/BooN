@@ -206,7 +206,7 @@ class Boonify(QMainWindow):
         for edge in edges:
             try:
                 label = edge_labels[edge].get_text()
-                # A module is a list of signed integers separated by spaces. labels that are not integers are not considered.
+                # A module is a list of signed integers separated by spaces. The labels that are not integers are not considered.
                 modularity = {int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
 
                 if modularity:
