@@ -171,8 +171,12 @@ class Boonify(QMainWindow):
         if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
 
         # DEF: Definition of the interaction graph of the network from the drawing.
+        # The graph was derived from the graph drawing process.
+        # Arc signs are associated with their color.
+        # Only nodes with a label are used to define the graph.
+
         # STEP: Find consistent nodes corresponding to the variables in the BooN.
-        # The type of consistent nodes is symbol or integer.
+        # Consistent nodes are symbols or integers.
         # Dictionary of consistent nodes id:symbol, where the symbol is defined from the node label.
         # Recall that only the labeled nodes are kept in editgraph.node_label_artists. The unlabelled nodes are not considered.
         # WARNING: As nodes of the pattern network are strings, they are never selected as consistent nodes.
@@ -196,7 +200,7 @@ class Boonify(QMainWindow):
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
 
-        # STEP: Determination of the modules from edge label
+        # STEP: Determination of the modules from edge label.
         edge_labels = self.editgraph.edge_label_artists
         modules = {}
         for edge in edges:
@@ -205,16 +209,15 @@ class Boonify(QMainWindow):
                 # A module is a list of signed integers separated by spaces. labels that are not integers are not considered.
                 modularity = {int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
 
-                # set the label sign  w.r.t. the edge sign, used if the label are not properly defined by the user.
-                match signs[edge]:
-                    case 1:  # Positive
-                        modularity = {abs(module) for module in modularity}
-                    case -1: # Negative
-                        modularity = { -abs(module) for module in modularity}
-                    case 0: # undefined (both) - non-monotone interaction
-                        pass
-
                 if modularity:
+                    # re-set the label sign  w.r.t. the edge sign, used if the labels are not properly defined by the user.
+                    match signs[edge]:
+                        case 1:  # Positive
+                            modularity = {abs(module) for module in modularity}
+                        case -1:  # Negative
+                            modularity = {-abs(module) for module in modularity}
+                        case 0:  # undefined (both) - non-monotone interaction
+                            pass
                     modules.update({symbolic(edge): modularity})
                 else:
                     modules.update({symbolic(edge): {signs[edge]}})
@@ -501,7 +504,7 @@ class Help(QMainWindow):
 
 
 class View(QDialog):
-    """View Class used for showing the BooN in a table."""
+    """View Class used for showing the BooN formula in a table."""
 
     def __init__(self, parent=None):
         super(View, self).__init__(parent)
@@ -523,13 +526,14 @@ class View(QDialog):
 
         # STEP: Resize columns of the table to content.
         self.BooNContent.setColumnWidth(1, 500)
-        self.BooNContent.resizeColumnToContents(0)
-        self.BooNContent.resizeColumnToContents(2)
 
-        # STEP: Stretch the formula columns.
+        # STEP: Fix size of the  formula columns.
         header = self.BooNContent.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
-        header.setSectionResizeMode(1, QHeaderView.Interactive)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        header.setStretchLastSection(True)
+        header.setSectionResizeMode(2, QHeaderView.Interactive)
 
         self.initialize_view()
 
@@ -549,10 +553,10 @@ class View(QDialog):
         for row, var in enumerate(theboon.desc):
             item = QTableWidgetItem(str(var))
             item.setTextAlignment(Qt.AlignCenter)
-            self.BooNContent.setItem(row, 0, item)  # variable
+            self.BooNContent.setItem(row, 1, item)  # variable
 
             self.formulas[row].setText(logic.prettyform(theboon.desc[var], style=self.style))
-            self.BooNContent.setCellWidget(row, 1, self.formulas[row])  # formula
+            self.BooNContent.setCellWidget(row, 2, self.formulas[row])  # formula
 
             if is_dnf(theboon.desc[var]):  # type of the formula
                 form = "DNF"
@@ -564,7 +568,7 @@ class View(QDialog):
                 form = "ALL"
             item = QTableWidgetItem(form)
             item.setTextAlignment(Qt.AlignHCenter)
-            self.BooNContent.setItem(row, 2, item)
+            self.BooNContent.setItem(row, 0, item)
 
     def change_formula(self):
         """ Update the BooN from a formula change."""
