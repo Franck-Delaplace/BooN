@@ -123,8 +123,8 @@ class Boonify(QMainWindow):
         """Set up of the editable graph."""
         self.disablecallback = True  # Disable the design callback during the set-up.
 
-        # STEP: Creation of the style-network used for edge styling.
-        # To prevent its inclusion in the BooN, the variable names are string while the other nodes are integers or symbols.
+        # STEP: Creation of the pattern-network used for edge styling.
+        # To prevent its inclusion in the BooN, the variable names are strings while the other nodes are integers or symbols.
         g = nx.DiGraph([(REG, POS), (REG, NEG), (NEG, NEG), (POS, POS)])
         edge_color = {(REG, POS): SIGNCOLOR[1], (REG, NEG): SIGNCOLOR[-1], (NEG, NEG): SIGNCOLOR[-1], (POS, POS): SIGNCOLOR[1]}
         positions = {NEG: (0.25, 0.045), REG: (0.5, 0.045), POS: (0.75, 0.045)}
@@ -172,25 +172,26 @@ class Boonify(QMainWindow):
 
         # DEF: Definition of the interaction graph of the network from the drawing.
         # STEP: Find consistent nodes corresponding to the variables in the BooN.
-        # The type of consistent nodes is symbol or integer with a label.
+        # The type of consistent nodes is symbol or integer.
         # Dictionary of consistent nodes id:symbol, where the symbol is defined from the node label.
-        # Recall that only the labeled nodes are kept in editgraph.node_label_artists.
+        # Recall that only the labeled nodes are kept in editgraph.node_label_artists. The unlabelled nodes are not considered.
         # WARNING: As nodes of the pattern network are strings, they are never selected as consistent nodes.
 
         idvar = {idt: symbols(text.get_text()) for idt, text in self.editgraph.node_label_artists.items() if isinstance(idt, int | Symbol)}
 
         # Function setting edges in symbolic form where nodes are all symbols.
         def symbolic(edge):
+            """set edges in symbolic form where node labels are symbols"""
             return idvar[edge[0]], idvar[edge[1]]
 
         # STEP: Select the edges with consistent nodes. The other edges cannot be included in the IG.
         edges = {(src, tgt) for src, tgt in self.editgraph.edge_artists.keys() if src in idvar and tgt in idvar}
 
-        # STEP: set the positions of nodes.
+        # STEP: define the positions of nodes. The positions are kept in a dictionary { node:pos ..}
         edit_pos = self.editgraph.node_positions
         pos = {idvar[idt]: edit_pos[idt] for idt in idvar}
 
-        # STEP: Interpret the colors to signs.
+        # STEP: Find signs from the edge colors.
         # WARNING: The face color is (r,g,b,a) while the sign colors are (r,g,b). Hence a must be removed.
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
@@ -201,9 +202,10 @@ class Boonify(QMainWindow):
         for edge in edges:
             try:
                 label = edge_labels[edge].get_text()
-                # retrieve the modules from the edge drawing. The module is alist of signed integers separated by spaces.
-                # modularity = {signs[edge] * int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
+                # A module is a list of signed integers separated by spaces. labels that are not integers are not considered.
                 modularity = {int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
+
+                # set the label sign  w.r.t. the edge sign, used if the label are not properly defined by the user.
                 match signs[edge]:
                     case 1:  # Positive
                         modularity = {abs(module) for module in modularity}
@@ -216,21 +218,23 @@ class Boonify(QMainWindow):
                     modules.update({symbolic(edge): modularity})
                 else:
                     modules.update({symbolic(edge): {signs[edge]}})
-            except KeyError:  # No edge labels -  the module is the sign.
+
+            except KeyError:  # No edge labels = no modules => the module is the sign.
                 modules.update({symbolic(edge): {signs[edge]}})
 
         # STEP: Convert the edges symbolically for signs.
         # WARNING: as signs dict is previously used for determining the modules with string as keys, the conversion can only be achieved here.
         signs = {symbolic(edge): signs[edge] for edge in signs}
 
-        # STEP: Generate the ig from the editable graph.
+        # DEF conversion of the IG to BooN
+
+        # STEP: Define the ig from the editable graph.
         ig = nx.DiGraph()
         ig.add_nodes_from(idvar.values())  # add nodes
         for edge in signs:  # add edges
             ig.add_edge(edge[0], edge[1], sign=signs[edge], module=modules[edge])
 
-        # DEF conversion of the IG to BooN
-        # STEP: Finally convert the ig to BooN.
+        # STEP: Convert the ig to BooN.
         try:
             self.boon.from_ig(ig)  # Find the BooN from the ig.
         except ValueError:  # To prevent the transient error due to edge labeling.
@@ -239,7 +243,7 @@ class Boonify(QMainWindow):
         # STEP:  Store positions.
         self.boon.pos = pos
 
-        # STEP: Update the history and refresh the open windows.
+        # DEF: Update the history and refresh the open windows.
         self.add_history()
         if self.hupdate:
             self.refresh()
