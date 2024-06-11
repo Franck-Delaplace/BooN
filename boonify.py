@@ -3,7 +3,7 @@
 # Creation date: February 2024
 
 # In comments :
-# DEF means definition which is a code parte gathering functions related to a process or object definition,
+# DEF means definition which is a code part gathering functions related to a process or object definition,
 # STEP means main steps
 # WARNING is a warning.
 # These terms can be used to color comments in PyCharm or else.
