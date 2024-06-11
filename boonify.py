@@ -125,7 +125,8 @@ class Boonify(QMainWindow):
 
         # STEP: Creation of the pattern-network used for edge styling.
         # To prevent its inclusion in the BooN, the variable names are strings while the other nodes are integers or symbols.
-        g = nx.DiGraph([(REG, POS), (REG, NEG), (NEG, NEG), (POS, POS)])
+        # network structure:  NEG <--[-]-- REG --[+]--> POS
+        g = nx.DiGraph([(REG, POS), (REG, NEG)])
         edge_color = {(REG, POS): SIGNCOLOR[1], (REG, NEG): SIGNCOLOR[-1], (NEG, NEG): SIGNCOLOR[-1], (POS, POS): SIGNCOLOR[1]}
         positions = {NEG: (0.25, 0.045), REG: (0.5, 0.045), POS: (0.75, 0.045)}
 
@@ -200,7 +201,7 @@ class Boonify(QMainWindow):
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
 
-            # STEP: Determination of the modules from edge label.
+        # STEP: Determination of the modules from edge label.
 
         edge_labels = self.editgraph.edge_label_artists
         modules = {}
@@ -257,7 +258,7 @@ class Boonify(QMainWindow):
         # STEP: Fix the size related to the network design
         width = self.frameGeometry().width()
         height = self.frameGeometry().height()
-        self.designsize = min(round(1350 / min(width, height), 1), 2.5) # heuristic function providing the designsize w.r.t. to window size.
+        self.designsize = min(round(1350 / min(width, height), 1), 2.5)  # heuristic function providing the designsize w.r.t. to window size.
 
         # STEP: retrieve all parameters of editgraph
         positions = self.editgraph.node_positions
@@ -747,6 +748,7 @@ class Model(QMainWindow):
 
 class Controllability(QMainWindow):
     """Controllability class"""
+
     def __init__(self, parent=None):
         super(Controllability, self).__init__(parent)
         loadUi('BooNGui/controllability.ui', self)
