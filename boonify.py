@@ -333,7 +333,6 @@ class Boonify(QMainWindow):
                 case _:
                     QMessageBox.critical(self, "File extension error", f"The extension is unknown. \nFound {extension}\nAdmitted extension: .txt, .sbml, .xml")
 
-
             self.refresh()
             self.setup_design()
             self.history_raz()  # clear history
