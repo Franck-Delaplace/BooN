@@ -6,7 +6,7 @@ from boon import *
 
 # The program analyzes the cause of breath cancer from a Boolean network datamodel,
 # namely which genes should be mutated to cause cancer and are they oncogenes (True) or tumor suppressors (False).
-# Next, the program found the potential therapeutic targets and the actions on them for a cancer caused by a BRCA1 mutation.
+# Next, the program found the potential therapeutic targets and the actions on them for a cancer caused by  BRCA1 mutation.
 
 # Read the Boolean network from a text file.
 bcn = BooN()

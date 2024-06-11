@@ -49,7 +49,7 @@ POS: str = '\u03b2'  # alpha
 NEG: str = '\u03bb'  # beta
 
 # Integer regular expression
-INTPAT: str = r"\s*-?[0-9]+\s*"  # signed integer pattern
+INTPAT: str = r"\s*-?[0-9]+\s*"
 
 
 class Boonify(QMainWindow):
@@ -200,7 +200,8 @@ class Boonify(QMainWindow):
         edge_attributes = self.editgraph.edge_artists
         signs = {edge: COLORSIGN[edge_attributes[edge].get_facecolor()[0:3]] for edge in edges}
 
-        # STEP: Determination of the modules from edge label.
+            # STEP: Determination of the modules from edge label.
+
         edge_labels = self.editgraph.edge_label_artists
         modules = {}
         for edge in edges:
@@ -256,7 +257,7 @@ class Boonify(QMainWindow):
         # STEP: Fix the size related to the network design
         width = self.frameGeometry().width()
         height = self.frameGeometry().height()
-        self.designsize = min(round(1350 / min(width, height), 1), 2.5)
+        self.designsize = min(round(1350 / min(width, height), 1), 2.5) # heuristic function providing the designsize w.r.t. to window size.
 
         # STEP: retrieve all parameters of editgraph
         positions = self.editgraph.node_positions
@@ -330,7 +331,8 @@ class Boonify(QMainWindow):
                 case ".xml":
                     self.boon.from_sbmlfile(filename[0])
                 case _:
-                    QMessageBox.warning(self, "File extension error", f"The extension is unknown (.txt, .sbml, .xml): {extension}", Q.MessageBoc.Ok)
+                    QMessageBox.critical(self, "File extension error", f"The extension is unknown. \nFound {extension}\nAdmitted extension: .txt, .sbml, .xml")
+
 
             self.refresh()
             self.setup_design()
