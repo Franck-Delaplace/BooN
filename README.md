@@ -1,6 +1,6 @@
 
 <h1 style="text-align:center">BooN</h1>
-<p style="text-align:justify">The BooN project provides a complete set of functionalities for Boolean network analysis. 
+<p style="text-align:justify">The BooN project provides a complete set of functionalities for Boolean Network (BooN) analysis. 
 It was originally designed to explore the modeling of genetic networks by Boolean networks. 
 The project includes:</p>
  <ul>
@@ -18,9 +18,9 @@ The project includes:</p>
 <ul>
 <li> <code>boon</code> module is related to the manipulation of Boolean network named BooN which is an object.</li>
 <li> <code>logic</code> module includes basic functions on propositional formula,
-as well as more advanced features like CNF conversion for large formulas, CNF conversion using Tseitin's method, 
+as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin's method, 
 and prime implicant calculation. These functions are used in the BooN modules. </li>
-<li> The <code>boonify</code> module is the graphical interface for accessing project functions in BooN:
+<li> The <code>boonify</code> module is the graphical interface manipulating BooN:
 computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and 
 the controllability analysis. For exploring BooN interactively run <code>boonify.py</code></li>
 </ul>
@@ -34,7 +34,7 @@ A real case study on breast cancer is available.
  This example aims to identify the causes of breast cancer and to predict the therapeutic targets.
 <code>breast-cancer.boon</code> contains the Boolean network related to breast cancer study that can be used interactively with <code>boonify.py</code>.
 The analysis is decomposed in two phases: first, we will consider the prediction of mutations causing breast cancer, 
-and then the prediction of therapeutic actions by cancer type in order to cure. In this section, we will detail the operations to apply with boonify.py in order to achieve these predictions. 
+and then the prediction of therapeutic actions by cancer type in order to cure <b>BRCA1</b> cancer. In this section, we will detail the operations to apply with <code>boonify.py</code> in order to achieve these predictions. 
 Following and testing this scenario will contribute to a deeper understanding of the potentiality of BooN for regulatory network analysis and its philosophy.
 <h4> Start the analysis </h4>
 <ul>
