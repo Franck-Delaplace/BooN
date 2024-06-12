@@ -67,7 +67,7 @@ def firstsymbol(formula):
 def cnf2clauses(cnf):
     """ Decomposition of a CNF into a sequence of clauses.
     :param cnf: CNF formula
-    :type formula: simpy formula
+    :type cnf: simpy formula
     :return: sequence of clauses.
     :rtype: tuple[formula]"""
     if isinstance(cnf, And):  # The cnf is  plain (And of Or-clauses).
