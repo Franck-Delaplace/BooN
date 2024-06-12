@@ -2,6 +2,12 @@
 # Author: Franck Delaplace
 # Creation date: January 2024
 
+# In comments :
+# DEF means definition which is a code part gathering functions related to a process or an object definition,
+# STEP means main steps
+# WARNING is a warning.
+# These terms can be used to color comments in PyCharm or else.
+
 import inspect
 import pulp
 import sys
@@ -35,7 +41,10 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     """Display an error message and exit in case of error (keyword ERROR).
     :param msg: the error message.
     :param arg: the argument of the error message (Default: "" no args).
-    :param kind: type of error (Default: ERROR)."""
+    :param kind: type of error (Default: ERROR).
+    :type msg: str
+    :type arg: str
+    :type kind: str"""
     print(f"** {kind}: {inspect.stack()[1].filename.split(PATHSEP)[-1]} - {inspect.stack()[1].function}: {msg}: {arg}")
     if kind == "ERROR":
         exit()
@@ -44,6 +53,7 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
 def firstsymbol(formula):
     """ Extract the first symbol from the set of symbols of a dnf.
     :param formula: the input dnf.
+    :type formula: simpy formula
     :return: the first symbol."""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):  # The formula is reduced to a Boolean value, no symbols.
         return None
@@ -55,7 +65,9 @@ def firstsymbol(formula):
 def cnf2clauses(cnf):
     """ Decomposition of a CNF into a sequence of clauses.
     :param cnf: CNF formula
-    :return: sequence of clauses."""
+    :type formula: simpy formula
+    :return: sequence of clauses.
+    :rtype: tuple[formula]"""
     if isinstance(cnf, And):  # The cnf is  plain (And of Or-clauses).
         clauses = cnf.args
     elif isinstance(cnf, bool | BooleanFalse | BooleanTrue):  # The cnf is reduced to a boolean value.
@@ -68,7 +80,9 @@ def cnf2clauses(cnf):
 def clause2literals(clause) -> set:
     """" Convert a clause or a cube into of a sequence of literals.
     :param  clause: the clause or cube.
-    :return: set of literals."""
+    :type clause: simpy formula
+    :return: set of literals.
+    :rtype: set"""
     if isinstance(clause, Symbol | Not):  # clause reduced to a single literal.
         literals_clause = {clause}
     elif isinstance(clause, bool | BooleanFalse | BooleanTrue):  # clause reduced to Boolean value.
@@ -83,7 +97,10 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
     """Return a string of a formula in nice form.
     :param formula: the input formula.
     :param style: the style style of the logical operators (Default: LOGICAL)
-    :param depth: the current depth of the formula for setting parentheses (Default: 0)"""
+    :param depth: the current depth of the formula for setting parentheses (Default: 0)
+    :type formula: simpy formula
+    :type style: dict
+    :type depth: int"""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return style[formula]
     elif isinstance(formula, Symbol):
@@ -112,7 +129,9 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
 def sympy2z3(formula):
     """Convert a sympy formula to z3 formula.
     :param formula: the formula to convert.
-    :return: the equivalent z3 formula."""
+    :type formula: simpy formula
+    :return: the equivalent z3 formula.
+    :rtype: z3 formula"""
     if isinstance(formula, bool):
         return formula
     elif isinstance(formula, BooleanTrue):
@@ -143,9 +162,11 @@ _varcounter = 0  # counter1 used in newvar.
 def newvar(initialize: int | None = None):
     """Create a new sympy symbol of the form <prefix><number>.
        The prefix is given by TSEITIN constant.
-     :param initialize: initialize the counter1 if the value is an integer
-     or let the counter1 increment by 1 if it is set to None (Default value = None)
-     :return: a Sympy symbol."""
+     :param initialize: initialize the counter  if the value is an integer
+     or let the counter increment by 1 if it is set to None (Default value = None)
+     :type  initialize: int|None
+     :return: a Sympy symbol.
+     :rtype: symbol"""
     global _varcounter
     if initialize is not None:
         _varcounter = initialize
@@ -157,7 +178,10 @@ def newvar(initialize: int | None = None):
 def tseitin(formula):
     """ Characterize the Tseitin form of a formula. The additional variables are prefixed by {}
     :param formula: the formula.
-    :return: a pair: Tseitin variable, Tseitin CNF.""".format(TEITSIN)
+    :type formula: simpy formula
+    :return: a pair: Tseitin variable, Tseitin CNF.
+    :rtype: tuple"""
+
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return formula, True
     elif isinstance(formula, Symbol):
@@ -200,7 +224,9 @@ def tseitin(formula):
 def tseitin_cnf(formula):
     """Convert a formula to CNF using Tseitin method.
     :param formula: the formula to be converted.
-    :return: CNF formula."""
+    :type formula: simpy formula
+    :return: CNF formula.
+    :rtype: simpy formula"""
     newvar(0)  # initialize the counter1
     p, f = tseitin(formula)
     return And(p, f)
@@ -209,8 +235,11 @@ def tseitin_cnf(formula):
 def supercnf(formula, trace: bool = False):
     """ Convert the formula to CNF. The method is adapted to large formula.
     :param formula: the formula to convert.
-     :param trace: Boolean flag if True trace the computational steps  (Default value = False)
-     :return: CNF formula
+    :param trace: Boolean flag if True trace the computational steps  (Default value = False)
+    :type formula: simpy formula
+    :type trace: bool
+    :return: CNF formula
+    :rtype: simpy formula
     """
     # Most of the classical methods cannot perform the CNF conversion on large formula in acceptable time (cf. to_cnf sympy, pyeda)
     # To overcome this disabling limitation, we design another method based on SAT solver.
@@ -254,7 +283,12 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     :param kept: predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
     :param trace: Boolean flag determining whether the trace showing the resolution is activated (Default: False).
     :param solver: the solver to use (Default: Pulp solver).
-    :return: all the prime implicants in the form of a set of sets where each subset represent one prime implicant filtered by kept."""
+    :type formula: simpy formula
+    :type kept: function
+    :type trace: bool
+    :type solver: solver function
+    :return: all the prime implicants in the form of a set of sets where each subset represent one prime implicant filtered by kept.
+    :rtype: frozenset"""
     global prime_implicants_problem
     global trc_implicants
     cnf = formula if is_cnf(formula) else tseitin_cnf(formula)  # Convert the dnf into CNF by the Tseitin method if needed.

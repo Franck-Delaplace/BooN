@@ -1,6 +1,13 @@
 # Boolean Network analysis module
 # Author: Franck Delaplace
 # Creation date: January 2024
+
+# In comments :
+# DEF means definition which is a code part gathering functions related to a process or an object definition,
+# STEP means main steps
+# WARNING is a warning.
+# These terms can be used to color comments in PyCharm or else.
+
 from __future__ import annotations
 import re
 import copy
