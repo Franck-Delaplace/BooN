@@ -67,7 +67,7 @@ def cnf2clauses(cnf):
 
 def clause2literals(clause) -> set:
     """" Convert a clause or a cube into of a sequence of literals.
-    :param: clause: the clause or cube.
+    :param  clause: the clause or cube.
     :return: set of literals."""
     if isinstance(clause, Symbol | Not):  # clause reduced to a single literal.
         literals_clause = {clause}
