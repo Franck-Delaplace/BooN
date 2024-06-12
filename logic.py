@@ -24,7 +24,7 @@ from tqdm import tqdm
 LOGICAL: dict = {'type': 'infix', And: '\u2227', Or: '\u2228', Implies: '\u21D2', Equivalent: '\u21D4', Xor: '\u22BB', Not: '\u00AC', False: 'false', True: 'true'}
 MATHEMATICA: dict = {'type': 'prefix', '(': "[", ')': "]",
                      And: '&&', Or: '||', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
-SYMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
+SIMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
                And: '&', Or: '|', Implies: 'Implies', Xor: 'Xor', Xnor: 'Xnor', Equivalent: 'Equivalent', Not: '~', False: 'False', True: 'True'}
 JAVA: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: 'false', True: 'true'}
 C: dict = {'type': 'normal form', And: "&&", Or: "DEF:", Not: "!", False: '0', True: '1'}
@@ -182,7 +182,7 @@ def tseitin(formula):
     :param formula: the formula.
     :type formula: simpy formula
     :return: a pair: Tseitin variable, Tseitin CNF.
-    :rtype: tuple"""
+    :rtype: tuple""".format(TEITSIN)
 
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return formula, True
