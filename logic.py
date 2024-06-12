@@ -167,7 +167,7 @@ def newvar(initialize: int | None = None):
      :param initialize: initialize the counter  if the value is an integer
      or let the counter increment by 1 if it is set to None (Default value = None)
      :type  initialize: int|None
-     :return: a Sympy symbol.
+     :return: a Simpy symbol.
      :rtype: symbol"""
     global _varcounter
     if initialize is not None:
