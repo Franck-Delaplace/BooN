@@ -24,21 +24,20 @@ extensions = [
                 'sphinx.ext.autodoc',
                 'sphinx_rtd_theme',
                 'sphinx.ext.githubpages',
-               # 'sphinx.ext.napoleon',
                ]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+html_static_path = ['_static']
 
-autodoc_param_description = [
-    'param',
-    'type',
-    'return',
-    'rtype'
-    'default'
-]
-
+# autodoc_param_description = [
+#     'param',
+#     'type',
+#     'return',
+#     'rtype'
+#     'default'
+# ]
 
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+
 
