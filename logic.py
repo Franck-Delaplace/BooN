@@ -41,6 +41,7 @@ trc_implicants = 0  # global variables counting the number of prime implicants i
 # DEF: Basic functions
 def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     """Display an error message and exit in case of error (keyword ERROR).
+
     :param msg: the error message.
     :param arg: the argument of the error message (Default: "" no args).
     :param kind: type of error (Default: ERROR).
@@ -54,6 +55,7 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
 
 def firstsymbol(formula):
     """ Extract the first symbol from the set of symbols of a dnf.
+
     :param formula: the input dnf.
     :type formula: sympy formula
     :return: the first symbol."""
@@ -66,6 +68,7 @@ def firstsymbol(formula):
 # DEF: Functions decomposing a formula.
 def cnf2clauses(cnf):
     """ Decomposition of a CNF into a sequence of clauses.
+
     :param cnf: CNF formula
     :type cnf: sympy formula
     :return: sequence of clauses.
@@ -81,6 +84,7 @@ def cnf2clauses(cnf):
 
 def clause2literals(clause) -> set:
     """" Convert a clause or a cube into of a sequence of literals.
+
     :param  clause: the clause or cube.
     :type clause: sympy formula
     :return: set of literals.
@@ -97,6 +101,7 @@ def clause2literals(clause) -> set:
 # DEF: Functions converting the formula into another style.
 def prettyform(formula, style: dict = LOGICAL, depth=0):
     """Return a string of a formula in nice form.
+
     :param formula: the input formula.
     :param style: the style style of the logical operators (Default: LOGICAL)
     :param depth: the current depth of the formula for setting parentheses (Default: 0)
@@ -130,6 +135,7 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
 
 def sympy2z3(formula):
     """Convert a sympy formula to z3 formula.
+
     :param formula: the formula to convert.
     :type formula: sympy formula
     :return: the equivalent z3 formula.
@@ -162,10 +168,9 @@ _varcounter = 0  # counter1 used in newvar.
 
 
 def newvar(initialize: int | None = None):
-    """Create a new sympy symbol of the form <prefix><number>.
-       The prefix is given by TSEITIN constant.
-     :param initialize: initialize the counter  if the value is an integer
-     or let the counter increment by 1 if it is set to None (Default value = None)
+    """Create a new sympy symbol of the form <prefix><number>. The prefix is given by TSEITIN constant.
+
+     :param initialize: initialize the counter  if the value is an integer or let the counter increment by 1 if it is set to None (Default value = None)
      :type  initialize: int|None
      :return: a Simpy symbol.
      :rtype: symbol"""
@@ -178,12 +183,12 @@ def newvar(initialize: int | None = None):
 
 
 def tseitin(formula):
-    """ Characterize the Tseitin form of a formula. The additional variables are prefixed by {}
+    """ Characterize the Tseitin form of a formula. The additional variables are prefixed by TEITSIN constant
+
     :param formula: the formula.
     :type formula: sympy formula
     :return: a pair: Tseitin variable, Tseitin CNF.
-    :rtype: tuple""".format(TEITSIN)
-
+    :rtype: tuple"""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return formula, True
     elif isinstance(formula, Symbol):
@@ -225,6 +230,7 @@ def tseitin(formula):
 
 def tseitin_cnf(formula):
     """Convert a formula to CNF using Tseitin method.
+
     :param formula: the formula to be converted.
     :type formula: sympy formula
     :return: CNF formula.
@@ -235,7 +241,8 @@ def tseitin_cnf(formula):
 
 
 def supercnf(formula, trace: bool = False):
-    """ Convert the formula to CNF. The method is adapted to large formula.
+    """ Convert the formula to CNF. The method is well adapted to large formula.
+
     :param formula: the formula to convert.
     :param trace: Boolean flag if True trace the computational steps  (Default value = False)
     :type formula: sympy formula
@@ -281,6 +288,7 @@ def supercnf(formula, trace: bool = False):
 
 def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).name.startswith(TEITSIN), trace: bool = False, solver: type = SOLVER) -> frozenset:
     """Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
+
     :param formula: the input formula. The formula does not need to be in CNF.
     :param kept: predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
     :param trace: Boolean flag determining whether the trace showing the resolution is activated (Default: False).
