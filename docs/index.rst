@@ -1,0 +1,65 @@
+.. BooN documentation master file, created by
+   sphinx-quickstart on Thu Jun 13 12:59:04 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+BooN's Documentation
+======================
+
+The BooN project provides a complete set of functionalities for Boolean Network (BooN) analysis.
+It was originally designed to explore the modeling of genetic networks by Boolean networks.
+The project includes:
+
+ * the definition of a **Boolean network** with the possibility to load and save it;
+ * the computation of the **model of dynamics** with respect to a **mode** policy;
+ * the definition of the **interaction graph** including a modular decomposition of the interaction;
+ * the computation of **equilibria** based on dynamics model;
+ * the efficient symbolic computation of **stable states** based on SAT solver;
+ * the **controllability** analysis predicting which variables must be frozen to reach the expected goal at stable states based on possibility and necessity query;
+ * also different basic functionalities are included as: update formula and importing/exporting to a text file the Boolean network.
+
+--------------
+ BooN Modules
+--------------
+
+The BooN project comprises 3 modules:
+
+*   ``boon`` module is related to the manipulation of Boolean network named BooN which is an object.
+
+*   ``logic`` module includes basic functions on propositional formula, as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin's method, and prime implicant calculation. These functions are used in the BooN modules.
+
+*  ``boonify`` module is the graphical interface manipulating BooN:computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and the controllability analysis. For exploring BooN interactively run  ``boonify.py``
+
+In the next section, the function related to  ``boon``  and ``logic`` are described.
+
+-----------------
+BooN installation
+-----------------
+
+Go in the directory of BooN and type:
+
+*  ``pip install .``
+
+*  or,  ``python -m pip install .``
+
+
+--------------------
+Function Description
+--------------------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+.. automodule:: boon
+   :members:
+
+.. automodule:: logic
+   :members:
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
