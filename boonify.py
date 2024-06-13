@@ -18,7 +18,7 @@ import BooNGui.booneries_rc  # resources
 import boon
 from boon import BooN, SIGNCOLOR, COLORSIGN, EXTSBML, EXTXT
 import logic
-from logic import LOGICAL, SIMPY, MATHEMATICA, JAVA
+from logic import LOGICAL, SYMPY, MATHEMATICA, JAVA
 
 from sympy.logic.boolalg import is_cnf, is_dnf, is_nnf
 from sympy.core.symbol import Symbol
@@ -46,7 +46,7 @@ mpl.use("Qt5Agg")
 
 # Parameters
 HSIZE: int = 10  # size of the history
-STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SIMPY, "Mathematica": MATHEMATICA}
+STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SYMPY, "Mathematica": MATHEMATICA}
 ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.svg", False: ":/icon/resources/false.svg"}  # True/False icons
 MODELBOUND: int = 8  # Size bound of the dynamics model in terms of variables.
 
