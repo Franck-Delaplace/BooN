@@ -55,7 +55,7 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
 def firstsymbol(formula):
     """ Extract the first symbol from the set of symbols of a dnf.
     :param formula: the input dnf.
-    :type formula: simpy formula
+    :type formula: sympy formula
     :return: the first symbol."""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):  # The formula is reduced to a Boolean value, no symbols.
         return None
@@ -67,7 +67,7 @@ def firstsymbol(formula):
 def cnf2clauses(cnf):
     """ Decomposition of a CNF into a sequence of clauses.
     :param cnf: CNF formula
-    :type cnf: simpy formula
+    :type cnf: sympy formula
     :return: sequence of clauses.
     :rtype: tuple[formula]"""
     if isinstance(cnf, And):  # The cnf is  plain (And of Or-clauses).
@@ -82,7 +82,7 @@ def cnf2clauses(cnf):
 def clause2literals(clause) -> set:
     """" Convert a clause or a cube into of a sequence of literals.
     :param  clause: the clause or cube.
-    :type clause: simpy formula
+    :type clause: sympy formula
     :return: set of literals.
     :rtype: set"""
     if isinstance(clause, Symbol | Not):  # clause reduced to a single literal.
@@ -100,7 +100,7 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
     :param formula: the input formula.
     :param style: the style style of the logical operators (Default: LOGICAL)
     :param depth: the current depth of the formula for setting parentheses (Default: 0)
-    :type formula: simpy formula
+    :type formula: sympy formula
     :type style: dict
     :type depth: int"""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
@@ -131,7 +131,7 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
 def sympy2z3(formula):
     """Convert a sympy formula to z3 formula.
     :param formula: the formula to convert.
-    :type formula: simpy formula
+    :type formula: sympy formula
     :return: the equivalent z3 formula.
     :rtype: z3 formula"""
     if isinstance(formula, bool):
@@ -180,7 +180,7 @@ def newvar(initialize: int | None = None):
 def tseitin(formula):
     """ Characterize the Tseitin form of a formula. The additional variables are prefixed by {}
     :param formula: the formula.
-    :type formula: simpy formula
+    :type formula: sympy formula
     :return: a pair: Tseitin variable, Tseitin CNF.
     :rtype: tuple""".format(TEITSIN)
 
@@ -226,9 +226,9 @@ def tseitin(formula):
 def tseitin_cnf(formula):
     """Convert a formula to CNF using Tseitin method.
     :param formula: the formula to be converted.
-    :type formula: simpy formula
+    :type formula: sympy formula
     :return: CNF formula.
-    :rtype: simpy formula"""
+    :rtype: sympy formula"""
     newvar(0)  # initialize the counter1
     p, f = tseitin(formula)
     return And(p, f)
@@ -238,10 +238,10 @@ def supercnf(formula, trace: bool = False):
     """ Convert the formula to CNF. The method is adapted to large formula.
     :param formula: the formula to convert.
     :param trace: Boolean flag if True trace the computational steps  (Default value = False)
-    :type formula: simpy formula
+    :type formula: sympy formula
     :type trace: bool
     :return: CNF formula
-    :rtype: simpy formula
+    :rtype: sympy formula
     """
     # Most of the classical methods cannot perform the CNF conversion on large formula in acceptable time (cf. to_cnf sympy, pyeda)
     # To overcome this disabling limitation, we design another method based on SAT solver.
@@ -285,7 +285,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     :param kept: predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
     :param trace: Boolean flag determining whether the trace showing the resolution is activated (Default: False).
     :param solver: the solver to use (Default: Pulp solver).
-    :type formula: simpy formula
+    :type formula: sympy formula
     :type kept: function
     :type trace: bool
     :type solver: solver function

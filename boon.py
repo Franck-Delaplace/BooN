@@ -48,7 +48,7 @@ COLOR: list[str] = ['gold', 'tomato', 'yellowgreen', 'plum', 'mediumaquamarine',
 def is_controlled(formula) -> bool:
     """Check whether a formula is controlled.
         :param formula: the input formula.
-        :type formula: simpy formula.
+        :type formula: sympy formula.
         :return:True if the formula is controlled otherwise False.
         :rtype: bool"""
     try:
@@ -359,7 +359,7 @@ class BooN:
             species_name = species.getName() if species.isSetName() else species.getId()
             vars_dic[species_name] = symbols(species_name)
 
-        # STEP: read the formulas from transitions and convert them to simpy format.
+        # STEP: read the formulas from transitions and convert them to sympy format.
         desc = {}
         for transition in qualitative_model.getListOfTransitions():  # Scan all the transitions.
             # Get the output variable
@@ -382,13 +382,13 @@ class BooN:
             else:
                 formula = libsbml.formulaToL3String(logic_terms[0].getMath())
 
-            # Convert the SBML QUAL formula into simpy syntax before parsing it.
+            # Convert the SBML QUAL formula into sympy syntax before parsing it.
             normal_formula = re.sub(r'\|\|', '|', formula)  # convert || to |
             normal_formula = re.sub(r'&&', '&', normal_formula)  # convert && to &
             normal_formula = re.sub(r'\b(\w+)\s*==\s*1\b', r'\1', normal_formula)  # convert <var> == 1 to <var>
             normal_formula = re.sub(r'\b(\w+)\s*==\s*0\b', r'~\1', normal_formula)  # convert <var> == 0 to ~ <var>
             normal_formula = normal_formula
-            # Parse the formula to obtain a simpy formula and complete desc
+            # Parse the formula to obtain a sympy formula and complete desc
             try:
                 simpy_formula = parse_expr(normal_formula, vars_dic)
             except SyntaxError:
@@ -732,19 +732,19 @@ class BooN:
     def possibly(self, query):
         """Compute the possibility constraint.
         :param query: a formula characterizing the query, objective or goal.
-        :type query: simpy formula
+        :type query: sympy formula
         :return: a formula specifying the possibility.
-        :rtype: simpy formula"""
+        :rtype: sympy formula"""
         return And(self.stability_constraints(), query)
 
     def necessary(self, query, trace: bool = False):
         """Compute the necessary constraints.
         :param query: a formula characterizing the query, objective or goal.
         :param trace: Boolean flag determining whether the trace is activated (Default value = False).
-        :type query: simpy formula
+        :type query: sympy formula
         :type trace: bool
         :return: CNF specifying the necessity.
-        :rtype: simpy formula"""
+        :rtype: sympy formula"""
 
         if not self.desc:
             return True
@@ -765,11 +765,11 @@ class BooN:
         :param query: the query defining the expected destiny or goal as propositional formula.
         :param trace: Boolean flag determining whether the trace is activated (Default: False).
         :param solver: the PulpSolver used for solving the problem (Default: PULP_CBC_CMD).
-        :type query: simpy formula
+        :type query: sympy formula
         :type trace: bool
         :type solver: function
         :return: the core of control
-        :rtype: frozenset[simpy formula]"""
+        :rtype: frozenset[sympy formula]"""
 
         # predicate selecting the negative control.
         def isnegctrl(lit) -> bool:
