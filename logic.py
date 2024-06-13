@@ -44,7 +44,7 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
 
     :param msg: the error message.
     :param arg: the argument of the error message (Default: "" no args).
-    :param kind: type of error (Default: ERROR).
+    :param kind: type of error (Default: ERROR). only the "ERROR" option will exit the application.
     :type msg: str
     :type arg: str
     :type kind: str"""
