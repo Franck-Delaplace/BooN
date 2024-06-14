@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>logic &mdash; BooN 1.03 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=ede5f57a"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BooN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BooN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">logic</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for logic</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Boolean Network analysis module</span>
+<span class="c1"># Author: Franck Delaplace</span>
+<span class="c1"># Creation date: January 2024</span>
+
+<span class="c1"># In comments :</span>
+<span class="c1"># DEF means definition which is a code part gathering functions related to a process or an object definition,</span>
+<span class="c1"># STEP means main steps</span>
+<span class="c1"># WARNING is a warning.</span>
+<span class="c1"># These terms can be used to color comments in PyCharm or else.</span>
+
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">pulp</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">z3</span>
+<span class="kn">from</span> <span class="nn">pulp</span> <span class="kn">import</span> <span class="n">PULP_CBC_CMD</span>
+<span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">sympy.core.symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
+<span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">And</span><span class="p">,</span> <span class="n">Or</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">Equivalent</span><span class="p">,</span> <span class="n">Xor</span><span class="p">,</span> <span class="n">Xnor</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">BooleanTrue</span><span class="p">,</span> <span class="n">BooleanFalse</span>
+<span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">is_cnf</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1"># Dictionary defining the output style of the formula, see prettyform</span>
+<span class="n">LOGICAL</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;infix&#39;</span><span class="p">,</span> <span class="n">And</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\u2227</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">Or</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\u2228</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">Implies</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\u21D2</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">Equivalent</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\u21D4</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">Xor</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\u22BB</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">Not</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\u00AC</span><span class="s1">&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">}</span>
+<span class="n">MATHEMATICA</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;prefix&#39;</span><span class="p">,</span> <span class="s1">&#39;(&#39;</span><span class="p">:</span> <span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span>
+                     <span class="n">And</span><span class="p">:</span> <span class="s1">&#39;&amp;&amp;&#39;</span><span class="p">,</span> <span class="n">Or</span><span class="p">:</span> <span class="s1">&#39;||&#39;</span><span class="p">,</span> <span class="n">Xor</span><span class="p">:</span> <span class="s1">&#39;Xor&#39;</span><span class="p">,</span> <span class="n">Xnor</span><span class="p">:</span> <span class="s1">&#39;Xnor&#39;</span><span class="p">,</span> <span class="n">Implies</span><span class="p">:</span> <span class="s1">&#39;Implies&#39;</span><span class="p">,</span> <span class="n">Equivalent</span><span class="p">:</span> <span class="s1">&#39;Equivalent&#39;</span><span class="p">,</span> <span class="n">Not</span><span class="p">:</span> <span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;True&#39;</span><span class="p">}</span>
+<span class="n">SYMPY</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;prefix&#39;</span><span class="p">,</span> <span class="s1">&#39;(&#39;</span><span class="p">:</span> <span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+               <span class="n">And</span><span class="p">:</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">,</span> <span class="n">Or</span><span class="p">:</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">Implies</span><span class="p">:</span> <span class="s1">&#39;Implies&#39;</span><span class="p">,</span> <span class="n">Xor</span><span class="p">:</span> <span class="s1">&#39;Xor&#39;</span><span class="p">,</span> <span class="n">Xnor</span><span class="p">:</span> <span class="s1">&#39;Xnor&#39;</span><span class="p">,</span> <span class="n">Equivalent</span><span class="p">:</span> <span class="s1">&#39;Equivalent&#39;</span><span class="p">,</span> <span class="n">Not</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;True&#39;</span><span class="p">}</span>
+<span class="n">JAVA</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;normal form&#39;</span><span class="p">,</span> <span class="n">And</span><span class="p">:</span> <span class="s2">&quot;&amp;&amp;&quot;</span><span class="p">,</span> <span class="n">Or</span><span class="p">:</span> <span class="s2">&quot;||&quot;</span><span class="p">,</span> <span class="n">Not</span><span class="p">:</span> <span class="s2">&quot;!&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">}</span>
+<span class="n">C</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;normal form&#39;</span><span class="p">,</span> <span class="n">And</span><span class="p">:</span> <span class="s2">&quot;&amp;&amp;&quot;</span><span class="p">,</span> <span class="n">Or</span><span class="p">:</span> <span class="s2">&quot;DEF:&quot;</span><span class="p">,</span> <span class="n">Not</span><span class="p">:</span> <span class="s2">&quot;!&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
+
+<span class="n">SOLVER</span> <span class="o">=</span> <span class="n">PULP_CBC_CMD</span>  <span class="c1"># Default PULP solver</span>
+<span class="n">PATHSEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span>  <span class="c1"># Separator in the file path.</span>
+
+<span class="n">prime_implicants_problem</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Global variable storing the last prime implicants problem specification.</span>
+<span class="n">trc_clauses</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># global variables counting the number of CNF clauses in supercnf function</span>
+<span class="n">trc_cnf</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># global variables counting the number of clauses converted to CNF in supercnf function</span>
+<span class="n">trc_implicants</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># global variables counting the number of prime implicants in prime_implicants</span>
+
+
+<span class="c1"># DEF: Basic functions</span>
+<div class="viewcode-block" id="errmsg">
+<a class="viewcode-back" href="../index.html#logic.errmsg">[docs]</a>
+<span class="k">def</span> <span class="nf">errmsg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Display an error message and exit in case of error (keyword ERROR).</span>
+
+<span class="sd">    :param msg: the error message.</span>
+<span class="sd">    :param arg: the argument of the error message (Default: &quot;&quot; no args).</span>
+<span class="sd">    :param kind: type of error (Default: ERROR). only the &quot;ERROR&quot; option will exit the application.</span>
+<span class="sd">    :type msg: str</span>
+<span class="sd">    :type arg: str</span>
+<span class="sd">    :type kind: str&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;** </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">PATHSEP</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">function</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span>
+        <span class="n">exit</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="firstsymbol">
+<a class="viewcode-back" href="../index.html#logic.firstsymbol">[docs]</a>
+<span class="k">def</span> <span class="nf">firstsymbol</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Extract the first symbol from the symbols of a dnf.</span>
+
+<span class="sd">    :param formula: the input dnf.</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :return: the first symbol.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">BooleanFalse</span> <span class="o">|</span> <span class="n">BooleanTrue</span><span class="p">):</span>  <span class="c1"># The formula is reduced to a Boolean value, no symbols.</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># The formula has at least 1 symbol.</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">free_symbols</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># DEF: Functions decomposing a formula.</span>
+<div class="viewcode-block" id="cnf2clauses">
+<a class="viewcode-back" href="../index.html#logic.cnf2clauses">[docs]</a>
+<span class="k">def</span> <span class="nf">cnf2clauses</span><span class="p">(</span><span class="n">cnf</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Decomposition of a CNF into a sequence of clauses.</span>
+
+<span class="sd">    :param cnf: CNF formula</span>
+<span class="sd">    :type cnf: sympy formula</span>
+<span class="sd">    :return: sequence of clauses.</span>
+<span class="sd">    :rtype: tuple[formula]&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cnf</span><span class="p">,</span> <span class="n">And</span><span class="p">):</span>  <span class="c1"># The cnf is  plain (And of Or-clauses).</span>
+        <span class="n">clauses</span> <span class="o">=</span> <span class="n">cnf</span><span class="o">.</span><span class="n">args</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cnf</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">BooleanFalse</span> <span class="o">|</span> <span class="n">BooleanTrue</span><span class="p">):</span>  <span class="c1"># The cnf is reduced to a boolean value.</span>
+        <span class="n">clauses</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clauses</span> <span class="o">=</span> <span class="p">(</span><span class="n">cnf</span><span class="p">,)</span>  <span class="c1"># Otherwise the cnf is reduced to a single clause.</span>
+    <span class="k">return</span> <span class="n">clauses</span></div>
+
+
+
+<div class="viewcode-block" id="clause2literals">
+<a class="viewcode-back" href="../index.html#logic.clause2literals">[docs]</a>
+<span class="k">def</span> <span class="nf">clause2literals</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a clause or a cube into of a sequence of literals.</span>
+
+<span class="sd">    :param  clause: the clause or cube.</span>
+<span class="sd">    :type clause: sympy formula</span>
+<span class="sd">    :return: set of literals.</span>
+<span class="sd">    :rtype: set&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">clause</span><span class="p">,</span> <span class="n">Symbol</span> <span class="o">|</span> <span class="n">Not</span><span class="p">):</span>  <span class="c1"># clause reduced to a single literal.</span>
+        <span class="n">literals_clause</span> <span class="o">=</span> <span class="p">{</span><span class="n">clause</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">clause</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">BooleanFalse</span> <span class="o">|</span> <span class="n">BooleanTrue</span><span class="p">):</span>  <span class="c1"># clause reduced to Boolean value.</span>
+        <span class="n">literals_clause</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># plain clause.</span>
+        <span class="n">literals_clause</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">clause</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">literals_clause</span></div>
+
+
+
+<span class="c1"># DEF: Functions converting the formula into another style.</span>
+<div class="viewcode-block" id="prettyform">
+<a class="viewcode-back" href="../index.html#logic.prettyform">[docs]</a>
+<span class="k">def</span> <span class="nf">prettyform</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a string of a formula in nice form.</span>
+
+<span class="sd">    :param formula: the input formula.</span>
+<span class="sd">    :param style: the style style of the logical operators (Default: LOGICAL)</span>
+<span class="sd">    :param depth: the current depth of the formula for setting parentheses (Default: 0)</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :type style: dict</span>
+<span class="sd">    :type depth: int&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">BooleanFalse</span> <span class="o">|</span> <span class="n">BooleanTrue</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">style</span><span class="p">[</span><span class="n">formula</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Not</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">style</span><span class="p">[</span><span class="n">Not</span><span class="p">]</span> <span class="o">+</span> <span class="n">prettyform</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">style</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">And</span> <span class="o">|</span> <span class="n">Or</span><span class="p">):</span>
+        <span class="n">new_formula</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">style</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">formula</span><span class="p">)])</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">prettyform</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_formula</span> <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">new_formula</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># other operators than Or, And</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">match</span> <span class="n">style</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]:</span>
+                <span class="k">case</span> <span class="s1">&#39;infix&#39;</span><span class="p">:</span>
+                    <span class="n">new_formula</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">style</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">formula</span><span class="p">)])</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">prettyform</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+                    <span class="k">return</span> <span class="n">new_formula</span> <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">new_formula</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                <span class="k">case</span> <span class="s1">&#39;prefix&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">style</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">formula</span><span class="p">)]</span> <span class="o">+</span> <span class="n">style</span><span class="p">[</span><span class="s2">&quot;(&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">prettyform</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">))</span> <span class="o">+</span> <span class="n">style</span><span class="p">[</span><span class="s2">&quot;)&quot;</span><span class="p">]</span>
+                <span class="k">case</span> <span class="s1">&#39;normal form&#39;</span><span class="p">:</span>
+                    <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;Normal form formula only&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>
+                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                    <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;Internal program error on style&quot;</span><span class="p">,</span> <span class="n">style</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown operator of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sympy2z3">
+<a class="viewcode-back" href="../index.html#logic.sympy2z3">[docs]</a>
+<span class="k">def</span> <span class="nf">sympy2z3</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a sympy formula to z3 formula.</span>
+
+<span class="sd">    :param formula: the formula to convert.</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :return: the equivalent z3 formula.</span>
+<span class="sd">    :rtype: z3 formula&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">formula</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">BooleanTrue</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">BooleanFalse</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">z3</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Not</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">z3</span><span class="o">.</span><span class="n">Not</span><span class="p">(</span><span class="n">sympy2z3</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Or</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">z3</span><span class="o">.</span><span class="n">Or</span><span class="p">([</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">sympy2z3</span><span class="p">,</span> <span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">And</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">z3</span><span class="o">.</span><span class="n">And</span><span class="p">([</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="n">sympy2z3</span><span class="p">,</span> <span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Implies</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">z3</span><span class="o">.</span><span class="n">Implies</span><span class="p">(</span><span class="n">sympy2z3</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">sympy2z3</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Equivalent</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sympy2z3</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">sympy2z3</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;a piece of the formula is not recognized&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># DEF: Advanced functionalities: fast CNF conversion, prime implicants computation.</span>
+<span class="n">TEITSIN</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_t6n&quot;</span>  <span class="c1"># prefix of the new variables introduced in Teitsin conversion</span>
+<span class="n">_varcounter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># counter1 used in newvar.</span>
+
+
+<div class="viewcode-block" id="newvar">
+<a class="viewcode-back" href="../index.html#logic.newvar">[docs]</a>
+<span class="k">def</span> <span class="nf">newvar</span><span class="p">(</span><span class="n">initialize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new sympy symbol of the form &lt;prefix&gt;&lt;number&gt;. The prefix is given by TSEITIN constant.</span>
+
+<span class="sd">     :param initialize: initialize the counter  if the value is an integer or let the counter increment by 1 if it is set to None (Default value = None)</span>
+<span class="sd">     :type  initialize: int|None</span>
+<span class="sd">     :return: a Simpy symbol.</span>
+<span class="sd">     :rtype: symbol&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_varcounter</span>
+    <span class="k">if</span> <span class="n">initialize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_varcounter</span> <span class="o">=</span> <span class="n">initialize</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_varcounter</span> <span class="o">=</span> <span class="n">_varcounter</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{prefix}{counter:d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">TEITSIN</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">_varcounter</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="tseitin">
+<a class="viewcode-back" href="../index.html#logic.tseitin">[docs]</a>
+<span class="k">def</span> <span class="nf">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Characterize the Tseitin form of a formula. The additional variables are prefixed by TEITSIN constant</span>
+
+<span class="sd">    :param formula: the formula.</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :return: a pair: Tseitin variable, Tseitin CNF.</span>
+<span class="sd">    :rtype: tuple&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">BooleanFalse</span> <span class="o">|</span> <span class="n">BooleanTrue</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">formula</span><span class="p">,</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">formula</span><span class="p">,</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Not</span><span class="p">):</span>
+        <span class="c1"># (¬ p ∨ ¬ p1) ∧ (p ∨ p1) ∧ c1</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">newvar</span><span class="p">()</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">p1</span><span class="p">)),</span> <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">p1</span><span class="p">),</span> <span class="n">c1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Or</span><span class="p">):</span>
+        <span class="c1">#  p, (¬p ∨ p1 ∨ p2) ∧ (p ∨ ¬p1) ∧ (p ∨ ¬p2) ∧ c1 ∧ c2)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">newvar</span><span class="p">()</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">p2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">Or</span><span class="p">(</span><span class="o">*</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">p1</span><span class="p">)),</span> <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">p2</span><span class="p">)),</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">And</span><span class="p">):</span>
+        <span class="c1"># p, (p ∨ ¬p1 ∨ ¬p2) ∧ (¬p ∨ p1) ∧ (¬p ∨ p2) ∧ c1∧ c2</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">newvar</span><span class="p">()</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">p2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="o">*</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">p2</span><span class="p">)),</span> <span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p1</span><span class="p">),</span> <span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p2</span><span class="p">),</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Implies</span><span class="p">):</span>
+        <span class="c1"># p , (¬p ∨ ¬p1∨ p2) ∧ (p ∨ p1) ∧ (p ∨ ¬p2) ∧ c1∧ c2</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">newvar</span><span class="p">()</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">p2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="n">p2</span><span class="p">),</span> <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">p1</span><span class="p">),</span> <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">p2</span><span class="p">)),</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Equivalent</span><span class="p">):</span>
+        <span class="c1"># p, (¬p ∨¬p1 ∨ p2)∧(¬p ∨ p1 ∨ ¬p2)∧(p ∨ ¬p1 ∨ ¬p2)∧(p ∨ p1 ∨ p2) ∧ c1 ∧ c2)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">newvar</span><span class="p">()</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">p2</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="n">p2</span><span class="p">),</span> <span class="n">Or</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p1</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">p2</span><span class="p">)),</span>
+                      <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">p2</span><span class="p">)),</span> <span class="n">Or</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;a piece of the formula is not recognized:&quot;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;__failed__&quot;</span><span class="p">),</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="tseitin_cnf">
+<a class="viewcode-back" href="../index.html#logic.tseitin_cnf">[docs]</a>
+<span class="k">def</span> <span class="nf">tseitin_cnf</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a formula to CNF using Tseitin method.</span>
+
+<span class="sd">    :param formula: the formula to be converted.</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :return: CNF formula.</span>
+<span class="sd">    :rtype: sympy formula&quot;&quot;&quot;</span>
+    <span class="n">newvar</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># initialize the counter1</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">tseitin</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">And</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="supercnf">
+<a class="viewcode-back" href="../index.html#logic.supercnf">[docs]</a>
+<span class="k">def</span> <span class="nf">supercnf</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert the formula to CNF. The method is well adapted to large formula.</span>
+
+<span class="sd">    :param formula: the formula to convert.</span>
+<span class="sd">    :param trace: Boolean flag if True trace the computational steps  (Default value = False)</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :type trace: bool</span>
+<span class="sd">    :return: CNF formula</span>
+<span class="sd">    :rtype: sympy formula</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Most of the classical methods cannot perform the CNF conversion on large formula in acceptable time (cf. to_cnf sympy, pyeda)</span>
+    <span class="c1"># To overcome this disabling limitation, we design another method based on SAT solver.</span>
+    <span class="c1"># Basically, let f be a formula, we define the CNF as ¬(SAT(¬f)) as ¬¬f = f, namely the negation of the satisfiable models of ¬f.</span>
+    <span class="c1"># Let f be a formula, we compute all the models for ¬f. For each datamodel if x = True then return ~x and x if x=False.</span>
+    <span class="c1"># The SAT solver must necessarily admit non CNF formula and be efficient. We use z3 solver which answers to these requirements.</span>
+    <span class="c1"># This was really challenging to find an efficient method to convert very large formula in CNF, Yep ! I did it :-)</span>
+    <span class="k">global</span> <span class="n">trc_clauses</span>
+    <span class="k">global</span> <span class="n">trc_cnf</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">z3</span><span class="o">.</span><span class="n">Solver</span><span class="p">()</span>  <span class="c1"># initialize Z3 solver</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sympy2z3</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">formula</span><span class="p">)))</span>  <span class="c1"># add the negation of the formula.</span>
+
+    <span class="c1"># Enumerate all models</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">trc_clauses</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">solver</span><span class="o">.</span><span class="n">check</span><span class="p">()</span> <span class="o">==</span> <span class="n">z3</span><span class="o">.</span><span class="n">sat</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
+        <span class="n">trc_clauses</span> <span class="o">=</span> <span class="n">trc_clauses</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span>
+            <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">BooN &gt;&gt; # models:[</span><span class="si">{</span><span class="n">trc_clauses</span><span class="si">:</span><span class="s1">5d</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="c1"># Block the current datamodel to enable the finding of another datamodel.</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="p">[</span><span class="n">sol</span><span class="p">()</span> <span class="o">!=</span> <span class="n">model</span><span class="p">[</span><span class="n">sol</span><span class="p">]</span> <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">model</span><span class="p">]</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">Or</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>  <span class="c1"># if x=True, y=False then add x != True or y != False as constraint disabling the selection of the datamodel.</span>
+
+    <span class="c1"># Convert the models into a CNF by negating the datamodel: x=True -&gt; ~x, x=False -&gt; x</span>
+    <span class="k">if</span> <span class="n">trace</span><span class="p">:</span>
+        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">cnf</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">Or</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sol</span><span class="p">:</span> <span class="n">Not</span><span class="p">(</span><span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sol</span><span class="p">)))</span> <span class="k">if</span> <span class="n">models</span><span class="p">[</span><span class="n">trc_cnf</span><span class="p">][</span><span class="n">sol</span><span class="p">]</span> <span class="k">else</span> <span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sol</span><span class="p">)),</span> <span class="n">models</span><span class="p">[</span><span class="n">trc_cnf</span><span class="p">]))</span>
+                    <span class="k">for</span> <span class="n">trc_cnf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)),</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;BooN &gt;&gt; CNF formatting&#39;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+                                        <span class="n">bar_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{desc}</span><span class="s1">: </span><span class="si">{percentage:3.0f}</span><span class="s1">% |</span><span class="si">{bar}</span><span class="s1">[</span><span class="si">{n_fmt:5s}</span><span class="s1"> - </span><span class="si">{elapsed}</span><span class="s1"> - </span><span class="si">{rate_fmt}</span><span class="s1">]&#39;</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cnf</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">Or</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sol</span><span class="p">:</span> <span class="n">Not</span><span class="p">(</span><span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sol</span><span class="p">)))</span> <span class="k">if</span> <span class="n">models</span><span class="p">[</span><span class="n">trc_cnf</span><span class="p">][</span><span class="n">sol</span><span class="p">]</span> <span class="k">else</span> <span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sol</span><span class="p">)),</span> <span class="n">models</span><span class="p">[</span><span class="n">trc_cnf</span><span class="p">]))</span>
+                    <span class="k">for</span> <span class="n">trc_cnf</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">))])</span>
+    <span class="k">return</span> <span class="n">cnf</span></div>
+
+
+
+<div class="viewcode-block" id="prime_implicants">
+<a class="viewcode-back" href="../index.html#logic.prime_implicants">[docs]</a>
+<span class="k">def</span> <span class="nf">prime_implicants</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">kept</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">lit</span><span class="p">:</span> <span class="ow">not</span> <span class="n">firstsymbol</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">TEITSIN</span><span class="p">),</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">solver</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">SOLVER</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.</span>
+
+<span class="sd">    :param formula: the input formula. The formula does not need to be in CNF.</span>
+<span class="sd">    :param kept: predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)</span>
+<span class="sd">    :param trace: Boolean flag determining whether the trace showing the resolution is activated (Default: False).</span>
+<span class="sd">    :param solver: the solver to use (Default: Pulp solver).</span>
+<span class="sd">    :type formula: sympy formula</span>
+<span class="sd">    :type kept: function</span>
+<span class="sd">    :type trace: bool</span>
+<span class="sd">    :type solver: solver function</span>
+<span class="sd">    :return: all the prime implicants in the form of a set of sets where each subset represent one prime implicant filtered by kept.</span>
+<span class="sd">    :rtype: frozenset&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">prime_implicants_problem</span>
+    <span class="k">global</span> <span class="n">trc_implicants</span>
+    <span class="n">cnf</span> <span class="o">=</span> <span class="n">formula</span> <span class="k">if</span> <span class="n">is_cnf</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span> <span class="k">else</span> <span class="n">tseitin_cnf</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>  <span class="c1"># Convert the dnf into CNF by the Tseitin method if needed.</span>
+
+    <span class="c1">#  Gather all literals from CNF</span>
+    <span class="n">literals</span> <span class="o">=</span> <span class="p">{</span><span class="n">lit</span> <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="n">cnf2clauses</span><span class="p">(</span><span class="n">cnf</span><span class="p">)</span> <span class="k">for</span> <span class="n">lit</span> <span class="ow">in</span> <span class="n">clause2literals</span><span class="p">(</span><span class="n">clause</span><span class="p">)}</span>
+
+    <span class="c1"># Find the critical variables where a literal and its négation both occur in the CNF formula.</span>
+    <span class="n">negvars</span> <span class="o">=</span> <span class="p">{</span><span class="n">lit</span> <span class="k">for</span> <span class="n">lit</span> <span class="ow">in</span> <span class="n">literals</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lit</span><span class="p">,</span> <span class="n">Not</span><span class="p">)}</span>
+    <span class="n">posvars</span> <span class="o">=</span> <span class="n">literals</span> <span class="o">-</span> <span class="n">negvars</span>
+    <span class="n">negvars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">firstsymbol</span><span class="p">,</span> <span class="n">negvars</span><span class="p">))</span>  <span class="c1"># Extract the variables from the negative literals.</span>
+    <span class="n">criticalvars</span> <span class="o">=</span> <span class="n">posvars</span> <span class="o">&amp;</span> <span class="n">negvars</span>  <span class="c1"># Critical variables occurring positively and negatively in the formula.</span>
+
+    <span class="c1"># Create a dictionary associating the literals to their Boolean pulp variable of the same name.</span>
+    <span class="c1"># This dictionary is used to convert the literals into pulp variables (vlit[lit])</span>
+    <span class="n">vlit</span> <span class="o">=</span> <span class="p">{</span><span class="n">lit</span><span class="p">:</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">lit</span><span class="p">),</span> <span class="n">lowBound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upBound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cat</span><span class="o">=</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpInteger</span><span class="p">)</span> <span class="k">for</span> <span class="n">lit</span> <span class="ow">in</span> <span class="n">literals</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;BooN &gt;&gt; Initialize prime implicants solving.&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="c1"># Initialize the prime implicants problem in pulp.</span>
+    <span class="n">primes</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpProblem</span><span class="p">(</span><span class="s2">&quot;Prime_Implicants&quot;</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span><span class="p">)</span>
+
+    <span class="c1"># Objective function = sum of all literals selected by kept function.</span>
+    <span class="n">objective_function</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">([</span><span class="n">vlit</span><span class="p">[</span><span class="n">lit</span><span class="p">]</span> <span class="k">for</span> <span class="n">lit</span> <span class="ow">in</span> <span class="n">literals</span> <span class="k">if</span> <span class="n">kept</span><span class="p">(</span><span class="n">lit</span><span class="p">)])</span>
+    <span class="n">primes</span> <span class="o">+=</span> <span class="n">objective_function</span>
+
+    <span class="c1"># Get the sequence of clauses of the CNF.</span>
+    <span class="n">clauses</span> <span class="o">=</span> <span class="n">cnf2clauses</span><span class="p">(</span><span class="n">cnf</span><span class="p">)</span>
+
+    <span class="c1"># Define the clauses as constraints  x |~y | z  --&gt; x + ~y + z &gt;= 1</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">clause</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clauses</span><span class="p">):</span>  <span class="c1"># Extract the literals of the current clause.</span>
+        <span class="n">literals_clause</span> <span class="o">=</span> <span class="n">clause2literals</span><span class="p">(</span><span class="n">clause</span><span class="p">)</span>
+        <span class="c1"># Transform the current clause into constraints</span>
+        <span class="n">primes</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">([</span><span class="n">vlit</span><span class="p">[</span><span class="n">literal</span><span class="p">]</span> <span class="k">for</span> <span class="n">literal</span> <span class="ow">in</span> <span class="n">literals_clause</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;CLAUSE_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c1"># Define the exclusive choice  constraint between a variable and its negation, i.e. x + ~x &lt;= 1</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">criticalvars</span><span class="p">:</span>
+        <span class="n">primes</span> <span class="o">+=</span> <span class="n">vlit</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">+</span> <span class="n">vlit</span><span class="p">[</span><span class="n">Not</span><span class="p">(</span><span class="n">var</span><span class="p">)]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;EXCLUSION_&quot;</span> <span class="o">+</span> <span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="c1"># Find all the solutions until no solutions are found.</span>
+    <span class="n">solutions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span>
+    <span class="n">trc_implicants</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">status</span> <span class="o">==</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>  <span class="c1"># while a solution is found</span>
+        <span class="n">primes</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># Quiet solving</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">primes</span><span class="o">.</span><span class="n">status</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+            <span class="n">trc_implicants</span> <span class="o">=</span> <span class="n">trc_implicants</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">BooN &gt;&gt; # solutions:[</span><span class="si">{</span><span class="n">trc_implicants</span><span class="si">:</span><span class="s1">3d</span><span class="si">}</span><span class="s1">]     &#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">solution</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="n">lit</span> <span class="k">for</span> <span class="n">lit</span> <span class="ow">in</span> <span class="n">literals</span> <span class="k">if</span> <span class="n">kept</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span> <span class="ow">and</span> <span class="n">vlit</span><span class="p">[</span><span class="n">lit</span><span class="p">]</span><span class="o">.</span><span class="n">varValue</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">})</span>
+            <span class="n">solutions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+
+            <span class="c1"># Add the constraint discarding the found solution, e.g.  s = {x, ~y, z} --&gt; x+~y+z &lt;= 2 s.t. len(s)-1 = 2.</span>
+            <span class="n">discard_solution</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">lit</span><span class="p">:</span> <span class="n">vlit</span><span class="p">[</span><span class="n">lit</span><span class="p">],</span> <span class="n">solution</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;OUT_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">trc_implicants</span><span class="p">)</span>
+            <span class="n">primes</span> <span class="o">+=</span> <span class="n">discard_solution</span>
+    <span class="n">prime_implicants_problem</span> <span class="o">=</span> <span class="n">primes</span>  <span class="c1"># keep the specification of the problem in a global variable.</span>
+    <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">solutions</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Franck Delaplace.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
