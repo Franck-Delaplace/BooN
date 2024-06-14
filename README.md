@@ -1,7 +1,9 @@
 
 <h1 style="text-align:center">BooN</h1>
 <p style="text-align:justify">The BooN project provides a complete set of functionalities for Boolean Network (BooN) analysis. 
-It was originally designed to explore the modeling of genetic networks by Boolean networks. 
+It was originally designed to explore the modeling of genetic networks by Boolean networks.
+The documentation related to the functions can be found here: <a href="https://franck-delaplace.github.io/BooN/"> 
+https://franck-delaplace.github.io/BooN/</a>
 The project includes:</p>
  <ul>
  <li> the definition of a <b>Boolean network</b> with the possibility to load and save it; </li>
