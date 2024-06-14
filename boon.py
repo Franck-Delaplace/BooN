@@ -81,7 +81,7 @@ def asynchronous(variables: list | set) -> frozenset:
 
     :param variables: list of variables.
     :return: set of sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
-    :rtype: frozenset[frozenset[symbol]]"""
+    :rtype: frozenset[frozenset[Symbol]]"""
     return frozenset({frozenset({x}) for x in variables})
 
 
@@ -90,12 +90,12 @@ def synchronous(variables: list | set) -> frozenset:
 
         :param variables: list of variables.
         :return: set of sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
-        :rtype: frozenset[frozenset[symbol]]"""
+        :rtype: frozenset[frozenset[Symbol]]"""
     return frozenset({frozenset({*variables})})
 
 
 def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
-    """Convert a set of states to an integer.
+    """Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
 
     :param state: state of the variables.
     :param variables: list of variables. If the list is empty then the encoding order corresponds to the variable occur. (Defaults [])
@@ -150,15 +150,15 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
 class BooN:
     """Boolean Network Class.
 
-    :param  desc:  Boolean network descriptor { variable: formula…}.
-    :param  style: output form of the BooN.
+    :param  desc:  Boolean network descriptor { variable: formula, …}.
+    :param  style: output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA 
     :param  pos: the positions of the nodes in the interaction graph.
     :type  desc: dict
-    :type  style: str
+    :type  style: dict
     :type  pos: dict"""
     desc: dict = {}
     style: dict = {}
-    pos: dict = {}  #
+    pos: dict = {}  
 
     def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}) -> None:
         """Initialize the BooN object.
@@ -197,7 +197,7 @@ class BooN:
         """Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
 
         :param  variable: the variable to delete.
-        :type variable: symbol"""
+        :type variable: Symbol"""
 
         def delete(formula, val):  # sub function deleting a variable in a formula.
             if isinstance(formula, bool):
@@ -237,8 +237,8 @@ class BooN:
 
         :param  source:  the variable to rename.
         :param  target:  the variable renaming the source.
-        :type source: symbol
-        :type target: symbol"""
+        :type source: Symbol
+        :type target: Symbol"""
         variables = self.variables
 
         if source not in variables:
@@ -322,7 +322,7 @@ class BooN:
                         except ValueError:
                             errmsg(f"Syntax error, = is missing, line {i} in file", fullfilename, "READ ERROR")
                             return
-                        try:  # Set the variable to symbol.
+                        try:  # Set the variable to Symbol.
                             var = symbols(line[:equal].strip())
                         except ValueError:
                             errmsg(f"Syntax error, wrong variable name, line {i} in file", fullfilename, "READ ERROR")
@@ -371,7 +371,7 @@ class BooN:
             errmsg("The model does not have the Qual plugin", kind="WARNING")
             return
 
-        # make a dictionary associating a string name to its corresponding symbol.
+        # make a dictionary associating a string name to its corresponding Symbol.
         vars_dic = {}
         for species in qualitative_model.getListOfQualitativeSpecies():
             species_name = species.getName() if species.isSetName() else species.getId()
@@ -431,7 +431,7 @@ class BooN:
         :param  variable: the variable where the formula  is to be converted in CNF (Default None). If variable is None then all the formulas are converted to CNF.
         :param  simplify: Boolean flag determining whether the formula should be simplified (Default True).
         :param  force: Boolean flag forcing the complete simplification (Default True).
-        :type  variable: symbol
+        :type  variable: Symbol
         :type  simplify: bool
         :type  force: bool"""
 
@@ -450,7 +450,7 @@ class BooN:
         :param  variable: the variable where the formula is to be converted in DNF (Default: None). If variable is None then all the formulas are converted to DNF.
         :param  simplify: Boolean flag determining whether the formula should be simplified (Default: True).
         :param  force: Boolean flag forcing the complete simplification (Default: True).
-        :type  variable: symbol
+        :type  variable: Symbol
         :type  simplify: bool
         :type  force: bool"""
 
