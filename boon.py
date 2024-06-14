@@ -65,7 +65,7 @@ def core2actions(core: frozenset) -> list:
     The actions are sorted by length meaning that the more parsimonious actions are at first.
 
     :param core: the core.
-    :type core: frozenset
+    :type core: frozenset of literals.
     :return: A list of combined actions where an action is defined as:[(variable,bool) ...]
     :rtype: list[list[tuple]]"""
     ACTION: dict = {"0": False, "1": True}
