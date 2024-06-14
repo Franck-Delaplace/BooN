@@ -45,9 +45,12 @@
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">BooN’s Documentation</a><ul>
-<li><a class="reference internal" href="#boon-modules">BooN Modules</a></li>
+<li><a class="reference internal" href="#boon-modules-description">BooN Modules Description</a></li>
 <li><a class="reference internal" href="#boon-installation">BooN installation</a></li>
-<li><a class="reference internal" href="#function-description">Function Description</a><ul>
+<li><a class="reference internal" href="#function-description">Function Description</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boon-module">Boon Module</a><ul>
 <li><a class="reference internal" href="#boon.BooN"><code class="docutils literal notranslate"><span class="pre">BooN</span></code></a><ul>
 <li><a class="reference internal" href="#boon.BooN.cnf"><code class="docutils literal notranslate"><span class="pre">BooN.cnf()</span></code></a></li>
 <li><a class="reference internal" href="#boon.BooN.control"><code class="docutils literal notranslate"><span class="pre">BooN.control()</span></code></a></li>
@@ -81,6 +84,9 @@
 <li><a class="reference internal" href="#boon.is_controlled"><code class="docutils literal notranslate"><span class="pre">is_controlled()</span></code></a></li>
 <li><a class="reference internal" href="#boon.state2int"><code class="docutils literal notranslate"><span class="pre">state2int()</span></code></a></li>
 <li><a class="reference internal" href="#boon.synchronous"><code class="docutils literal notranslate"><span class="pre">synchronous()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#logic-module">Logic Module</a><ul>
 <li><a class="reference internal" href="#logic.clause2literals"><code class="docutils literal notranslate"><span class="pre">clause2literals()</span></code></a></li>
 <li><a class="reference internal" href="#logic.cnf2clauses"><code class="docutils literal notranslate"><span class="pre">cnf2clauses()</span></code></a></li>
 <li><a class="reference internal" href="#logic.errmsg"><code class="docutils literal notranslate"><span class="pre">errmsg()</span></code></a></li>
@@ -92,6 +98,65 @@
 <li><a class="reference internal" href="#logic.sympy2z3"><code class="docutils literal notranslate"><span class="pre">sympy2z3()</span></code></a></li>
 <li><a class="reference internal" href="#logic.tseitin"><code class="docutils literal notranslate"><span class="pre">tseitin()</span></code></a></li>
 <li><a class="reference internal" href="#logic.tseitin_cnf"><code class="docutils literal notranslate"><span class="pre">tseitin_cnf()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boonify-module">Boonify Module</a><ul>
+<li><a class="reference internal" href="#boonify.Boonify"><code class="docutils literal notranslate"><span class="pre">Boonify</span></code></a><ul>
+<li><a class="reference internal" href="#boonify.Boonify.add_history"><code class="docutils literal notranslate"><span class="pre">Boonify.add_history()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.closeEvent"><code class="docutils literal notranslate"><span class="pre">Boonify.closeEvent()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.controllability"><code class="docutils literal notranslate"><span class="pre">Boonify.controllability()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.design"><code class="docutils literal notranslate"><span class="pre">Boonify.design()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.exportation"><code class="docutils literal notranslate"><span class="pre">Boonify.exportation()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.help"><code class="docutils literal notranslate"><span class="pre">Boonify.help()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.history_raz"><code class="docutils literal notranslate"><span class="pre">Boonify.history_raz()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.importation"><code class="docutils literal notranslate"><span class="pre">Boonify.importation()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.model"><code class="docutils literal notranslate"><span class="pre">Boonify.model()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.open"><code class="docutils literal notranslate"><span class="pre">Boonify.open()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.quit"><code class="docutils literal notranslate"><span class="pre">Boonify.quit()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.redo"><code class="docutils literal notranslate"><span class="pre">Boonify.redo()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.refresh"><code class="docutils literal notranslate"><span class="pre">Boonify.refresh()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.resizeEvent"><code class="docutils literal notranslate"><span class="pre">Boonify.resizeEvent()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.save"><code class="docutils literal notranslate"><span class="pre">Boonify.save()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.saveas"><code class="docutils literal notranslate"><span class="pre">Boonify.saveas()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.setup_design"><code class="docutils literal notranslate"><span class="pre">Boonify.setup_design()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.show_history"><code class="docutils literal notranslate"><span class="pre">Boonify.show_history()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.stablestates"><code class="docutils literal notranslate"><span class="pre">Boonify.stablestates()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.undo"><code class="docutils literal notranslate"><span class="pre">Boonify.undo()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Boonify.view"><code class="docutils literal notranslate"><span class="pre">Boonify.view()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boonify.Controllability"><code class="docutils literal notranslate"><span class="pre">Controllability</span></code></a><ul>
+<li><a class="reference internal" href="#boonify.Controllability.actupon"><code class="docutils literal notranslate"><span class="pre">Controllability.actupon()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Controllability.controllability"><code class="docutils literal notranslate"><span class="pre">Controllability.controllability()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Controllability.destiny_to_observers"><code class="docutils literal notranslate"><span class="pre">Controllability.destiny_to_observers()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Controllability.initialize_controllability"><code class="docutils literal notranslate"><span class="pre">Controllability.initialize_controllability()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Controllability.observers_to_destiny"><code class="docutils literal notranslate"><span class="pre">Controllability.observers_to_destiny()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Controllability.select_action"><code class="docutils literal notranslate"><span class="pre">Controllability.select_action()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boonify.Help"><code class="docutils literal notranslate"><span class="pre">Help</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
+<li><a class="reference internal" href="#boonify.Model.cb_network_layout"><code class="docutils literal notranslate"><span class="pre">Model.cb_network_layout()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Model.modeling"><code class="docutils literal notranslate"><span class="pre">Model.modeling()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Model.rb_mode"><code class="docutils literal notranslate"><span class="pre">Model.rb_mode()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boonify.StableStates"><code class="docutils literal notranslate"><span class="pre">StableStates</span></code></a><ul>
+<li><a class="reference internal" href="#boonify.StableStates.cb_styling"><code class="docutils literal notranslate"><span class="pre">StableStates.cb_styling()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.StableStates.stablestates"><code class="docutils literal notranslate"><span class="pre">StableStates.stablestates()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boonify.Threader"><code class="docutils literal notranslate"><span class="pre">Threader</span></code></a><ul>
+<li><a class="reference internal" href="#boonify.Threader.apply"><code class="docutils literal notranslate"><span class="pre">Threader.apply()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Threader.quit"><code class="docutils literal notranslate"><span class="pre">Threader.quit()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.Threader.run"><code class="docutils literal notranslate"><span class="pre">Threader.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#boonify.View"><code class="docutils literal notranslate"><span class="pre">View</span></code></a><ul>
+<li><a class="reference internal" href="#boonify.View.cb_styling"><code class="docutils literal notranslate"><span class="pre">View.cb_styling()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.View.change_formula"><code class="docutils literal notranslate"><span class="pre">View.change_formula()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.View.convertdnf"><code class="docutils literal notranslate"><span class="pre">View.convertdnf()</span></code></a></li>
+<li><a class="reference internal" href="#boonify.View.initialize_view"><code class="docutils literal notranslate"><span class="pre">View.initialize_view()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -139,15 +204,14 @@ The project includes:</p>
 <li><p>also different basic functionalities are included as: update formula and importing/exporting to a text or SBML file the Boolean network.</p></li>
 </ul>
 </div></blockquote>
-<section id="boon-modules">
-<h2>BooN Modules<a class="headerlink" href="#boon-modules" title="Link to this heading"></a></h2>
+<section id="boon-modules-description">
+<h2>BooN Modules Description<a class="headerlink" href="#boon-modules-description" title="Link to this heading"></a></h2>
 <p>The BooN project comprises 3 modules:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">boon</span></code> module is related to the manipulation of Boolean network named BooN which is an object.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">logic</span></code> module includes basic functions on propositional formula, as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin’s method, and prime implicant calculation. These functions are used in the BooN modules.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">boonify</span></code> module is the graphical interface manipulating BooN:computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and the controllability analysis. For exploring BooN interactively run <code class="docutils literal notranslate"><span class="pre">boonify.py</span></code></p></li>
 </ul>
-<p>In the next section, the function related to <code class="docutils literal notranslate"><span class="pre">boon</span></code> and <code class="docutils literal notranslate"><span class="pre">logic</span></code> are described.</p>
 </section>
 <section id="boon-installation">
 <h2>BooN installation<a class="headerlink" href="#boon-installation" title="Link to this heading"></a></h2>
@@ -161,6 +225,12 @@ The project includes:</p>
 <h2>Function Description<a class="headerlink" href="#function-description" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 </div>
+</section>
+</section>
+<section id="boon-module">
+<h1>Boon Module<a class="headerlink" href="#boon-module" title="Link to this heading"></a></h1>
+<p>This module contains functions used for manipulation Boolean network (BooN).
+BooN is the class of this module.</p>
 <dl class="py class" id="module-boon">
 <dt class="sig sig-object py" id="boon.BooN">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boon.</span></span><span class="sig-name descname"><span class="pre">BooN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'type':</span> <span class="pre">'infix',</span> <span class="pre">And:</span> <span class="pre">'∧',</span> <span class="pre">Equivalent:</span> <span class="pre">'⇔',</span> <span class="pre">False:</span> <span class="pre">'false',</span> <span class="pre">Implies:</span> <span class="pre">'⇒',</span> <span class="pre">Not:</span> <span class="pre">'¬',</span> <span class="pre">Or:</span> <span class="pre">'∨',</span> <span class="pre">True:</span> <span class="pre">'true',</span> <span class="pre">Xor:</span> <span class="pre">'⊻'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon.html#BooN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN" title="Link to this definition"></a></dt>
@@ -440,7 +510,7 @@ The separator of formulas is defined by BOONSEP variable. The nodes are circular
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN14-juin-24-16.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN14-juin-24-17.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
 <dd><p>Save the Boolean Network to file.  If the extension is missing then .boon is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -513,7 +583,7 @@ The separator of formulas is defined by BOONSEP variable.</p>
 The actions are sorted by length meaning that the more parsimonious actions are at first.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>core</strong> (<em>frozenset</em>) – the core.</p>
+<dd class="field-odd"><p><strong>core</strong> (<em>frozenset</em><em> of </em><em>literals.</em>) – the core.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of combined actions where an action is defined as:[(variable,bool) …]</p>
@@ -615,10 +685,14 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dl>
 </dd></dl>
 
+</section>
+<section id="logic-module">
+<h1>Logic Module<a class="headerlink" href="#logic-module" title="Link to this heading"></a></h1>
+<p>This module includes functions on propositional formula.</p>
 <dl class="py function" id="module-logic">
 <dt class="sig sig-object py" id="logic.clause2literals">
 <span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">clause2literals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clause</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span></span></span><a class="reference internal" href="_modules/logic.html#clause2literals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.clause2literals" title="Link to this definition"></a></dt>
-<dd><p>“ Convert a clause or a cube into of a sequence of literals.</p>
+<dd><p>Convert a clause or a cube into of a sequence of literals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>clause</strong> (<em>sympy formula</em>) – the clause or cube.</p>
@@ -667,7 +741,7 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 <dl class="py function">
 <dt class="sig sig-object py" id="logic.firstsymbol">
 <span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">firstsymbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#firstsymbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.firstsymbol" title="Link to this definition"></a></dt>
-<dd><p>Extract the first symbol from the set of symbols of a dnf.</p>
+<dd><p>Extract the first symbol from the symbols of a dnf.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>formula</strong> (<em>sympy formula</em>) – the input dnf.</p>
@@ -804,6 +878,285 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 </section>
+<section id="boonify-module">
+<h1>Boonify Module<a class="headerlink" href="#boonify-module" title="Link to this heading"></a></h1>
+<p>Graphical interface module.</p>
+<dl class="py class" id="module-boonify">
+<dt class="sig sig-object py" id="boonify.Boonify">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">Boonify</span></span><a class="reference internal" href="_modules/boonify.html#Boonify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify" title="Link to this definition"></a></dt>
+<dd><p>Main Class of the GUI</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.add_history">
+<span class="sig-name descname"><span class="pre">add_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.add_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.add_history" title="Link to this definition"></a></dt>
+<dd><p>Add current BooN to the history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.closeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.closeEvent" title="Link to this definition"></a></dt>
+<dd><p>Close window</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.controllability">
+<span class="sig-name descname"><span class="pre">controllability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.controllability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.controllability" title="Link to this definition"></a></dt>
+<dd><p>Controllability View</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.design">
+<span class="sig-name descname"><span class="pre">design</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.design" title="Link to this definition"></a></dt>
+<dd><p>interaction graph design callback.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.exportation">
+<span class="sig-name descname"><span class="pre">exportation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.exportation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.exportation" title="Link to this definition"></a></dt>
+<dd><p>Export file dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.help">
+<span class="sig-name descname"><span class="pre">help</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.help"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.help" title="Link to this definition"></a></dt>
+<dd><p>Help View</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.history_raz">
+<span class="sig-name descname"><span class="pre">history_raz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.history_raz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.history_raz" title="Link to this definition"></a></dt>
+<dd><p>Clear the history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.importation">
+<span class="sig-name descname"><span class="pre">importation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.importation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.importation" title="Link to this definition"></a></dt>
+<dd><p>Import file dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.model">
+<span class="sig-name descname"><span class="pre">model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.model" title="Link to this definition"></a></dt>
+<dd><p>Model View</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.open" title="Link to this definition"></a></dt>
+<dd><p>Open file dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.quit" title="Link to this definition"></a></dt>
+<dd><p>Quit application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.redo">
+<span class="sig-name descname"><span class="pre">redo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.redo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.redo" title="Link to this definition"></a></dt>
+<dd><p>Redo operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.refresh" title="Link to this definition"></a></dt>
+<dd><p>Refresh the opened widgets.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.resizeEvent">
+<span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.resizeEvent" title="Link to this definition"></a></dt>
+<dd><p>Modify graph parameters so that node and edge widths are invariant to window resizing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.save" title="Link to this definition"></a></dt>
+<dd><p>Save file dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.saveas">
+<span class="sig-name descname"><span class="pre">saveas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.saveas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.saveas" title="Link to this definition"></a></dt>
+<dd><p>Save as file as dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.setup_design">
+<span class="sig-name descname"><span class="pre">setup_design</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.setup_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.setup_design" title="Link to this definition"></a></dt>
+<dd><p>Set up of the editable graph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.show_history">
+<span class="sig-name descname"><span class="pre">show_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.show_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.show_history" title="Link to this definition"></a></dt>
+<dd><p>Display the history.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.stablestates">
+<span class="sig-name descname"><span class="pre">stablestates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.stablestates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.stablestates" title="Link to this definition"></a></dt>
+<dd><p>Stable States View</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.undo">
+<span class="sig-name descname"><span class="pre">undo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.undo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.undo" title="Link to this definition"></a></dt>
+<dd><p>Undo operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Boonify.view">
+<span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Boonify.view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Boonify.view" title="Link to this definition"></a></dt>
+<dd><p>BooN View</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="boonify.Controllability">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">Controllability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability" title="Link to this definition"></a></dt>
+<dd><p>Controllability class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Controllability.actupon">
+<span class="sig-name descname"><span class="pre">actupon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.actupon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.actupon" title="Link to this definition"></a></dt>
+<dd><p>Apply the selection actions on the BooN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Controllability.controllability">
+<span class="sig-name descname"><span class="pre">controllability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.controllability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.controllability" title="Link to this definition"></a></dt>
+<dd><p>Compute the control actions based on the destiny and the observers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Controllability.destiny_to_observers">
+<span class="sig-name descname"><span class="pre">destiny_to_observers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.destiny_to_observers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.destiny_to_observers" title="Link to this definition"></a></dt>
+<dd><p>Modify the observer w.r.t. the destiny change.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Controllability.initialize_controllability">
+<span class="sig-name descname"><span class="pre">initialize_controllability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.initialize_controllability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.initialize_controllability" title="Link to this definition"></a></dt>
+<dd><p>Initialize the controllability widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Controllability.observers_to_destiny">
+<span class="sig-name descname"><span class="pre">observers_to_destiny</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chkitem</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.observers_to_destiny"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.observers_to_destiny" title="Link to this definition"></a></dt>
+<dd><p>Modify the destiny w.r.t. the observer change</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Controllability.select_action">
+<span class="sig-name descname"><span class="pre">select_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.select_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.select_action" title="Link to this definition"></a></dt>
+<dd><p>Keep the selection solution</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="boonify.Help">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">Help</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Help"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Help" title="Link to this definition"></a></dt>
+<dd><p>Help Class used for showing help.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="boonify.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Model" title="Link to this definition"></a></dt>
+<dd><p>Class to handle model of dynamics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Model.cb_network_layout">
+<span class="sig-name descname"><span class="pre">cb_network_layout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Model.cb_network_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Model.cb_network_layout" title="Link to this definition"></a></dt>
+<dd><p>Determine the layout of the network model from combo box.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Model.modeling">
+<span class="sig-name descname"><span class="pre">modeling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Model.modeling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Model.modeling" title="Link to this definition"></a></dt>
+<dd><p>Compute the model of dynamics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Model.rb_mode">
+<span class="sig-name descname"><span class="pre">rb_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Model.rb_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Model.rb_mode" title="Link to this definition"></a></dt>
+<dd><p>Mode selection from radio button box.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="boonify.StableStates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">StableStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#StableStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.StableStates" title="Link to this definition"></a></dt>
+<dd><p>Class to handle stable states computation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.StableStates.cb_styling">
+<span class="sig-name descname"><span class="pre">cb_styling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#StableStates.cb_styling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.StableStates.cb_styling" title="Link to this definition"></a></dt>
+<dd><p>Select style from combo box selection</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.StableStates.stablestates">
+<span class="sig-name descname"><span class="pre">stablestates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#StableStates.stablestates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.StableStates.stablestates" title="Link to this definition"></a></dt>
+<dd><p>Compute stable states and arrange the view.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="boonify.Threader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">Threader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app=&lt;function</span> <span class="pre">Threader.&lt;lambda&gt;&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Threader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Threader" title="Link to this definition"></a></dt>
+<dd><p>Class executing a thread to run an application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Threader.apply">
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Threader.apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Threader.apply" title="Link to this definition"></a></dt>
+<dd><p>Fix the application running in the thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Threader.quit">
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Threader.quit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Threader.quit" title="Link to this definition"></a></dt>
+<dd><p>terminate the thread</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.Threader.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Threader.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Threader.run" title="Link to this definition"></a></dt>
+<dd><p>run the application</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="boonify.View">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">boonify.</span></span><span class="sig-name descname"><span class="pre">View</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#View"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.View" title="Link to this definition"></a></dt>
+<dd><p>View Class used for showing the BooN formula in a table.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.View.cb_styling">
+<span class="sig-name descname"><span class="pre">cb_styling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#View.cb_styling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.View.cb_styling" title="Link to this definition"></a></dt>
+<dd><p>Style from combo box selection</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.View.change_formula">
+<span class="sig-name descname"><span class="pre">change_formula</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#View.change_formula"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.View.change_formula" title="Link to this definition"></a></dt>
+<dd><p>Update the BooN from a formula change.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.View.convertdnf">
+<span class="sig-name descname"><span class="pre">convertdnf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#View.convertdnf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.View.convertdnf" title="Link to this definition"></a></dt>
+<dd><p>Convert the BooN into DNF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="boonify.View.initialize_view">
+<span class="sig-name descname"><span class="pre">initialize_view</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#View.initialize_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.View.initialize_view" title="Link to this definition"></a></dt>
+<dd><p>Fill the table.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>

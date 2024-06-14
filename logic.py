@@ -54,7 +54,7 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
 
 
 def firstsymbol(formula):
-    """ Extract the first symbol from the set of symbols of a dnf.
+    """ Extract the first symbol from the symbols of a dnf.
 
     :param formula: the input dnf.
     :type formula: sympy formula
@@ -83,7 +83,7 @@ def cnf2clauses(cnf):
 
 
 def clause2literals(clause) -> set:
-    """" Convert a clause or a cube into of a sequence of literals.
+    """Convert a clause or a cube into of a sequence of literals.
 
     :param  clause: the clause or cube.
     :type clause: sympy formula
