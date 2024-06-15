@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>boon &mdash; BooN 1.04 documentation</title>
+  <title>boon &mdash; BooN 1.05 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=266c65b7"></script>
+        <script src="../_static/documentation_options.js?v=8214e1ae"></script>
         <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -124,7 +124,6 @@
 <span class="sd">    :type formula: sympy formula.</span>
 <span class="sd">    :return: True if the formula is controlled otherwise False</span>
 <span class="sd">    :rtype: bool</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">var</span><span class="p">:</span> <span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">),</span> <span class="n">formula</span><span class="o">.</span><span class="n">free_symbols</span><span class="p">))</span>
@@ -143,6 +142,7 @@
 <span class="sd">    :type core: frozenset of literals.</span>
 <span class="sd">    :return: A list of combined actions where an action is defined as:[(variable,bool) ...]</span>
 <span class="sd">    :rtype: list[list[tuple]]&quot;&quot;&quot;</span>
+
     <span class="n">ACTION</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
     <span class="n">lctrl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span>
     <span class="n">actions</span> <span class="o">=</span> <span class="p">[[(</span><span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)[</span><span class="n">lctrl</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]),</span> <span class="n">ACTION</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)[</span><span class="n">lctrl</span><span class="p">]])</span> <span class="k">for</span> <span class="n">ctrl</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">]</span> <span class="k">for</span> <span class="n">primes</span> <span class="ow">in</span> <span class="n">core</span><span class="p">]</span>
@@ -267,6 +267,7 @@
 <span class="sd">        :param  style: the output style of formulas  (Default: LOGICAL).</span>
 <span class="sd">        :param  pos: positions of the variable in the interaction graph drawing.</span>
 <span class="sd">                If empty, the pos are generated during the drawing (Default: {}). &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">descriptor</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="n">descriptor</span>
         <span class="k">else</span><span class="p">:</span>
@@ -291,6 +292,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">variables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the set of variables.&quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 <div class="viewcode-block" id="BooN.delete">
@@ -344,6 +346,7 @@
 <span class="sd">        :param  target:  the variable renaming the source.</span>
 <span class="sd">        :type source: Symbol</span>
 <span class="sd">        :type target: Symbol&quot;&quot;&quot;</span>
+
         <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span>
 
         <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
@@ -388,6 +391,7 @@
 <span class="sd">        :param filename: the name of the file to load the network.</span>
 <span class="sd">        :type  filename: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTBOON</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -407,6 +411,7 @@
 
 <span class="sd">        :param filename: the file name.</span>
 <span class="sd">        :type  filename: str&quot;&quot;&quot;</span>
+
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTXT</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span>
@@ -426,6 +431,7 @@
 <span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
 <span class="sd">        :type  filename: str</span>
 <span class="sd">        :type sep: str&quot;&quot;&quot;</span>
+
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTXT</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">try</span><span class="p">:</span>
@@ -475,26 +481,28 @@
 
 <span class="sd">        :param filename: the file name to import the Boolean network.</span>
 <span class="sd">        :type  filename: str&quot;&quot;&quot;</span>
+
         <span class="n">sbml_file</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTSBML</span>
 
         <span class="c1"># STEP: Open the SBML file and get the qualitative_model model</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">libsbml</span><span class="o">.</span><span class="n">SBMLReader</span><span class="p">()</span>
         <span class="n">document</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">readSBML</span><span class="p">(</span><span class="n">sbml_file</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">document</span><span class="o">.</span><span class="n">getNumErrors</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;Error reading SBML file&quot;</span><span class="p">,</span> <span class="n">document</span><span class="o">.</span><span class="n">getErrorLog</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">document</span><span class="o">.</span><span class="n">getNumErrors</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># Check if there is no errors while reading the SBML files.</span>
+            <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;Error reading SBML file&quot;</span><span class="p">,</span> <span class="n">document</span><span class="o">.</span><span class="n">getErrorLog</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="p">(),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
 
-        <span class="n">model</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">getModel</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">getModel</span><span class="p">()</span> <span class="c1"># Check whether a model exists.</span>
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;No model present in SBML file.&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="n">qualitative_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">getPlugin</span><span class="p">(</span><span class="s2">&quot;qual&quot;</span><span class="p">)</span>  <span class="c1"># Get the qualitative_model part of the model.</span>
-        <span class="k">if</span> <span class="n">qualitative_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">qualitative_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># Check whether a Qual model exists.</span>
             <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;The model does not have the Qual plugin&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="c1"># make a dictionary associating a string name to its corresponding Symbol.</span>
+        <span class="c1"># Make a dictionary associating a string name to its corresponding Symbol.</span>
         <span class="n">vars_dic</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">qualitative_model</span><span class="o">.</span><span class="n">getListOfQualitativeSpecies</span><span class="p">():</span>
             <span class="n">species_name</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="k">if</span> <span class="n">species</span><span class="o">.</span><span class="n">isSetName</span><span class="p">()</span> <span class="k">else</span> <span class="n">species</span><span class="o">.</span><span class="n">getId</span><span class="p">()</span>
@@ -514,13 +522,13 @@
             <span class="c1"># Get the formula</span>
             <span class="n">logic_terms</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">getListOfFunctionTerms</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logic_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Empty transition in SBML -&gt; skip it</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logic_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Empty transition in SBML file, skip it.</span>
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logic_terms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># check whether there exists a single formula only, error otherwise</span>
                 <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;Multiple logic terms present. Number of terms&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">logic_terms</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
                 <span class="k">return</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># Get the SBML QUAL formula</span>
                 <span class="n">formula</span> <span class="o">=</span> <span class="n">libsbml</span><span class="o">.</span><span class="n">formulaToL3String</span><span class="p">(</span><span class="n">logic_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getMath</span><span class="p">())</span>
 
             <span class="c1"># Convert the SBML QUAL formula into sympy syntax before parsing it.</span>
@@ -887,6 +895,7 @@
 <span class="sd">        :type frozenfalse: iterable object (list, set, tuple)</span>
 <span class="sd">        :type frozentrue: iterable object (list, set, tuple)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span>
         <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">frozenfalse</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
@@ -942,7 +951,7 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.destify">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">destify</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">PULP_CBC_CMD</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the core which is the minimal set of controls under the inclusion to satisfy the query.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.</span>
 <span class="sd">        Destify is a neologism that refers to the deliberate and purposeful act for shaping destiny by</span>
 <span class="sd">        influencing or directing the course of events or outcomes towards an expected goal.</span>
 
@@ -951,11 +960,11 @@
 <span class="sd">        :param solver: the PulpSolver used for solving the problem (Default: PULP_CBC_CMD).</span>
 <span class="sd">        :type query: sympy formula</span>
 <span class="sd">        :type trace: bool</span>
-<span class="sd">        :type solver: function</span>
+<span class="sd">        :type solver: type</span>
 <span class="sd">        :return: the core of control</span>
 <span class="sd">        :rtype: frozenset[sympy formula]&quot;&quot;&quot;</span>
 
-        <span class="c1"># predicate selecting the negative control.</span>
+        <span class="c1"># predicate determining whether a literal is a negative control (e.g. ~ _u1).</span>
         <span class="k">def</span> <span class="nf">isnegctrl</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">firstsymbol</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lit</span><span class="p">,</span> <span class="n">Not</span><span class="p">)</span>
 
