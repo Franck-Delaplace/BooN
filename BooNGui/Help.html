@@ -56,17 +56,15 @@
     <p > The network is designed interactively.
         At the bottom of the graph window, there is a <i>pattern network</i>  which is used to
         select the edge sign: either positive (<span style="color: Green;">Green</span>) or negative (<span style="color:red">Red</span>).&nbsp;
-        If the interaction is not monotone, its definition will be achieved by modifying the formula directly.
-        This network will never be included in the final BooN. When you select the appropriate edge by clicking on it in this network, all new edges will be of the same type as this edge.
-        The selected node or edge is always emphasized. <br>
+        This network will never be included in the final BooN. Clicking on an edge of the pattern network will apply the selected edge type to all new edges.
+        Selecting a node or edge will always highlight it.  If the interaction is not monotone, its definition can only be achieved by modifying the formula directly.<br>
         The network design commands are: </p>
     <dl>
         <dt><b>Create a node:</b></dt><dd>press <span class="cmd">[insert]</span> or
             <span class="cmd">+</span> will add a new node to the
-            graph at mouse position.</dd>
-         <dt><b>Create an edge:</b></dt><dd>to create a new edge, first select an edge
-            with the desired sign or color, then double-click the starting node and
-            double-click the destination node next.</dd>
+            graph at the current mouse position. This node is unlabelled and must be named after.</dd>
+         <dt><b>Create an edge:</b></dt><dd> Select an edge with the desired sign or colour,
+        then double-click the starting and destination nodes.</dd>
         <dt><b>Delete a node or edge:</b> </dt><dd>select the node or edge and press <span class="cmd">[delete]</span>
             or <span class="cmd">-</span>.</dd>
         <dt><b>Change edge direction:</b></dt><dd> pressing <span class="cmd">[@]</span>
@@ -86,12 +84,13 @@ syntax of a variable.</dd>
         <li> To prevent the GUI from becoming unresponsive, press <span class="cmd">[enter]</span>
 		   a second time to complete the labeling process. If forgotten press again <span class="cmd">[enter]</span> to end the labeling.
         </li>
-        <li> Nodes will only be integrated if they are named, so labeling a node is necessary to include it in the BooN.
+        <li> Nodes will only be integrated if they are named, so naming a node is necessary to include it in the BooN.
         </li>
         <li> Edge labels correspond to module ID and must be integers, otherwise they are not considered.
-            A module is a set of co-expressed genes. The variables having the same module ID belong to the same clause for formula in DNF.
-        <li> For negative interactions, the labels are assumed to be negative (e.g., -1, -2) and for positive interactions, the labels are assumed to be positive (e.g., 1, 2).
-           However, if the sign of a label does not match the interaction sign, the label sign is automatically corrected appropriatly. </li>
+            A module is a set of variables acting together. The variables having the same module ID belong to the same clause for formula in DNF.
+        <li> The labels are assumed to be in the sign of the edge.
+        If there is a discrepancy in the sign of the label compared to the interaction sign,
+        the system will automatically correct it. This correction is not achieved for non monotone interaction.</li>
         <li> If a variable occurs in several modules, separate the integer label of each module by a space.</li>
         <li>  If no labels is set for an edge, then the source node is implicitly
             included in the first module (ID = 1). </li>
@@ -116,7 +115,7 @@ syntax of a variable.</dd>
             <li> The extension of a BooN file is <code>.boon</code>.</li>
             <li> The exportation or importation is defined from a text file
                 specification of a BooN  with <code>.txt</code> as default extension. </li>
-            <li> The importated SBML files must correspond to the Qualitative Model or the "qual" extension for SBML</li>
+            <li> The imported SBML files must correspond to the Qualitative Model or the "qual" extension for SBML</li>
             <li>The coordinates of the nodes are lost during the exportation, to keep them save the BooN before. </li>
             <li>The nodes of an imported BooN are circularly arranged The node layout computation may take time.</li>
             <li>At the bottom-left a flag indicates whether the file is saved:
@@ -146,7 +145,7 @@ syntax of a variable.</dd>
          <dt><span class="cmd">[View BooN]</span></dt> <dd>shows the Boolean network specification corresponding to the current BooN.
             conversion to DNF is available via this functionality.
 			Moreover, the formulas can be redefined by typing a new formula in the formula field of a variable.
-         We suggest you switch to Python style first to make these changes. </dd>
+     </dd>
          <dt><span class="cmd">[Stable states]</span></dt>
          <dd>compute the stable states of the BooN. The method is based on SAT Solver and
              can be applied to large network.
@@ -161,9 +160,14 @@ syntax of a variable.</dd>
      </dl>
     <p class="info">
         <b><span class="info-title">INFO:</span></b><br>
-        The model of dynamics is exponential and thus this computation is reduced to a given number of variables. <br>
+        The model of dynamics is exponential and thus this computation is reduced to a given number of variables.
+        <br>
 		The syntax of a new formula typed in the formula field must follow the SYMPY/Python syntax whatever the current output style, 
 		and only use the already drawn nodes. Switching to Python style first is advisable to make these changes.
+        <br>
+        To create a network directly from a formula specification,
+        it is first necessary to create the nodes of the variables involved in the network
+        and then enter the formula.
     </p>
 	 <h2 id="controllability"> Controllability analysis </h2>
 	 <p style="text-align: justify;"> Controllability analysis determines the variables that must be fixed/frozen to achieve a specific goal.
