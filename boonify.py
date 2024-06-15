@@ -580,7 +580,7 @@ class View(QDialog):
             self.BooNContent.setItem(row, 0, item)
 
     def change_formula(self):
-         """Update the BooN from a formula change."""
+        """Update the BooN from a formula change."""
         row = self.BooNContent.currentRow()  # get the current modified row
         text = self.formulas[row].text()  # get the text of the lineedit formula
 
@@ -613,7 +613,7 @@ class View(QDialog):
         self.initialize_view()  # Refresh the view.
 
     def convertdnf(self):
-         """Convert the BooN into DNF."""
+        """Convert the BooN into DNF."""
         self.parent.boon.dnf()
         self.initialize_view()  # Refresh the view.
 
@@ -722,7 +722,7 @@ class Model(QMainWindow):
         self.modeling()
 
     def cb_network_layout(self):
-         """Determine the layout of the network model from combo box."""
+        """Determine the layout of the network model from combo box."""
         layout = self.NetworkLayout.currentText()
         match layout:
             case "Hypercube":
@@ -849,7 +849,7 @@ class Controllability(QMainWindow):
             item.setCheckState(Qt.Checked)
 
     def observers_to_destiny(self, chkitem):
-         """Modify the destiny w.r.t. the observer change"""
+        """Modify the destiny w.r.t. the observer change"""
         row = chkitem.row()
         if chkitem.checkState() == Qt.Unchecked:
             combobox = self.Destiny.cellWidget(row, 1)

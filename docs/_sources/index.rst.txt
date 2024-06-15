@@ -2,7 +2,7 @@
    sphinx-quickstart on Thu Jun 13 12:59:04 2024.
 
 BooN's Documentation
-======================
+====================
 
 The BooN project provides a complete set of functionalities for Boolean Network (BooN) analysis.
 It was originally designed to explore the modeling of genetic networks by Boolean networks.
