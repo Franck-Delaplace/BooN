@@ -80,6 +80,7 @@ def asynchronous(variables: list | set) -> frozenset:
     """Asynchronous or sequential mode. One variable is updated per transition.
 
     :param variables: list of variables.
+    :type variables: list or set
     :return: set of sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
     :rtype: frozenset[frozenset[Symbol]]"""
     return frozenset({frozenset({x}) for x in variables})
@@ -89,6 +90,7 @@ def synchronous(variables: list | set) -> frozenset:
     """synchronous or parallel mode. All the variables are updated jointly per transition.
 
         :param variables: list of variables.
+        :type variables: list or set
         :return: set of sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
         :rtype: frozenset[frozenset[Symbol]]"""
     return frozenset({frozenset({*variables})})
@@ -99,6 +101,8 @@ def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
 
     :param state: state of the variables.
     :param variables: list of variables. If the list is empty then the encoding order corresponds to the variable occur. (Defaults [])
+    :type state: dict or tuple
+    :type variables: list or set
     :return: an integer such that its binary profile represents the state.
     :rtype: int
     """
@@ -122,6 +126,8 @@ def int2state(int_state: int, variables: list | set) -> dict:
 
     :param int_state: the state coded into integer.
     :param variables: list of variables.
+    :type int_state: int
+    :type variables: list or set
     :return: a dictionary representing the state {variable: boolean state…}. .
     :rtype: dict"""
     BIN2BOOL: dict = {'0': False, '1': True}
@@ -133,6 +139,7 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
     """Compute the hypercube layout of a graph.
 
     :param arg: the dimension of the hypercube or the network to which the layout is applied.
+    :type arg: int or networkx Digraph
     :return: a dictionary {int:position} where int is the integer code of the hypercube labels.
     :rtype: dict"""
     dim = 0

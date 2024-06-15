@@ -341,7 +341,7 @@
 <div class="viewcode-block" id="Boonify.resizeEvent">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.resizeEvent">[docs]</a>
     <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Modify graph parameters so that node and edge widths are invariant to window resizing.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify graph parameters so that node and edge widths are invariant to window resizing.&quot;&quot;&quot;</span>
         <span class="c1"># STEP: Fix the size related to the network design</span>
         <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameGeometry</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
         <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameGeometry</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
@@ -726,7 +726,7 @@
 <div class="viewcode-block" id="View.change_formula">
 <a class="viewcode-back" href="../index.html#boonify.View.change_formula">[docs]</a>
     <span class="k">def</span> <span class="nf">change_formula</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Update the BooN from a formula change.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the BooN from a formula change.&quot;&quot;&quot;</span>
         <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BooNContent</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span>  <span class="c1"># get the current modified row</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>  <span class="c1"># get the text of the lineedit formula</span>
 
@@ -765,7 +765,7 @@
 <div class="viewcode-block" id="View.convertdnf">
 <a class="viewcode-back" href="../index.html#boonify.View.convertdnf">[docs]</a>
     <span class="k">def</span> <span class="nf">convertdnf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Convert the BooN into DNF.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the BooN into DNF.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">dnf</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialize_view</span><span class="p">()</span>  <span class="c1"># Refresh the view.</span></div>
 </div>
@@ -892,7 +892,7 @@
 <div class="viewcode-block" id="Model.cb_network_layout">
 <a class="viewcode-back" href="../index.html#boonify.Model.cb_network_layout">[docs]</a>
     <span class="k">def</span> <span class="nf">cb_network_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine the layout of the network model from combo box.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the layout of the network model from combo box.&quot;&quot;&quot;</span>
         <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NetworkLayout</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="k">match</span> <span class="n">layout</span><span class="p">:</span>
             <span class="k">case</span> <span class="s2">&quot;Hypercube&quot;</span><span class="p">:</span>
@@ -1034,7 +1034,7 @@
 <div class="viewcode-block" id="Controllability.observers_to_destiny">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.observers_to_destiny">[docs]</a>
     <span class="k">def</span> <span class="nf">observers_to_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chkitem</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Modify the destiny w.r.t. the observer change&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify the destiny w.r.t. the observer change&quot;&quot;&quot;</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">chkitem</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">chkitem</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">:</span>
             <span class="n">combobox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Destiny</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>

@@ -510,7 +510,7 @@ The separator of formulas is defined by BOONSEP variable. The nodes are circular
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN15-juin-24-04.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN15-juin-24-05.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
 <dd><p>Save the Boolean Network to file.  If the extension is missing then .boon is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -565,7 +565,7 @@ The separator of formulas is defined by BOONSEP variable.</p>
 <dd><p>Asynchronous or sequential mode. One variable is updated per transition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>variables</strong> – list of variables.</p>
+<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em> or </em><em>set</em>) – list of variables.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>set of sets: {{x1},…,{xi},…,{xn}} representing the asynchronous mode.</p>
@@ -600,7 +600,7 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 <dd><p>Compute the hypercube layout of a graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>arg</strong> – the dimension of the hypercube or the network to which the layout is applied.</p>
+<dd class="field-odd"><p><strong>arg</strong> (<em>int</em><em> or </em><em>networkx Digraph</em>) – the dimension of the hypercube or the network to which the layout is applied.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dictionary {int:position} where int is the integer code of the hypercube labels.</p>
@@ -618,8 +618,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>int_state</strong> – the state coded into integer.</p></li>
-<li><p><strong>variables</strong> – list of variables.</p></li>
+<li><p><strong>int_state</strong> (<em>int</em>) – the state coded into integer.</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em> or </em><em>set</em>) – list of variables.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -655,8 +655,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>state</strong> – state of the variables.</p></li>
-<li><p><strong>variables</strong> – list of variables. If the list is empty then the encoding order corresponds to the variable occur. (Defaults [])</p></li>
+<li><p><strong>state</strong> (<em>dict</em><em> or </em><em>tuple</em>) – state of the variables.</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em> or </em><em>set</em>) – list of variables. If the list is empty then the encoding order corresponds to the variable occur. (Defaults [])</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -674,7 +674,7 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 <dd><p>synchronous or parallel mode. All the variables are updated jointly per transition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>variables</strong> – list of variables.</p>
+<dd class="field-odd"><p><strong>variables</strong> (<em>list</em><em> or </em><em>set</em>) – list of variables.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>set of sets: {{x1,…,xi,…,xn}} representing the synchronous mode.</p>

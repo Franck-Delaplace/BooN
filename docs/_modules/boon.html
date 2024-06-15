@@ -158,6 +158,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Asynchronous or sequential mode. One variable is updated per transition.</span>
 
 <span class="sd">    :param variables: list of variables.</span>
+<span class="sd">    :type variables: list or set</span>
 <span class="sd">    :return: set of sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.</span>
 <span class="sd">    :rtype: frozenset[frozenset[Symbol]]&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">({</span><span class="nb">frozenset</span><span class="p">({</span><span class="n">x</span><span class="p">})</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">})</span></div>
@@ -170,6 +171,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;synchronous or parallel mode. All the variables are updated jointly per transition.</span>
 
 <span class="sd">        :param variables: list of variables.</span>
+<span class="sd">        :type variables: list or set</span>
 <span class="sd">        :return: set of sets: {{x1,...,xi,...,xn}} representing the synchronous mode.</span>
 <span class="sd">        :rtype: frozenset[frozenset[Symbol]]&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">({</span><span class="nb">frozenset</span><span class="p">({</span><span class="o">*</span><span class="n">variables</span><span class="p">})})</span></div>
@@ -183,6 +185,8 @@
 
 <span class="sd">    :param state: state of the variables.</span>
 <span class="sd">    :param variables: list of variables. If the list is empty then the encoding order corresponds to the variable occur. (Defaults [])</span>
+<span class="sd">    :type state: dict or tuple</span>
+<span class="sd">    :type variables: list or set</span>
 <span class="sd">    :return: an integer such that its binary profile represents the state.</span>
 <span class="sd">    :rtype: int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -209,6 +213,8 @@
 
 <span class="sd">    :param int_state: the state coded into integer.</span>
 <span class="sd">    :param variables: list of variables.</span>
+<span class="sd">    :type int_state: int</span>
+<span class="sd">    :type variables: list or set</span>
 <span class="sd">    :return: a dictionary representing the state {variable: boolean state…}. .</span>
 <span class="sd">    :rtype: dict&quot;&quot;&quot;</span>
     <span class="n">BIN2BOOL</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
@@ -223,6 +229,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the hypercube layout of a graph.</span>
 
 <span class="sd">    :param arg: the dimension of the hypercube or the network to which the layout is applied.</span>
+<span class="sd">    :type arg: int or networkx Digraph</span>
 <span class="sd">    :return: a dictionary {int:position} where int is the integer code of the hypercube labels.</span>
 <span class="sd">    :rtype: dict&quot;&quot;&quot;</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span>
