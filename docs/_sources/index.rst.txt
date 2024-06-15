@@ -51,8 +51,9 @@ Function Description
 
 Boon Module
 ============
-This module contains functions used for manipulation Boolean network (BooN).
+This module contains functions used for the manipulation of Boolean network (BooN).
 BooN is the class of this module.
+
 
 .. automodule:: boon
    :members:
