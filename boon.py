@@ -165,7 +165,7 @@ class BooN:
     :type  pos: dict"""
     desc: dict = {}
     style: dict = {}
-    pos: dict = {}  
+    pos: dict = {}
 
     def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}) -> None:
         """Initialize the BooN object.
@@ -305,7 +305,7 @@ class BooN:
             self.style = tmp
             f.close()
 
-    def from_textfile(self, filename: str, sep:str = BOONSEP) -> None:
+    def from_textfile(self, filename: str, sep: str = BOONSEP) -> None:
         """Import the Boolean network from a text file. If the file extension is missing then .txt is added.
         The nodes are circularly mapped.
 
