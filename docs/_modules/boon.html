@@ -403,8 +403,7 @@
 <div class="viewcode-block" id="BooN.to_textfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.to_textfile">[docs]</a>
     <span class="k">def</span> <span class="nf">to_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the Boolean network in a text file. If the extension is missing then .txt is added.</span>
-<span class="sd">        The separator of formulas is defined by BOONSEP variable.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the Boolean network in a text file. If the file extension is missing then .txt is added.</span>
 
 <span class="sd">        :param filename: the file name.</span>
 <span class="sd">        :type  filename: str&quot;&quot;&quot;</span>
@@ -419,18 +418,20 @@
 
 <div class="viewcode-block" id="BooN.from_textfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.from_textfile">[docs]</a>
-    <span class="k">def</span> <span class="nf">from_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a text file. If the extension is missing then .txt is added.</span>
-<span class="sd">        The separator of formulas is defined by BOONSEP variable. The nodes are circularly mapped.</span>
+    <span class="k">def</span> <span class="nf">from_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a text file. If the file extension is missing then .txt is added.</span>
+<span class="sd">        The nodes are circularly mapped.</span>
 
 <span class="sd">        :param filename: the file name to import the Boolean network.</span>
-<span class="sd">        :type  filename: str&quot;&quot;&quot;</span>
+<span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
+<span class="sd">        :type  filename: str</span>
+<span class="sd">        :type sep: str&quot;&quot;&quot;</span>
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTXT</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>  <span class="c1"># Join all the lines in 1 string.</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">BOONSEP</span><span class="p">))</span>  <span class="c1"># And next separate the string w.r.t. the separator BOONSEP</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">))</span>  <span class="c1"># And next separate the string w.r.t. the separator BOONSEP</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># Parse the network description. A line is of the form: &lt;var&gt; = &lt;formula&gt;, comment line start with &#39;#&#39;</span>
                     <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>  <span class="c1"># Skip comment.</span>
                         <span class="k">pass</span>
@@ -470,8 +471,7 @@
 <div class="viewcode-block" id="BooN.from_sbmlfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.from_sbmlfile">[docs]</a>
     <span class="k">def</span> <span class="nf">from_sbmlfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a sbml file. If the extension is missing then .xml is added.</span>
-<span class="sd">        The separator of formulas is defined by BOONSEP variable.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a sbml file. If the extension is missing then .sbml is added.</span>
 
 <span class="sd">        :param filename: the file name to import the Boolean network.</span>
 <span class="sd">        :type  filename: str&quot;&quot;&quot;</span>

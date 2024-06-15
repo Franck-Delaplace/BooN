@@ -394,8 +394,7 @@ influencing or directing the course of events or outcomes towards an expected go
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_sbmlfile">
 <span class="sig-name descname"><span class="pre">from_sbmlfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_sbmlfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_sbmlfile" title="Link to this definition"></a></dt>
-<dd><p>Import the Boolean network from a sbml file. If the extension is missing then .xml is added.
-The separator of formulas is defined by BOONSEP variable.</p>
+<dd><p>Import the Boolean network from a sbml file. If the extension is missing then .sbml is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network.</p>
@@ -405,12 +404,15 @@ The separator of formulas is defined by BOONSEP variable.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_textfile">
-<span class="sig-name descname"><span class="pre">from_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_textfile" title="Link to this definition"></a></dt>
-<dd><p>Import the Boolean network from a text file. If the extension is missing then .txt is added.
-The separator of formulas is defined by BOONSEP variable. The nodes are circularly mapped.</p>
+<span class="sig-name descname"><span class="pre">from_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_textfile" title="Link to this definition"></a></dt>
+<dd><p>Import the Boolean network from a text file. If the file extension is missing then .txt is added.
+The nodes are circularly mapped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – the separator between formulas (default BOONSEP constant)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -542,8 +544,7 @@ The separator of formulas is defined by BOONSEP variable. The nodes are circular
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.to_textfile">
 <span class="sig-name descname"><span class="pre">to_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.to_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.to_textfile" title="Link to this definition"></a></dt>
-<dd><p>Export the Boolean network in a text file. If the extension is missing then .txt is added.
-The separator of formulas is defined by BOONSEP variable.</p>
+<dd><p>Export the Boolean network in a text file. If the file extension is missing then .txt is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the file name.</p>

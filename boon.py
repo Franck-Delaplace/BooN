@@ -293,8 +293,7 @@ class BooN:
             errmsg("No such file or directory, no changes", fullfilename, "WARNING")
 
     def to_textfile(self, filename: str) -> None:
-        """Export the Boolean network in a text file. If the extension is missing then .txt is added.
-        The separator of formulas is defined by BOONSEP variable.
+        """Export the Boolean network in a text file. If the file extension is missing then .txt is added.
 
         :param filename: the file name.
         :type  filename: str"""
@@ -306,18 +305,20 @@ class BooN:
             self.style = tmp
             f.close()
 
-    def from_textfile(self, filename: str) -> None:
-        """Import the Boolean network from a text file. If the extension is missing then .txt is added.
-        The separator of formulas is defined by BOONSEP variable. The nodes are circularly mapped.
+    def from_textfile(self, filename: str, sep:str = BOONSEP) -> None:
+        """Import the Boolean network from a text file. If the file extension is missing then .txt is added.
+        The nodes are circularly mapped.
 
         :param filename: the file name to import the Boolean network.
-        :type  filename: str"""
+        :param sep: the separator between formulas (default BOONSEP constant)
+        :type  filename: str
+        :type sep: str"""
         fullfilename = filename if "." in filename else filename + EXTXT
         desc = {}
         try:
             with open(fullfilename, 'r') as f:
                 text = " ".join(f.readlines())  # Join all the lines in 1 string.
-                text = map(lambda s: s.strip(), text.split(BOONSEP))  # And next separate the string w.r.t. the separator BOONSEP
+                text = map(lambda s: s.strip(), text.split(sep))  # And next separate the string w.r.t. the separator BOONSEP
                 for i, line in enumerate(text, 1):  # Parse the network description. A line is of the form: <var> = <formula>, comment line start with '#'
                     if line.startswith('#'):  # Skip comment.
                         pass
@@ -354,8 +355,7 @@ class BooN:
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
 
     def from_sbmlfile(self, filename: str) -> None:
-        """Import the Boolean network from a sbml file. If the extension is missing then .xml is added.
-        The separator of formulas is defined by BOONSEP variable.
+        """Import the Boolean network from a sbml file. If the extension is missing then .sbml is added.
 
         :param filename: the file name to import the Boolean network.
         :type  filename: str"""
