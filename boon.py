@@ -52,7 +52,6 @@ def is_controlled(formula) -> bool:
     :type formula: sympy formula.
     :return: True if the formula is controlled otherwise False
     :rtype: bool
-
     """
     try:
         return any(map(lambda var: var.name.startswith(CONTROL), formula.free_symbols))
@@ -68,6 +67,7 @@ def core2actions(core: frozenset) -> list:
     :type core: frozenset of literals.
     :return: A list of combined actions where an action is defined as:[(variable,bool) ...]
     :rtype: list[list[tuple]]"""
+
     ACTION: dict = {"0": False, "1": True}
     lctrl = len(CONTROL)
     actions = [[(symbols(str(ctrl)[lctrl + 1:]), ACTION[str(ctrl)[lctrl]]) for ctrl in primes] for primes in core]
@@ -174,6 +174,7 @@ class BooN:
         :param  style: the output style of formulas  (Default: LOGICAL).
         :param  pos: positions of the variable in the interaction graph drawing.
                 If empty, the pos are generated during the drawing (Default: {}). """
+
         if descriptor:
             self.desc = descriptor
         else:
@@ -198,6 +199,7 @@ class BooN:
     @property
     def variables(self) -> set:
         """Return the set of variables."""
+
         return set(self.desc.keys())
 
     def delete(self, variable) -> None:
@@ -246,6 +248,7 @@ class BooN:
         :param  target:  the variable renaming the source.
         :type source: Symbol
         :type target: Symbol"""
+
         variables = self.variables
 
         if source not in variables:
@@ -281,6 +284,7 @@ class BooN:
         :param filename: the name of the file to load the network.
         :type  filename: str
         """
+
         fullfilename = filename if "." in filename else filename + EXTBOON
         try:
             with open(fullfilename, 'rb') as f:
@@ -297,6 +301,7 @@ class BooN:
 
         :param filename: the file name.
         :type  filename: str"""
+
         fullfilename = filename if "." in filename else filename + EXTXT
         with open(fullfilename, 'w') as f:
             tmp = self.style
@@ -313,6 +318,7 @@ class BooN:
         :param sep: the separator between formulas (default BOONSEP constant)
         :type  filename: str
         :type sep: str"""
+
         fullfilename = filename if "." in filename else filename + EXTXT
         desc = {}
         try:
@@ -359,26 +365,28 @@ class BooN:
 
         :param filename: the file name to import the Boolean network.
         :type  filename: str"""
+
         sbml_file = filename if "." in filename else filename + EXTSBML
 
         # STEP: Open the SBML file and get the qualitative_model model
         reader = libsbml.SBMLReader()
         document = reader.readSBML(sbml_file)
 
-        if document.getNumErrors() > 0:
-            errmsg("Error reading SBML file", document.getErrorLog().toString())
+        if document.getNumErrors() > 0: # Check if there is no errors while reading the SBML files.
+            errmsg("Error reading SBML file", document.getErrorLog().toString(), kind="WARNING")
+            return
 
-        model = document.getModel()
+        model = document.getModel() # Check whether a model exists.
         if model is None:
             errmsg("No model present in SBML file.", kind="WARNING")
             return
 
         qualitative_model = model.getPlugin("qual")  # Get the qualitative_model part of the model.
-        if qualitative_model is None:
+        if qualitative_model is None: # Check whether a Qual model exists.
             errmsg("The model does not have the Qual plugin", kind="WARNING")
             return
 
-        # make a dictionary associating a string name to its corresponding Symbol.
+        # Make a dictionary associating a string name to its corresponding Symbol.
         vars_dic = {}
         for species in qualitative_model.getListOfQualitativeSpecies():
             species_name = species.getName() if species.isSetName() else species.getId()
@@ -398,13 +406,13 @@ class BooN:
             # Get the formula
             logic_terms = transition.getListOfFunctionTerms()
 
-            if len(logic_terms) == 0:  # Empty transition in SBML -> skip it
+            if len(logic_terms) == 0:  # Empty transition in SBML file, skip it.
                 continue
 
             if len(logic_terms) > 1:  # check whether there exists a single formula only, error otherwise
                 errmsg("Multiple logic terms present. Number of terms", len(logic_terms), kind="WARNING")
                 return
-            else:
+            else: # Get the SBML QUAL formula
                 formula = libsbml.formulaToL3String(logic_terms[0].getMath())
 
             # Convert the SBML QUAL formula into sympy syntax before parsing it.
@@ -744,6 +752,7 @@ class BooN:
         :type frozenfalse: iterable object (list, set, tuple)
         :type frozentrue: iterable object (list, set, tuple)
         """
+
         variables = self.variables
         for var in frozenfalse:
             if var in variables:
@@ -790,7 +799,7 @@ class BooN:
 
     @staticmethod
     def destify(query, trace: bool = False, solver=PULP_CBC_CMD):
-        """Compute the core which is the minimal set of controls under the inclusion to satisfy the query.
+        """Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
         Destify is a neologism that refers to the deliberate and purposeful act for shaping destiny by
         influencing or directing the course of events or outcomes towards an expected goal.
 
@@ -799,11 +808,11 @@ class BooN:
         :param solver: the PulpSolver used for solving the problem (Default: PULP_CBC_CMD).
         :type query: sympy formula
         :type trace: bool
-        :type solver: function
+        :type solver: type
         :return: the core of control
         :rtype: frozenset[sympy formula]"""
 
-        # predicate selecting the negative control.
+        # predicate determining whether a literal is a negative control (e.g. ~ _u1).
         def isnegctrl(lit) -> bool:
             return firstsymbol(lit).name.startswith(CONTROL) and isinstance(lit, Not)
 
