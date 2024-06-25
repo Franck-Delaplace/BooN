@@ -13,6 +13,8 @@ import re
 import copy
 import datetime
 import pickle
+from typing import Dict, Any
+
 import z3
 import math
 from collections.abc import Callable
@@ -32,6 +34,7 @@ from logic import LOGICAL, SYMPY, errmsg, firstsymbol
 
 import libsbml
 
+# CONSTANTS
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
 COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
 EXTBOON: str = ".boon"  # file extension for save and load.
@@ -192,6 +195,7 @@ class BooN:
         return BOONSEP.join([f"{str(var)} = {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
     def __eq__(self, other: BooN) -> bool:
+        """ The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
         if not isinstance(other, BooN):
             return NotImplemented
         return self.desc == other.desc
@@ -311,10 +315,10 @@ class BooN:
             f.close()
 
     def from_textfile(self, filename: str, sep: str = BOONSEP) -> None:
-        """Import the Boolean network from a text file. If the file extension is missing then .txt is added.
+        """Import the Boolean network from a text file.
         The nodes are circularly mapped.
 
-        :param filename: the file name to import the Boolean network.
+        :param filename: the file name to import the Boolean network. If the file extension is missing then .txt is added.
         :param sep: the separator between formulas (default BOONSEP constant)
         :type  filename: str
         :type sep: str"""
@@ -361,9 +365,9 @@ class BooN:
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
 
     def from_sbmlfile(self, filename: str) -> None:
-        """Import the Boolean network from a sbml file. If the extension is missing then .sbml is added.
+        """Import the Boolean network from a sbml file.
 
-        :param filename: the file name to import the Boolean network.
+        :param filename: the file name to import the Boolean network. If the extension is missing then .sbml is added.
         :type  filename: str"""
 
         sbml_file = filename if "." in filename else filename + EXTSBML
@@ -372,17 +376,17 @@ class BooN:
         reader = libsbml.SBMLReader()
         document = reader.readSBML(sbml_file)
 
-        if document.getNumErrors() > 0: # Check if there is no errors while reading the SBML files.
+        if document.getNumErrors() > 0:  # Check if there is no errors while reading the SBML files.
             errmsg("Error reading SBML file", document.getErrorLog().toString(), kind="WARNING")
             return
 
-        model = document.getModel() # Check whether a model exists.
+        model = document.getModel()  # Check whether a model exists.
         if model is None:
             errmsg("No model present in SBML file.", kind="WARNING")
             return
 
         qualitative_model = model.getPlugin("qual")  # Get the qualitative_model part of the model.
-        if qualitative_model is None: # Check whether a Qual model exists.
+        if qualitative_model is None:  # Check whether a Qual model exists.
             errmsg("The model does not have the Qual plugin", kind="WARNING")
             return
 
@@ -412,7 +416,7 @@ class BooN:
             if len(logic_terms) > 1:  # check whether there exists a single formula only, error otherwise
                 errmsg("Multiple logic terms present. Number of terms", len(logic_terms), kind="WARNING")
                 return
-            else: # Get the SBML QUAL formula
+            else:  # Get the SBML QUAL formula
                 formula = libsbml.formulaToL3String(logic_terms[0].getMath())
 
             # Convert the SBML QUAL formula into sympy syntax before parsing it.
@@ -420,15 +424,14 @@ class BooN:
             normal_formula = re.sub(r'&&', '&', normal_formula)  # convert && to &
             normal_formula = re.sub(r'\b(\w+)\s*==\s*1\b', r'\1', normal_formula)  # convert <var> == 1 to <var>
             normal_formula = re.sub(r'\b(\w+)\s*==\s*0\b', r'~\1', normal_formula)  # convert <var> == 0 to ~ <var>
-            normal_formula = normal_formula
             # Parse the formula to obtain a sympy formula and complete desc
             try:
-                simpy_formula = parse_expr(normal_formula, vars_dic)
+                sympy_formula = parse_expr(normal_formula, vars_dic)
             except SyntaxError:
                 errmsg("Syntax error in the following formula", normal_formula, "SYNTAX ERROR")
                 return
 
-            desc[variable] = simpy_formula
+            desc[variable] = sympy_formula
 
         # STEP: define the BooN with a circular layout for nodes
         self.desc = desc
@@ -445,7 +448,7 @@ class BooN:
 
         :param  variable: the variable where the formula  is to be converted in CNF (Default None). If variable is None then all the formulas are converted to CNF.
         :param  simplify: Boolean flag determining whether the formula should be simplified (Default True).
-        :param  force: Boolean flag forcing the complete simplification (Default True).
+        :param  force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
         :type  variable: Symbol
         :type  simplify: bool
         :type  force: bool"""
@@ -549,10 +552,10 @@ class BooN:
 
         :param  IG: the interaction graph or None. If None, the interaction graph is generated from BooN (Default: None).
         :param  modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
-        :param   kwargs: additional keyword arguments to pass to the interaction graph drawing
-        :type  IG: networkx DiGraph
-        :type  modular: bool
-        :type  kwargs: dict"""
+        :param  kwargs: additional keyword arguments to pass to the interaction graph drawing
+        :type   IG: networkx DiGraph
+        :type   modular: bool
+        :type   kwargs: dict"""
 
         ig = copy.deepcopy(IG) if IG else self.interaction_graph
 
@@ -789,12 +792,12 @@ class BooN:
         if not self.desc:
             return True
 
-        # specification of the necessity.
-        stability = self.stability_constraints()
-        necessity = logic.supercnf(Implies(stability, query), trace)
+        # Specification of the necessity.
+        stability = self.stability_constraints()  # stable stables specification
+        necessity = logic.supercnf(Implies(stability, query), trace)  # Necessary conversion into CNF of the query.
         necessary = And(*map(lambda clause:
                              Or(*[lit for lit in logic.clause2literals(clause) if firstsymbol(lit).name.startswith(CONTROL)]),
-                             logic.cnf2clauses(necessity)))
+                             logic.cnf2clauses(necessity)))  # Keep the control variables only.
         return necessary
 
     @staticmethod
@@ -816,12 +819,13 @@ class BooN:
         def isnegctrl(lit) -> bool:
             return firstsymbol(lit).name.startswith(CONTROL) and isinstance(lit, Not)
 
+        # Check if the query contains control variables.
         if not is_controlled(query):
             errmsg("The query has no controls of prefix", CONTROL, kind="WARNING")
             return frozenset(set())
 
         allprimes = logic.prime_implicants(query, isnegctrl, trace=trace, solver=solver)
-        # The result is of the form ~ _u0X; we need to get the control i.e. u0X
+        # The result is of the form ~ _u0X or ~_u1X. we need to get the control variable i.e. _u0X, _u1X
         ctrlprimes = {frozenset({firstsymbol(prime) for prime in primes}) for primes in allprimes}
 
         # Define the core composed of prime implicant sets that are minimal under the inclusion.
