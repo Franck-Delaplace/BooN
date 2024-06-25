@@ -253,7 +253,7 @@ BooN is the class of this module.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>variable</strong> (<em>Symbol</em>) – the variable where the formula  is to be converted in CNF (Default None). If variable is None then all the formulas are converted to CNF.</p></li>
 <li><p><strong>simplify</strong> (<em>bool</em>) – Boolean flag determining whether the formula should be simplified (Default True).</p></li>
-<li><p><strong>force</strong> (<em>bool</em>) – Boolean flag forcing the complete simplification (Default True).</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – Boolean flag forcing the complete simplification of the resulting CNF (Default True).</p></li>
 </ul>
 </dd>
 </dl>
@@ -394,10 +394,10 @@ influencing or directing the course of events or outcomes towards an expected go
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_sbmlfile">
 <span class="sig-name descname"><span class="pre">from_sbmlfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_sbmlfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_sbmlfile" title="Link to this definition"></a></dt>
-<dd><p>Import the Boolean network from a sbml file. If the extension is missing then .sbml is added.</p>
+<dd><p>Import the Boolean network from a sbml file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network. If the extension is missing then .sbml is added.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -405,12 +405,12 @@ influencing or directing the course of events or outcomes towards an expected go
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_textfile">
 <span class="sig-name descname"><span class="pre">from_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_textfile" title="Link to this definition"></a></dt>
-<dd><p>Import the Boolean network from a text file. If the file extension is missing then .txt is added.
+<dd><p>Import the Boolean network from a text file.
 The nodes are circularly mapped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network. If the file extension is missing then .txt is added.</p></li>
 <li><p><strong>sep</strong> (<em>str</em>) – the separator between formulas (default BOONSEP constant)</p></li>
 </ul>
 </dd>
@@ -512,7 +512,7 @@ The nodes are circularly mapped.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN15-juin-24-17.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN25-juin-24-14.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
 <dd><p>Save the Boolean Network to file.  If the extension is missing then .boon is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
