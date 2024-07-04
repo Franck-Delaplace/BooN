@@ -390,7 +390,7 @@ class BooN:
             errmsg("The model does not have the Qual plugin", kind="WARNING")
             return
 
-        # Make a dictionary associating a string name to its corresponding Symbol.
+        # Create a dictionary associating the string name of a variable to its corresponding Symbol.
         vars_dic = {}
         for species in qualitative_model.getListOfQualitativeSpecies():
             species_name = species.getName() if species.isSetName() else species.getId()
