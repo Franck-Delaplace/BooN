@@ -112,8 +112,8 @@ class Boonify(QMainWindow):
         manager = fig.canvas.manager
         self.canvas = FigureCanvas(fig)
         self.canvas.axes = self.canvas.figure.add_subplot(111)
-        self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # adjust the window s.t. the network fully fill it.
-        self.canvas.figure.canvas.manager = manager  # assign the manager in the canvas to be accessible by EditGraph.
+        self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # Adjust the window s.t. the network fully fills it.
+        self.canvas.figure.canvas.manager = manager  # Assign the manager in the canvas to be accessible by EditGraph.
 
         # STEP: Enable key_press_event events for using EditGraph:
         self.canvas.setFocusPolicy(QtCore.Qt.ClickFocus)
