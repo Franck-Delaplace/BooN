@@ -73,8 +73,8 @@ class Boonify(QMainWindow):
         self.history = [None] * HSIZE  # History
         self.hindex = 0  # Index of the last BooN added in the  history.
         self.hupdate = False  # Flag determining whether the history is updated.
-        self.saved = True  # Flag determining whether the current BooN is saved, initially False
-        self.boonsaved()  # also pen the status bar
+        self.saved = True  # Flag determining whether the current BooN is saved.
+        self.show_saved_flag()   # Show the save flag in the status bar
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
@@ -312,7 +312,7 @@ class Boonify(QMainWindow):
         """Save file dialog."""
         if self.filename:
             self.boon.save(self.filename)
-            self.boonsaved()
+            self.show_saved_flag()
         else:
             self.saveas()
 
@@ -322,7 +322,7 @@ class Boonify(QMainWindow):
         if filename:
             self.filename = filename[0]
             self.boon.save(self.filename)
-            self.boonsaved()
+            self.show_saved_flag()
 
     def importation(self):
         """Import file dialog."""
@@ -390,7 +390,7 @@ class Boonify(QMainWindow):
         self.hindex = 0  # Index of the last BooN added in the  history
         self.add_history()  # Initialize the history with the current BooN
         self.hupdate = False  # Flag determining whether the history is updated
-        self.boonsaved()  # The BooN is saved.
+        self.show_saved_flag()  # The BooN is saved.
 
     def undo(self):
         """Undo operation."""
@@ -425,7 +425,7 @@ class Boonify(QMainWindow):
             self.hindex = hindex
 
             if self.history[hindex] and self.history[hindex].desc:  # The current BooN is modified
-                self.boonsaved(False)
+                self.show_saved_flag(False)
 
             self.disablecallback = False  # Enable the design callback
 
@@ -485,9 +485,9 @@ class Boonify(QMainWindow):
         self.QControllability = Controllability(self)
         self.QControllability.show()
 
-    def boonsaved(self, val: bool = True):
-        NOTSAVED: str = '\u2B24'
-        SAVED: str = '\u25CB'
+    def show_saved_flag(self, val: bool = True):
+        NOTSAVED: str = '\u2B24' # Large black circle
+        SAVED: str = '\u25CB'    # Large empty circle
         self.saved = val
         if self.saved:
             self.statusBar().showMessage(SAVED)
