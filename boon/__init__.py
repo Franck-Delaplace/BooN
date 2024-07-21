@@ -29,8 +29,8 @@ from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent
 from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf
 from sympy.parsing.sympy_parser import parse_expr
-import logic
-from logic import LOGICAL, SYMPY, errmsg, firstsymbol
+import boon.logic as logic
+from .logic import LOGICAL, SYMPY, errmsg, firstsymbol
 
 import libsbml
 
