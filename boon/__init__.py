@@ -194,6 +194,15 @@ class BooN:
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
+    def str(self,sep: str = BOONSEP, assign: str = "="):
+        """Return a string representing the BooN. The output format can be parameterized (see style argument)
+        :param sep: the separator between formulas (default BOONSEP constant)
+        :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: '=')
+        :type sep: str
+        :type assign: str
+        """
+        return self.__str__(sep,assign)
+
     def __eq__(self, other: BooN) -> bool:
         """ The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
         if not isinstance(other, BooN):
@@ -316,7 +325,7 @@ class BooN:
         with open(fullfilename, 'w') as f:
             tmp = self.style
             self.style = ops  # assign ops to style
-            text = self.__str__(sep, assign)
+            text = self.str(sep, assign)
             f.write(text)
             self.style = tmp
             f.close()
