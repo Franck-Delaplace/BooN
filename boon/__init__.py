@@ -30,7 +30,7 @@ from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent
 from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf
 from sympy.parsing.sympy_parser import parse_expr
 import boon.logic as logic
-from .logic import LOGICAL, SYMPY, errmsg, firstsymbol
+from .logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 
 import libsbml
 
@@ -191,8 +191,8 @@ class BooN:
     def __deepcopy__(self, memo):
         return BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
 
-    def __str__(self) -> str:
-        return BOONSEP.join([f"{str(var)} = {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
+    def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
+        return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
     def __eq__(self, other: BooN) -> bool:
         """ The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
@@ -300,28 +300,40 @@ class BooN:
         except FileNotFoundError:
             errmsg("No such file or directory, no changes", fullfilename, "WARNING")
 
-    def to_textfile(self, filename: str) -> None:
-        """Export the Boolean network in a text file. If the file extension is missing then .txt is added.
+    def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> None:
+        """Export the Boolean network in a text file. If the file extension is missing then .txt is added. The default format is BOOLNET.
 
-        :param filename: the file name.
-        :type  filename: str"""
+        :param filename: the file name to export the Boolean network. If the file extension is missing then .txt is added.
+        :param sep: the separator between formulas (default BOONSEP constant)
+        :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: ',')
+        :param ops: a dictionary stipulating how the operators And, Or, Not, etc. are syntactically written. (Default: BOOLNET)
+        :type  filename: str
+        :type sep: str
+        :type assign:str
+        :type ops:dict"""
 
         fullfilename = filename if "." in filename else filename + EXTXT
         with open(fullfilename, 'w') as f:
             tmp = self.style
-            self.style = SYMPY
-            f.write(str(self))
+            self.style = ops  # assign ops to style
+            text = self.__str__(sep, assign)
+            f.write(text)
             self.style = tmp
             f.close()
 
-    def from_textfile(self, filename: str, sep: str = BOONSEP) -> None:
-        """Import the Boolean network from a text file.
+    def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> None:
+        """Import the Boolean network from a text file. The syntax depend to the ops descriptor.
+        The formulas must be in normal form containing OR, AND and NOT operators only.
         The nodes are circularly mapped.
 
         :param filename: the file name to import the Boolean network. If the file extension is missing then .txt is added.
         :param sep: the separator between formulas (default BOONSEP constant)
+        :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: ',')
+        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written. (Default: BOOLNET)
         :type  filename: str
-        :type sep: str"""
+        :type sep: str
+        :type assign:str
+        :type ops:dict"""
 
         fullfilename = filename if "." in filename else filename + EXTXT
         desc = {}
@@ -336,21 +348,31 @@ class BooN:
                         pass
                     else:
                         try:  # Find '=' operator.
-                            equal = line.index("=")
+                            equal = line.index(assign)
                         except ValueError:
-                            errmsg(f"Syntax error, = is missing, line {i} in file", fullfilename, "READ ERROR")
+                            errmsg(f"Syntax error, the assignment (sign:{assign}) is missing, line {i} in file", fullfilename, "READ ERROR")
                             return
                         try:  # Set the variable to Symbol.
                             var = symbols(line[:equal].strip())
                         except ValueError:
                             errmsg(f"Syntax error, wrong variable name, line {i} in file", fullfilename, "READ ERROR")
                             return
+
                         try:  # Parse formula.
-                            formula = parse_expr(line[equal + 1:].strip())
+                            # rewrite the operators to Python/Sympy operators
+                            formula = line[equal + 1:].strip()
+                            formula = formula.replace(ops[And], '&')  # Convert And
+                            formula = formula.replace(ops[Or], '|')  # Convert Or
+                            formula = formula.replace(ops[Not], '~')  # Convert Not
+
+                            formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[False], 'False', formula)  # Convert False
+                            formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[True], 'True', formula)  # Convert True
+
+                            trueformula = parse_expr(formula)  # Parse the rewritten formula
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
                             return
-                        desc.update({var: formula})
+                        desc.update({var: trueformula})
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes", fullfilename, "WARNING")
@@ -481,7 +503,7 @@ class BooN:
             for var in self.desc:
                 self.desc[var] = to_dnf(self.desc[var], simplify=simplify, force=force)
 
-    # || INTERACTION GRAPH
+    # DEF: INTERACTION GRAPH
     @property
     def interaction_graph(self) -> nx.DiGraph:
         """Build the interaction graph.
@@ -616,7 +638,7 @@ class BooN:
         # convert into formula
         self.desc = {node: Or(*(And(*clause) for clause in nodes[node])) for node in nodes}
 
-    # || DYNAMICS
+    # DEF: DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
         """Compute the dynamical datamodel of the BooN w.r.t. a mode.
 
@@ -744,7 +766,7 @@ class BooN:
         # convert the solution to a list of states.
         return list(map(lambda model: {symbols(str(sol())): bool(model[sol]) for sol in model}, models))
 
-    # || CONTROLLABILITY
+    # DEF CONTROLLABILITY
 
     def control(self, frozenfalse: set | list | frozenset, frozentrue: set | list | frozenset) -> None:
         """Set control on the BooN. The  controlled variables are divided in two classes:

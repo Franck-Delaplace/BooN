@@ -146,7 +146,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the  history.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hupdate</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag determining whether the history is updated.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saved</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Flag determining whether the current BooN is saved, initially False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">boonsaved</span><span class="p">()</span>  <span class="c1"># also pen the status bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># also pen the status bar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QView</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the View</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QStableStates</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the stable states</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QModel</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the dynamics model</span>
@@ -398,7 +398,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save file dialog.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">boonsaved</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">saveas</span><span class="p">()</span></div>
 
@@ -411,7 +411,7 @@
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">boonsaved</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Boonify.importation">
@@ -494,7 +494,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the  history</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_history</span><span class="p">()</span>  <span class="c1"># Initialize the history with the current BooN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hupdate</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag determining whether the history is updated</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">boonsaved</span><span class="p">()</span>  <span class="c1"># The BooN is saved.</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># The BooN is saved.</span></div>
 
 
 <div class="viewcode-block" id="Boonify.undo">
@@ -538,7 +538,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="n">hindex</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]</span><span class="o">.</span><span class="n">desc</span><span class="p">:</span>  <span class="c1"># The current BooN is modified</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">boonsaved</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Enable the design callback</span>
 
@@ -620,7 +620,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">QControllability</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">boonsaved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">display_saved_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">NOTSAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2B24</span><span class="s1">&#39;</span>
         <span class="n">SAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u25CB</span><span class="s1">&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saved</span> <span class="o">=</span> <span class="n">val</span>
