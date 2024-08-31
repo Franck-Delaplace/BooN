@@ -38,10 +38,10 @@ import libsbml
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
 COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
 EXTBOON: str = ".boon"  # file extension for save and load.
-EXTXT: str = ".txt"  # file extension for to_textfile and from_textfile.
+EXTXT: str = ".txt"     # file extension for to_textfile and from_textfile.
 EXTSBML: str = ".sbml"  # file extension of SBML file for from_sbmlfile .
-CONTROL: str = "_u"  # prefix name of the controllers.
-BOONSEP: str = "\n"  # separator between the equations of a BooN.
+CONTROL: str = "_u"     # prefix name of the controllers.
+BOONSEP: str = "\n"     # separator between the equations of a BooN.
 # color list for graph drawing
 COLOR: list[str] = ['gold', 'tomato', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
                     'darkkhaki', 'forestgreen', 'salmon', 'lightcoral', 'cornflowerblue', 'orange',
@@ -160,9 +160,9 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
 class BooN:
     """Boolean Network Class.
 
-    :param  desc:  Boolean network descriptor { variable: formula, …}.
-    :param  style: output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA 
-    :param  pos: the positions of the nodes in the interaction graph.
+    :param  desc:  Boolean network descriptor { variable: formula, ...}.
+    :param  style: output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, ...,
+    :param  pos: the positions of the nodes in the interaction graph. {node:position, ...}.
     :type  desc: dict
     :type  style: dict
     :type  pos: dict"""
@@ -314,12 +314,13 @@ class BooN:
 
         :param filename: the file name to export the Boolean network. If the file extension is missing then .txt is added.
         :param sep: the separator between formulas (default BOONSEP constant)
-        :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: ',')
-        :param ops: a dictionary stipulating how the operators And, Or, Not, etc. are syntactically written. (Default: BOOLNET)
+        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -> assign is '='  (Default: ',').
+        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written  (Default: BOOLNET).
         :type  filename: str
         :type sep: str
-        :type assign:str
-        :type ops:dict"""
+        :type assign: str
+        :type ops: dict
+        """
 
         fullfilename = filename if "." in filename else filename + EXTXT
         with open(fullfilename, 'w') as f:
@@ -337,12 +338,13 @@ class BooN:
 
         :param filename: the file name to import the Boolean network. If the file extension is missing then .txt is added.
         :param sep: the separator between definitions  (default BOONSEP constant)
-        :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: ',')
-        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written. (Default: BOOLNET)
+        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -> assign is '='  (Default: ',').
+        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written  (Default: BOOLNET).
         :type  filename: str
         :type sep: str
-        :type assign:str
-        :type ops:dict"""
+        :type assign: str
+        :type ops: dict
+        """
 
         fullfilename = filename if "." in filename else filename + EXTXT
         desc = {}

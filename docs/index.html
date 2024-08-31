@@ -240,8 +240,8 @@ BooN is the class of this module.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>desc</strong> (<em>dict</em>) – Boolean network descriptor { variable: formula, …}.</p></li>
-<li><p><strong>style</strong> (<em>dict</em>) – output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA</p></li>
-<li><p><strong>pos</strong> (<em>dict</em>) – the positions of the nodes in the interaction graph.</p></li>
+<li><p><strong>style</strong> (<em>dict</em>) – output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, …,</p></li>
+<li><p><strong>pos</strong> (<em>dict</em>) – the positions of the nodes in the interaction graph. {node:position, …}.</p></li>
 </ul>
 </dd>
 </dl>
@@ -414,8 +414,8 @@ The nodes are circularly mapped.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network. If the file extension is missing then .txt is added.</p></li>
 <li><p><strong>sep</strong> (<em>str</em>) – the separator between definitions  (default BOONSEP constant)</p></li>
-<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g. a = f(…)  -&gt; assign is ‘=’. Default: ‘,’</p></li>
-<li><p><strong>ops</strong> (<em>dict</em>) – a dictionary stipulating how the operators And, Or, Not  are syntactically written.  Default: BOOLNET</p></li>
+<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g. a = f(…)  -&gt; assign is ‘=’  (Default: ‘,’).</p></li>
+<li><p><strong>ops</strong> (<em>dict</em>) – a dictionary stipulating how the operators And, Or, Not  are syntactically written  (Default: BOOLNET).</p></li>
 </ul>
 </dd>
 </dl>
@@ -564,8 +564,8 @@ The nodes are circularly mapped.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em>) – the file name to export the Boolean network. If the file extension is missing then .txt is added.</p></li>
 <li><p><strong>sep</strong> (<em>str</em>) – the separator between formulas (default BOONSEP constant)</p></li>
-<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g. a = f(…)  -&gt; assign is ‘=’. Default: ‘,’</p></li>
-<li><p><strong>ops</strong> (<em>dict</em>) – a dictionary stipulating how the operators And, Or, Not, etc. are syntactically written. Default: BOOLNET</p></li>
+<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g. a = f(…)  -&gt; assign is ‘=’  (Default: ‘,’).</p></li>
+<li><p><strong>ops</strong> (<em>dict</em>) – a dictionary stipulating how the operators And, Or, Not  are syntactically written  (Default: BOOLNET).</p></li>
 </ul>
 </dd>
 </dl>

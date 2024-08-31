@@ -108,10 +108,10 @@
 <span class="n">SIGNCOLOR</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;crimson&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;forestgreen&#39;</span><span class="p">}</span>  <span class="c1"># colors of edges in the interaction graph w.r.t. to signs.</span>
 <span class="n">COLORSIGN</span> <span class="o">=</span> <span class="p">{</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">):</span> <span class="n">sign</span> <span class="k">for</span> <span class="n">sign</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">SIGNCOLOR</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 <span class="n">EXTBOON</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.boon&quot;</span>  <span class="c1"># file extension for save and load.</span>
-<span class="n">EXTXT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>  <span class="c1"># file extension for to_textfile and from_textfile.</span>
+<span class="n">EXTXT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>     <span class="c1"># file extension for to_textfile and from_textfile.</span>
 <span class="n">EXTSBML</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.sbml&quot;</span>  <span class="c1"># file extension of SBML file for from_sbmlfile .</span>
-<span class="n">CONTROL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_u&quot;</span>  <span class="c1"># prefix name of the controllers.</span>
-<span class="n">BOONSEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># separator between the equations of a BooN.</span>
+<span class="n">CONTROL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_u&quot;</span>     <span class="c1"># prefix name of the controllers.</span>
+<span class="n">BOONSEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>     <span class="c1"># separator between the equations of a BooN.</span>
 <span class="c1"># color list for graph drawing</span>
 <span class="n">COLOR</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="s1">&#39;tomato&#39;</span><span class="p">,</span> <span class="s1">&#39;yellowgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;plum&#39;</span><span class="p">,</span> <span class="s1">&#39;mediumaquamarine&#39;</span><span class="p">,</span> <span class="s1">&#39;darkorange&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;darkkhaki&#39;</span><span class="p">,</span> <span class="s1">&#39;forestgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;salmon&#39;</span><span class="p">,</span> <span class="s1">&#39;lightcoral&#39;</span><span class="p">,</span> <span class="s1">&#39;cornflowerblue&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span>
@@ -253,9 +253,9 @@
 <span class="k">class</span> <span class="nc">BooN</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Boolean Network Class.</span>
 
-<span class="sd">    :param  desc:  Boolean network descriptor { variable: formula, …}.</span>
-<span class="sd">    :param  style: output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA </span>
-<span class="sd">    :param  pos: the positions of the nodes in the interaction graph.</span>
+<span class="sd">    :param  desc:  Boolean network descriptor { variable: formula, ...}.</span>
+<span class="sd">    :param  style: output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, ...,</span>
+<span class="sd">    :param  pos: the positions of the nodes in the interaction graph. {node:position, ...}.</span>
 <span class="sd">    :type  desc: dict</span>
 <span class="sd">    :type  style: dict</span>
 <span class="sd">    :type  pos: dict&quot;&quot;&quot;</span>
@@ -427,8 +427,8 @@
 
 <span class="sd">        :param filename: the file name to export the Boolean network. If the file extension is missing then .txt is added.</span>
 <span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
-<span class="sd">        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -&gt; assign is &#39;=&#39;. Default: &#39;,&#39;</span>
-<span class="sd">        :param ops: a dictionary stipulating how the operators And, Or, Not, etc. are syntactically written. Default: BOOLNET</span>
+<span class="sd">        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -&gt; assign is &#39;=&#39;  (Default: &#39;,&#39;).</span>
+<span class="sd">        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written  (Default: BOOLNET).</span>
 <span class="sd">        :type  filename: str</span>
 <span class="sd">        :type sep: str</span>
 <span class="sd">        :type assign: str</span>
@@ -454,8 +454,8 @@
 
 <span class="sd">        :param filename: the file name to import the Boolean network. If the file extension is missing then .txt is added.</span>
 <span class="sd">        :param sep: the separator between definitions  (default BOONSEP constant)</span>
-<span class="sd">        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -&gt; assign is &#39;=&#39;. Default: &#39;,&#39;</span>
-<span class="sd">        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written.  Default: BOOLNET</span>
+<span class="sd">        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -&gt; assign is &#39;=&#39;  (Default: &#39;,&#39;).</span>
+<span class="sd">        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written  (Default: BOOLNET).</span>
 <span class="sd">        :type  filename: str</span>
 <span class="sd">        :type sep: str</span>
 <span class="sd">        :type assign: str</span>
