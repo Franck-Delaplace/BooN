@@ -24,7 +24,7 @@ The BooN project comprises 3 modules:
 
 *   ``boon`` module is related to the manipulation of Boolean network named BooN which is an object.
 
-*   ``logic`` module includes basic functions on propositional formula, as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin's method, and prime implicant calculation. These functions are used in the BooN modules.
+*   ``boon.logic`` sub module includes the basic functions on propositional formula, as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin's method, and prime implicant calculation. These functions are used in the BooN modules.
 
 * ``boonify`` module is the graphical interface manipulating BooN:computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and the controllability analysis. For exploring BooN interactively run ``boonify.py``
 
@@ -62,7 +62,7 @@ Logic Module
 ============
 This module includes functions on propositional formula.
 
-.. automodule:: logic
+.. automodule:: boon.logic
    :members:
 
 Boonify Module

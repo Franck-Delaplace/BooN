@@ -73,6 +73,7 @@
 <li><a class="reference internal" href="#boon.BooN.save"><code class="docutils literal notranslate"><span class="pre">BooN.save()</span></code></a></li>
 <li><a class="reference internal" href="#boon.BooN.stability_constraints"><code class="docutils literal notranslate"><span class="pre">BooN.stability_constraints()</span></code></a></li>
 <li><a class="reference internal" href="#boon.BooN.stable_states"><code class="docutils literal notranslate"><span class="pre">BooN.stable_states</span></code></a></li>
+<li><a class="reference internal" href="#boon.BooN.str"><code class="docutils literal notranslate"><span class="pre">BooN.str()</span></code></a></li>
 <li><a class="reference internal" href="#boon.BooN.to_textfile"><code class="docutils literal notranslate"><span class="pre">BooN.to_textfile()</span></code></a></li>
 <li><a class="reference internal" href="#boon.BooN.variables"><code class="docutils literal notranslate"><span class="pre">BooN.variables</span></code></a></li>
 </ul>
@@ -87,17 +88,17 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#logic-module">Logic Module</a><ul>
-<li><a class="reference internal" href="#logic.clause2literals"><code class="docutils literal notranslate"><span class="pre">clause2literals()</span></code></a></li>
-<li><a class="reference internal" href="#logic.cnf2clauses"><code class="docutils literal notranslate"><span class="pre">cnf2clauses()</span></code></a></li>
-<li><a class="reference internal" href="#logic.errmsg"><code class="docutils literal notranslate"><span class="pre">errmsg()</span></code></a></li>
-<li><a class="reference internal" href="#logic.firstsymbol"><code class="docutils literal notranslate"><span class="pre">firstsymbol()</span></code></a></li>
-<li><a class="reference internal" href="#logic.newvar"><code class="docutils literal notranslate"><span class="pre">newvar()</span></code></a></li>
-<li><a class="reference internal" href="#logic.prettyform"><code class="docutils literal notranslate"><span class="pre">prettyform()</span></code></a></li>
-<li><a class="reference internal" href="#logic.prime_implicants"><code class="docutils literal notranslate"><span class="pre">prime_implicants()</span></code></a></li>
-<li><a class="reference internal" href="#logic.supercnf"><code class="docutils literal notranslate"><span class="pre">supercnf()</span></code></a></li>
-<li><a class="reference internal" href="#logic.sympy2z3"><code class="docutils literal notranslate"><span class="pre">sympy2z3()</span></code></a></li>
-<li><a class="reference internal" href="#logic.tseitin"><code class="docutils literal notranslate"><span class="pre">tseitin()</span></code></a></li>
-<li><a class="reference internal" href="#logic.tseitin_cnf"><code class="docutils literal notranslate"><span class="pre">tseitin_cnf()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.clause2literals"><code class="docutils literal notranslate"><span class="pre">clause2literals()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.cnf2clauses"><code class="docutils literal notranslate"><span class="pre">cnf2clauses()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.errmsg"><code class="docutils literal notranslate"><span class="pre">errmsg()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.firstsymbol"><code class="docutils literal notranslate"><span class="pre">firstsymbol()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.newvar"><code class="docutils literal notranslate"><span class="pre">newvar()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.prettyform"><code class="docutils literal notranslate"><span class="pre">prettyform()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.prime_implicants"><code class="docutils literal notranslate"><span class="pre">prime_implicants()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.supercnf"><code class="docutils literal notranslate"><span class="pre">supercnf()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.sympy2z3"><code class="docutils literal notranslate"><span class="pre">sympy2z3()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.tseitin"><code class="docutils literal notranslate"><span class="pre">tseitin()</span></code></a></li>
+<li><a class="reference internal" href="#boon.logic.tseitin_cnf"><code class="docutils literal notranslate"><span class="pre">tseitin_cnf()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#boonify-module">Boonify Module</a><ul>
@@ -209,7 +210,7 @@ The project includes:</p>
 <p>The BooN project comprises 3 modules:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">boon</span></code> module is related to the manipulation of Boolean network named BooN which is an object.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">logic</span></code> module includes basic functions on propositional formula, as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin’s method, and prime implicant calculation. These functions are used in the BooN modules.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boon.logic</span></code> sub module includes the basic functions on propositional formula, as well as more advanced features like fast CNF conversion for large formulas, CNF conversion using Tseitin’s method, and prime implicant calculation. These functions are used in the BooN modules.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">boonify</span></code> module is the graphical interface manipulating BooN:computation of dynamical model for synchronous and asynchronous mode, the computation ot the stable states, and the controllability analysis. For exploring BooN interactively run <code class="docutils literal notranslate"><span class="pre">boonify.py</span></code></p></li>
 </ul>
 </section>
@@ -404,14 +405,17 @@ influencing or directing the course of events or outcomes towards an expected go
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_textfile">
-<span class="sig-name descname"><span class="pre">from_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_textfile" title="Link to this definition"></a></dt>
-<dd><p>Import the Boolean network from a text file.
+<span class="sig-name descname"><span class="pre">from_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'type':</span> <span class="pre">'normal</span> <span class="pre">form',</span> <span class="pre">And:</span> <span class="pre">'&amp;',</span> <span class="pre">False:</span> <span class="pre">'0',</span> <span class="pre">Not:</span> <span class="pre">'!',</span> <span class="pre">Or:</span> <span class="pre">'|',</span> <span class="pre">True:</span> <span class="pre">'1'}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_textfile" title="Link to this definition"></a></dt>
+<dd><p>Import the Boolean network from a text file. The syntax depend on the ops’ descriptor.
+The formulas must be in normal form containing OR, AND, NOT operators only.
 The nodes are circularly mapped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em>) – the file name to import the Boolean network. If the file extension is missing then .txt is added.</p></li>
-<li><p><strong>sep</strong> (<em>str</em>) – the separator between formulas (default BOONSEP constant)</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – the separator between definitions  (default BOONSEP constant)</p></li>
+<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g. a = f(…)  -&gt; assign is ‘=’. Default: ‘,’</p></li>
+<li><p><strong>ops</strong> (<em>dict</em>) – a dictionary stipulating how the operators And, Or, Not  are syntactically written.  Default: BOOLNET</p></li>
 </ul>
 </dd>
 </dl>
@@ -512,7 +516,7 @@ The nodes are circularly mapped.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN25-juin-24-14.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN31-août-24-17.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
 <dd><p>Save the Boolean Network to file.  If the extension is missing then .boon is added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -542,12 +546,27 @@ The nodes are circularly mapped.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="boon.BooN.str">
+<span class="sig-name descname"><span class="pre">str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'='</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon.html#BooN.str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.str" title="Link to this definition"></a></dt>
+<dd><p>Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
+:param sep: the separator between formulas (default BOONSEP constant)
+:param assign: the operator defining the assignment of a formula to a variable (e.g. a = f(…)  -&gt; assign is ‘=’). (Default: ‘=’)
+:type sep: str
+:type assign: str</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.to_textfile">
-<span class="sig-name descname"><span class="pre">to_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.to_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.to_textfile" title="Link to this definition"></a></dt>
-<dd><p>Export the Boolean network in a text file. If the file extension is missing then .txt is added.</p>
+<span class="sig-name descname"><span class="pre">to_textfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'type':</span> <span class="pre">'normal</span> <span class="pre">form',</span> <span class="pre">And:</span> <span class="pre">'&amp;',</span> <span class="pre">False:</span> <span class="pre">'0',</span> <span class="pre">Not:</span> <span class="pre">'!',</span> <span class="pre">Or:</span> <span class="pre">'|',</span> <span class="pre">True:</span> <span class="pre">'1'}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.to_textfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.to_textfile" title="Link to this definition"></a></dt>
+<dd><p>Export the Boolean network in a text file. If the file extension is missing then .txt is added. The default format is BOOLNET.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the file name.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – the file name to export the Boolean network. If the file extension is missing then .txt is added.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – the separator between formulas (default BOONSEP constant)</p></li>
+<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g. a = f(…)  -&gt; assign is ‘=’. Default: ‘,’</p></li>
+<li><p><strong>ops</strong> (<em>dict</em>) – a dictionary stipulating how the operators And, Or, Not, etc. are syntactically written. Default: BOOLNET</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -690,9 +709,9 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 <section id="logic-module">
 <h1>Logic Module<a class="headerlink" href="#logic-module" title="Link to this heading"></a></h1>
 <p>This module includes functions on propositional formula.</p>
-<dl class="py function" id="module-logic">
-<dt class="sig sig-object py" id="logic.clause2literals">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">clause2literals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clause</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span></span></span><a class="reference internal" href="_modules/logic.html#clause2literals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.clause2literals" title="Link to this definition"></a></dt>
+<dl class="py function" id="module-boon.logic">
+<dt class="sig sig-object py" id="boon.logic.clause2literals">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">clause2literals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clause</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span></span></span><a class="reference internal" href="_modules/boon/logic.html#clause2literals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.clause2literals" title="Link to this definition"></a></dt>
 <dd><p>Convert a clause or a cube into of a sequence of literals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -708,8 +727,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.cnf2clauses">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">cnf2clauses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cnf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#cnf2clauses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.cnf2clauses" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.cnf2clauses">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">cnf2clauses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cnf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#cnf2clauses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.cnf2clauses" title="Link to this definition"></a></dt>
 <dd><p>Decomposition of a CNF into a sequence of clauses.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -725,8 +744,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.errmsg">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">errmsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ERROR'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/logic.html#errmsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.errmsg" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.errmsg">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">errmsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ERROR'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon/logic.html#errmsg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.errmsg" title="Link to this definition"></a></dt>
 <dd><p>Display an error message and exit in case of error (keyword ERROR).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -740,8 +759,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.firstsymbol">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">firstsymbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#firstsymbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.firstsymbol" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.firstsymbol">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">firstsymbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#firstsymbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.firstsymbol" title="Link to this definition"></a></dt>
 <dd><p>Extract the first symbol from the symbols of a dnf.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -754,8 +773,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.newvar">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">newvar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#newvar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.newvar" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.newvar">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">newvar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#newvar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.newvar" title="Link to this definition"></a></dt>
 <dd><p>Create a new sympy symbol of the form &lt;prefix&gt;&lt;number&gt;. The prefix is given by TSEITIN constant.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -771,8 +790,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.prettyform">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">prettyform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'type':</span> <span class="pre">'infix',</span> <span class="pre">And:</span> <span class="pre">'∧',</span> <span class="pre">Equivalent:</span> <span class="pre">'⇔',</span> <span class="pre">False:</span> <span class="pre">'false',</span> <span class="pre">Implies:</span> <span class="pre">'⇒',</span> <span class="pre">Not:</span> <span class="pre">'¬',</span> <span class="pre">Or:</span> <span class="pre">'∨',</span> <span class="pre">True:</span> <span class="pre">'true',</span> <span class="pre">Xor:</span> <span class="pre">'⊻'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#prettyform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.prettyform" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.prettyform">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">prettyform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'type':</span> <span class="pre">'infix',</span> <span class="pre">And:</span> <span class="pre">'∧',</span> <span class="pre">Equivalent:</span> <span class="pre">'⇔',</span> <span class="pre">False:</span> <span class="pre">'false',</span> <span class="pre">Implies:</span> <span class="pre">'⇒',</span> <span class="pre">Not:</span> <span class="pre">'¬',</span> <span class="pre">Or:</span> <span class="pre">'∨',</span> <span class="pre">True:</span> <span class="pre">'true',</span> <span class="pre">Xor:</span> <span class="pre">'⊻'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#prettyform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.prettyform" title="Link to this definition"></a></dt>
 <dd><p>Return a string of a formula in nice form.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -786,8 +805,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.prime_implicants">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">prime_implicants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kept:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'pulp.apis.coin_api.PULP_CBC_CMD'&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">frozenset</span></span></span><a class="reference internal" href="_modules/logic.html#prime_implicants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.prime_implicants" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.prime_implicants">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">prime_implicants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kept:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'pulp.apis.coin_api.PULP_CBC_CMD'&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">frozenset</span></span></span><a class="reference internal" href="_modules/boon/logic.html#prime_implicants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.prime_implicants" title="Link to this definition"></a></dt>
 <dd><p>Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -808,8 +827,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.supercnf">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">supercnf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#supercnf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.supercnf" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.supercnf">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">supercnf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#supercnf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.supercnf" title="Link to this definition"></a></dt>
 <dd><p>Convert the formula to CNF. The method is well adapted to large formula.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -828,8 +847,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.sympy2z3">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">sympy2z3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#sympy2z3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.sympy2z3" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.sympy2z3">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">sympy2z3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#sympy2z3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.sympy2z3" title="Link to this definition"></a></dt>
 <dd><p>Convert a sympy formula to z3 formula.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -845,8 +864,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.tseitin">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">tseitin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#tseitin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.tseitin" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.tseitin">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">tseitin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#tseitin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.tseitin" title="Link to this definition"></a></dt>
 <dd><p>Characterize the Tseitin form of a formula. The additional variables are prefixed by TEITSIN constant</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -862,8 +881,8 @@ The actions are sorted by length meaning that the more parsimonious actions are 
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="logic.tseitin_cnf">
-<span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">tseitin_cnf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#tseitin_cnf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.tseitin_cnf" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="boon.logic.tseitin_cnf">
+<span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">tseitin_cnf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/boon/logic.html#tseitin_cnf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.tseitin_cnf" title="Link to this definition"></a></dt>
 <dd><p>Convert a formula to CNF using Tseitin method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

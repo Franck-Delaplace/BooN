@@ -99,8 +99,8 @@
 <span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">And</span><span class="p">,</span> <span class="n">Or</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">Equivalent</span>
 <span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">to_cnf</span><span class="p">,</span> <span class="n">to_dnf</span><span class="p">,</span> <span class="n">is_dnf</span>
 <span class="kn">from</span> <span class="nn">sympy.parsing.sympy_parser</span> <span class="kn">import</span> <span class="n">parse_expr</span>
-<span class="kn">import</span> <span class="nn">logic</span>
-<span class="kn">from</span> <span class="nn">logic</span> <span class="kn">import</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="n">SYMPY</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">firstsymbol</span>
+<span class="kn">from</span> <span class="nn">boon.logic</span> <span class="kn">import</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="n">SYMPY</span><span class="p">,</span> <span class="n">BOOLNET</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">firstsymbol</span>
+<span class="kn">import</span> <span class="nn">boon.logic</span> <span class="k">as</span> <span class="nn">logic</span>
 
 <span class="kn">import</span> <span class="nn">libsbml</span>
 
@@ -284,8 +284,20 @@
     <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">BooN</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="n">memo</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">BOONSEP</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">logic</span><span class="o">.</span><span class="n">prettyform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">])</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">assign</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">logic</span><span class="o">.</span><span class="n">prettyform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">])</span>
+
+<div class="viewcode-block" id="BooN.str">
+<a class="viewcode-back" href="../index.html#boon.BooN.str">[docs]</a>
+    <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)</span>
+<span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
+<span class="sd">        :param assign: the operator defining the assignment of a formula to a variable (e.g. a = f(...)  -&gt; assign is &#39;=&#39;). (Default: &#39;=&#39;)</span>
+<span class="sd">        :type sep: str</span>
+<span class="sd">        :type assign: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">assign</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">BooN</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; The equality between BooNs is based on the descriptor only, and not on the style or the nodes position.&quot;&quot;&quot;</span>
@@ -410,31 +422,45 @@
 
 <div class="viewcode-block" id="BooN.to_textfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.to_textfile">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the Boolean network in a text file. If the file extension is missing then .txt is added.</span>
+    <span class="k">def</span> <span class="nf">to_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BOOLNET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the Boolean network in a text file. If the file extension is missing then .txt is added. The default format is BOOLNET.</span>
 
-<span class="sd">        :param filename: the file name.</span>
-<span class="sd">        :type  filename: str&quot;&quot;&quot;</span>
+<span class="sd">        :param filename: the file name to export the Boolean network. If the file extension is missing then .txt is added.</span>
+<span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
+<span class="sd">        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -&gt; assign is &#39;=&#39;. Default: &#39;,&#39;</span>
+<span class="sd">        :param ops: a dictionary stipulating how the operators And, Or, Not, etc. are syntactically written. Default: BOOLNET</span>
+<span class="sd">        :type  filename: str</span>
+<span class="sd">        :type sep: str</span>
+<span class="sd">        :type assign: str</span>
+<span class="sd">        :type ops: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTXT</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">SYMPY</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">ops</span>  <span class="c1"># assign ops to style</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">assign</span><span class="p">)</span>  <span class="c1"># convert to string with regard to sep and assign</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">tmp</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="BooN.from_textfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.from_textfile">[docs]</a>
-    <span class="k">def</span> <span class="nf">from_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a text file.</span>
+    <span class="k">def</span> <span class="nf">from_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BOOLNET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a text file. The syntax depend on the ops&#39; descriptor.</span>
+<span class="sd">        The formulas must be in normal form containing OR, AND, NOT operators only.</span>
 <span class="sd">        The nodes are circularly mapped.</span>
 
 <span class="sd">        :param filename: the file name to import the Boolean network. If the file extension is missing then .txt is added.</span>
-<span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
+<span class="sd">        :param sep: the separator between definitions  (default BOONSEP constant)</span>
+<span class="sd">        :param assign: the operator defining the formula for a variable, e.g. a = f(...)  -&gt; assign is &#39;=&#39;. Default: &#39;,&#39;</span>
+<span class="sd">        :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written.  Default: BOOLNET</span>
 <span class="sd">        :type  filename: str</span>
-<span class="sd">        :type sep: str&quot;&quot;&quot;</span>
+<span class="sd">        :type sep: str</span>
+<span class="sd">        :type assign: str</span>
+<span class="sd">        :type ops: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTXT</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="p">{}</span>
@@ -449,21 +475,34 @@
                         <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">try</span><span class="p">:</span>  <span class="c1"># Find &#39;=&#39; operator.</span>
-                            <span class="n">equal</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                            <span class="n">equal</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">assign</span><span class="p">)</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                            <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Syntax error, = is missing, line </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in file&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;READ ERROR&quot;</span><span class="p">)</span>
+                            <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Syntax error, the assignment (sign:</span><span class="si">{</span><span class="n">assign</span><span class="si">}</span><span class="s2">) is missing, line </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in file&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;READ ERROR&quot;</span><span class="p">)</span>
                             <span class="k">return</span>
                         <span class="k">try</span><span class="p">:</span>  <span class="c1"># Set the variable to Symbol.</span>
                             <span class="n">var</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="n">line</span><span class="p">[:</span><span class="n">equal</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                             <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Syntax error, wrong variable name, line </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in file&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;READ ERROR&quot;</span><span class="p">)</span>
                             <span class="k">return</span>
+
                         <span class="k">try</span><span class="p">:</span>  <span class="c1"># Parse formula.</span>
-                            <span class="n">formula</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">equal</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                            <span class="c1"># STEP:  rewrite the operators to Python/Sympy operators</span>
+                            <span class="n">formula</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">equal</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                            <span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ops</span><span class="p">[</span><span class="n">And</span><span class="p">],</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">)</span>  <span class="c1"># Convert And</span>
+                            <span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ops</span><span class="p">[</span><span class="n">Or</span><span class="p">],</span> <span class="s1">&#39;|&#39;</span><span class="p">)</span>  <span class="c1"># Convert Or</span>
+                            <span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ops</span><span class="p">[</span><span class="n">Not</span><span class="p">],</span> <span class="s1">&#39;~&#39;</span><span class="p">)</span>  <span class="c1"># Convert Not</span>
+
+                            <span class="c1"># for constant True, False the code can be also a part of the variable name (e.g. True = 0, False = 1 and X101 as variable)</span>
+                            <span class="c1"># Therefore the replacement occurs iff it is located after a space, a logical operator or at the start of the formula.</span>
+                            <span class="n">formula</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;((?&lt;=\||&amp;|~|\s|\()|^)&#39;</span> <span class="o">+</span> <span class="n">ops</span><span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>  <span class="c1"># Convert False</span>
+                            <span class="n">formula</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;((?&lt;=\||&amp;|~|\s|\()|^)&#39;</span> <span class="o">+</span> <span class="n">ops</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span> <span class="s1">&#39;True&#39;</span><span class="p">,</span> <span class="n">formula</span><span class="p">)</span>  <span class="c1"># Convert True</span>
+
+                            <span class="c1"># STEP: Now the formula is rewritten in Python/Sympy syntax then parse it.</span>
+                            <span class="n">trueformula</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
                         <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
                             <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Syntax error, wrong formula parsing, line </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in file&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;READ ERROR&quot;</span><span class="p">)</span>
                             <span class="k">return</span>
-                        <span class="n">desc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">var</span><span class="p">:</span> <span class="n">formula</span><span class="p">})</span>
+                        <span class="n">desc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">var</span><span class="p">:</span> <span class="n">trueformula</span><span class="p">})</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;No such file or directory, no changes&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
@@ -506,7 +545,7 @@
             <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;The model does not have the Qual plugin&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="c1"># Make a dictionary associating a string name to its corresponding Symbol.</span>
+        <span class="c1"># Create a dictionary associating the string name of a variable to its corresponding Symbol.</span>
         <span class="n">vars_dic</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="n">qualitative_model</span><span class="o">.</span><span class="n">getListOfQualitativeSpecies</span><span class="p">():</span>
             <span class="n">species_name</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="k">if</span> <span class="n">species</span><span class="o">.</span><span class="n">isSetName</span><span class="p">()</span> <span class="k">else</span> <span class="n">species</span><span class="o">.</span><span class="n">getId</span><span class="p">()</span>
@@ -604,7 +643,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_dnf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">simplify</span><span class="o">=</span><span class="n">simplify</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span></div>
 
 
-    <span class="c1"># || INTERACTION GRAPH</span>
+    <span class="c1"># DEF: INTERACTION GRAPH</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">interaction_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the interaction graph.</span>
@@ -745,7 +784,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="o">*</span><span class="n">clause</span><span class="p">)</span> <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]))</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">}</span></div>
 
 
-    <span class="c1"># || DYNAMICS</span>
+    <span class="c1"># DEF: DYNAMICS</span>
 <div class="viewcode-block" id="BooN.model">
 <a class="viewcode-back" href="../index.html#boon.BooN.model">[docs]</a>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">,</span> <span class="n">self_loop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
@@ -885,7 +924,7 @@
         <span class="c1"># convert the solution to a list of states.</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">model</span><span class="p">:</span> <span class="p">{</span><span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sol</span><span class="p">())):</span> <span class="nb">bool</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">sol</span><span class="p">])</span> <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">model</span><span class="p">},</span> <span class="n">models</span><span class="p">))</span>
 
-    <span class="c1"># || CONTROLLABILITY</span>
+    <span class="c1"># DEF CONTROLLABILITY</span>
 
 <div class="viewcode-block" id="BooN.control">
 <a class="viewcode-back" href="../index.html#boon.BooN.control">[docs]</a>
