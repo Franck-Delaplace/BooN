@@ -54,16 +54,18 @@
 
     <h2 id="design"> Design network</h2>
     <p > The network is designed interactively.
-        At the bottom of the graph window, there is a <i>pattern network</i>  which is used to
+        At the bottom of the graph window, there is a <i>pattern network</i> which is used to
         select the edge sign: either positive (<span style="color: Green;">Green</span>) or negative (<span style="color:red">Red</span>).&nbsp;
-        This network will never be included in the final BooN. Clicking on an edge of the pattern network will apply the selected edge type to all new edges.
-        Selecting a node or edge will always highlight it.  If the interaction is not monotone, its definition can only be achieved by modifying the formula directly.<br>
+        This network will never be included in the final BooN.
+        Clicking on an edge of the pattern network will apply the selected-edge type to all new edges.
+        Selecting a node or edge will always highlight it.
+        If the interaction is not monotone, its definition can only be achieved by modifying the formula directly.<br>
         The network design commands are: </p>
     <dl>
         <dt><b>Create a node:</b></dt><dd>press <span class="cmd">[insert]</span> or
             <span class="cmd">+</span> will add a new node to the
             graph at the current mouse position. This node is unlabelled and must be named after.</dd>
-         <dt><b>Create an edge:</b></dt><dd> Select an edge with the desired sign or colour,
+         <dt><b>Create an edge:</b></dt><dd> Select an edge with the desired sign or color,
         then double-click the starting and destination nodes.</dd>
         <dt><b>Delete a node or edge:</b> </dt><dd>select the node or edge and press <span class="cmd">[delete]</span>
             or <span class="cmd">-</span>.</dd>
@@ -82,7 +84,8 @@ syntax of a variable.</dd>
         documentation of this function for the commands related to the graph design. </li>
 
         <li> To prevent the GUI from becoming unresponsive, press <span class="cmd">[enter]</span>
-		   a second time to complete the labeling process. If forgotten press again <span class="cmd">[enter]</span> to end the labeling.
+		   a second time to complete the labeling process.
+            If forgotten, press again <span class="cmd">[enter]</span> to end the labeling.
         </li>
         <li> Nodes will only be integrated if they are named, so naming a node is necessary to include it in the BooN.
         </li>
@@ -90,9 +93,10 @@ syntax of a variable.</dd>
             A module is a set of variables acting together. The variables having the same module ID belong to the same clause for formula in DNF.
         <li> The labels are assumed to be in the sign of the edge.
         If there is a discrepancy in the sign of the label compared to the interaction sign,
-        the system will automatically correct it. This correction is not achieved for non monotone interaction.</li>
+        the system will automatically correct it.
+        This correction is not achieved for non-monotone interaction.</li>
         <li> If a variable occurs in several modules, separate the integer label of each module by a space.</li>
-        <li>  If no labels is set for an edge, then the source node is implicitly
+        <li>  If no labels are set for an edge, then the source node is implicitly
             included in the first module (ID = 1). </li>
         <li> The default formula for a newly created node is False when it is isolated. </li>
 		<li> It is also possible to create a network by directly writing the formula of a node in the <b>BooN View</b> window
@@ -126,24 +130,24 @@ syntax of a variable.</dd>
             </li>
         </ul>
 
-    <h3>Syntax of the imported text BooN file</h3>
+    <h3>Syntax of the imported text follows the BoolNet format </h3>
     <p> The file contains a set of
         equations where a Boolean equation must be written in the same
         line.&nbsp; Comments can be added and start by&nbsp; #.&nbsp; The
-        formula must follow the <a href="https://www.sympy.org/fr/" title="Sympy Documentation">Sympy</a>
-        syntax, namely: (AND = &amp;, OR = |, NOT = ~).
-    <p> The grammar of an equation is :<span class="cmd"> &lt;variable&gt; '=' &lt;formula&gt;</span>. For example, we have:<br>
+        formula must follow the <a href="http://colomoto.org/biolqm/doc/format-bnet.html" title="BoolNet Documentation">BoolNet</a>
+        syntax where: AND = &amp;, OR = |, NOT = !.
+    <p> The grammar of a formula definition related to a variable is :<span class="cmd"> &lt;variable&gt; ',' &lt;formula&gt;</span>. For example, we have:<br>
     </p>
     <p class="info"><span class="info-title">EXAMPLE:</span><br>
         <span style="font-family: Consolas, monospace; text-align:left;"># Example of BooN<br>
-          x = (~x &amp; y) | z <br>
-          y = ~z | x <br>
-          z = y &amp; x &amp; ~z </span></p>
+          x , (!x &amp; y) | z <br>
+          y , !z | x <br>
+          z , y &amp; x &amp; !z </span></p>
     <h2 id="analysis"> Boolean Network Analysis </h2>
     The different items are:
      <dl>
          <dt><span class="cmd">[View BooN]</span></dt> <dd>shows the Boolean network specification corresponding to the current BooN.
-            conversion to DNF is available via this functionality.
+            Conversion to DNF is available via this functionality.
 			Moreover, the formulas can be redefined by typing a new formula in the formula field of a variable.
      </dd>
          <dt><span class="cmd">[Stable states]</span></dt>
@@ -160,7 +164,7 @@ syntax of a variable.</dd>
      </dl>
     <p class="info">
         <b><span class="info-title">INFO:</span></b><br>
-        The model of dynamics is exponential and thus this computation is reduced to a given number of variables.
+        The model of dynamics is exponential, and thus this computation is reduced to a given number of variables.
         <br>
 		The syntax of a new formula typed in the formula field must follow the SYMPY/Python syntax whatever the current output style, 
 		and only use the already drawn nodes. Switching to Python style first is advisable to make these changes.
@@ -180,19 +184,19 @@ syntax of a variable.</dd>
          On the left-hand side table, in the <span class="cmd"> Destiny</span> sheet,
          select the destiny profile by choosing the Boolean value of markers.
          </dd>
-	 <dt><b>Observers characterization:</b> </dt>  <dd> The observers are variables that cannot be controlled by definition. 
+	 <dt><b>Observers characterization:</b> </dt>  <dd> The observers are variables that definition cannot control.
          Set the observers in the <span class="cmd">Observers</span> sheet.
          The markers are always observers and implicitly set when their values are fixed.
 	 </dd>
-	 <dt><b>Choose the nature of the objective:</b> </dt> <dd> Choose either to <span class="cmd">[Reach]</span> or <span class="cmd">[Avoid]</span> the marking.
+	 <dt><b>Choose the nature of the aim:</b> </dt> <dd> Choose either to <span class="cmd">[Reach]</span> or <span class="cmd">[Avoid]</span> the marking.
          <span class="cmd">[Reach]</span> implies that the marking will be reached at stable state while  <span class="cmd">
              [Avoid]</span> means that the marking will be avoided.
 	 <dt> 
-	 <dt><b>Determine the modality of the objective:</b></dt> <dd> There are two modalities: the <span class="cmd">[Possibility]</span>and the <span class="cmd">[Necessity]</span>.
+	 <dt><b>Determine the modality of the goal:</b></dt> <dd> There are two modalities: the <span class="cmd">[Possibility]</span>and the <span class="cmd">[Necessity]</span>.
 	 In the case of a marking profile to be reached, the possibility implies that this marking profile exists for at least one stable state.
 	 The necessity dictates that all stable states possess this profile.
 	 The same applies to avoidance.
-	  <dt><b>Find the possible control:</b></dt> <dd> Click on the control button to compute the different possible solutions which are displayed at right.  
+	  <dt><b>Find the possible control:</b></dt> <dd> Click on the control button to compute the different possible solutions which are displayed at the right.
 	 <dt><b>Apply the control:</b></dt> <dd> 
 	 Select one control solution and click on the rightmost button to apply it to the BooN.
          The BooN will be changed according to the solution by freezing the appropriate variables.
