@@ -18,7 +18,7 @@ import BooNGui.booneries_rc  # resources
 import boon
 from boon import BooN, SIGNCOLOR, COLORSIGN, EXTSBML, EXTXT
 import boon.logic as logic
-from boon.logic import LOGICAL, SYMPY, MATHEMATICA, JAVA
+from boon.logic import LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET
 
 from sympy.logic.boolalg import is_cnf, is_dnf, is_nnf
 from sympy.core.symbol import Symbol
