@@ -29,8 +29,8 @@ from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent
 from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf
 from sympy.parsing.sympy_parser import parse_expr
+from boon.logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 import boon.logic as logic
-from .logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 
 import libsbml
 
@@ -194,14 +194,14 @@ class BooN:
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
-    def str(self,sep: str = BOONSEP, assign: str = "="):
-        """Return a string representing the BooN. The output format can be parameterized (see style argument)
+    def str(self, sep: str = BOONSEP, assign: str = "="):
+        """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
         :param sep: the separator between formulas (default BOONSEP constant)
-        :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: '=')
+        :param assign: the operator defining the assignment of a formula to a variable (e.g. a = f(...)  -> assign is '='). (Default: '=')
         :type sep: str
         :type assign: str
         """
-        return self.__str__(sep,assign)
+        return self.__str__(sep, assign)
 
     def __eq__(self, other: BooN) -> bool:
         """ The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
@@ -325,18 +325,18 @@ class BooN:
         with open(fullfilename, 'w') as f:
             tmp = self.style
             self.style = ops  # assign ops to style
-            text = self.str(sep, assign)
+            text = self.str(sep, assign)  # convert to string with regard to sep and assign
             f.write(text)
             self.style = tmp
             f.close()
 
     def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> None:
-        """Import the Boolean network from a text file. The syntax depend to the ops descriptor.
-        The formulas must be in normal form containing OR, AND and NOT operators only.
+        """Import the Boolean network from a text file. The syntax depend on the ops' descriptor.
+        The formulas must be in normal form containing OR, AND, NOT operators only.
         The nodes are circularly mapped.
 
         :param filename: the file name to import the Boolean network. If the file extension is missing then .txt is added.
-        :param sep: the separator between formulas (default BOONSEP constant)
+        :param sep: the separator between definitions  (default BOONSEP constant)
         :param assign: the operator defining the formula for a variable (e.g. a = f(...)  -> assign is '='). (Default: ',')
         :param ops: a dictionary stipulating how the operators And, Or, Not  are syntactically written. (Default: BOOLNET)
         :type  filename: str
@@ -368,16 +368,19 @@ class BooN:
                             return
 
                         try:  # Parse formula.
-                            # rewrite the operators to Python/Sympy operators
+                            # STEP:  rewrite the operators to Python/Sympy operators
                             formula = line[equal + 1:].strip()
                             formula = formula.replace(ops[And], '&')  # Convert And
                             formula = formula.replace(ops[Or], '|')  # Convert Or
                             formula = formula.replace(ops[Not], '~')  # Convert Not
 
+                            # for constant True, False the code can be also a part of the variable name (e.g. True = 0, False = 1 and X101 as variable)
+                            # Therefore the replacement occurs iff it is located after a space, a logical operator or at the start of the formula.
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[False], 'False', formula)  # Convert False
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[True], 'True', formula)  # Convert True
 
-                            trueformula = parse_expr(formula)  # Parse the rewritten formula
+                            # STEP: Now the formula is rewritten in Python/Sympy syntax then parse it.
+                            trueformula = parse_expr(formula)
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
                             return
