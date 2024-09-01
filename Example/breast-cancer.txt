@@ -1,4 +1,5 @@
-# Breast Cancer Model 2018 
+# Breast Cancer Model 2018
+# Format BoolNet
 EGFR , !BRCA1
 ERK12 ,  EGFR
 PIK3CA , !PTEN & EGFR
