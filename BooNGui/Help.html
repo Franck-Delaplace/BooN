@@ -1,6 +1,6 @@
 <!--
  HTML PAGE OF THE HELP FOR THE GRAPHICAL INTERFACE
- AUTHOR : FRANCK DELAPLACE
+ AUTHOR: FRANCK DELAPLACE
  CREATION DATE: January 2024
  -->
 <html lang="en-US">
@@ -16,7 +16,6 @@
             text-align: justify;
             text-justify: auto;
             justify-content: space-around;
-
         }
         .info
         {
@@ -169,9 +168,9 @@ syntax of a variable.</dd>
      </dl>
     <p class="info">
         <b><span class="info-title">INFO:</span></b><br>
-        The model of dynamics is exponential, and thus this computation is reduced to a given number of variables.
+        The dynamics model comprises an exponential number of states derived from the variables, and thus this computation is reduced to a given number of variables.
         <br>
-		The syntax of a new formula typed in the formula field must follow the SYMPY/Python syntax whatever the current output style, 
+		The syntax of a new formula typed in the formula field must follow the SYMPY/Python syntax whatever the current output style,
 		and only use the already drawn nodes. Switching to Python style first is advisable to make these changes.
         <br>
         To create a network directly from a formula specification,
@@ -182,20 +181,21 @@ syntax of a variable.</dd>
 	 <p style="text-align: justify;"> Controllability analysis determines the variables that must be fixed/frozen to achieve a specific goal.
 	 The goal is either to reach or avoid a Boolean profile of variables as markers at steady-state.
 	The markers are purposely selected variables.
-	 The procedure is decomposed into the following steps:
+         The procedure is decomposed into the following steps:
 	 </p>
 	 <dl>
 	 <dt><b>Define marker profile:</b> </dt> <dd>
          On the left-hand side table, in the <span class="cmd"> Destiny</span> sheet,
          select the destiny profile by choosing the Boolean value of markers.
          </dd>
-	 <dt><b>Observers characterization:</b> </dt>  <dd> The observers are variables that definition cannot control.
+	 <dt><b>Observers characterization:</b> </dt>  <dd> The observers are variables that cannot be controlled.
          Set the observers in the <span class="cmd">Observers</span> sheet.
          The markers are always observers and implicitly set when their values are fixed.
+         This set can be further completed to prevent the control of other variables.
 	 </dd>
 	 <dt><b>Choose the nature of the aim:</b> </dt> <dd> Choose either to <span class="cmd">[Reach]</span> or <span class="cmd">[Avoid]</span> the marking.
-         <span class="cmd">[Reach]</span> implies that the marking will be reached at stable state while  <span class="cmd">
-             [Avoid]</span> means that the marking will be avoided.
+         <span class="cmd">[Reach]</span> implies that the marking will be reached at stable state while
+         <span class="cmd">[Avoid]</span> means that the marking will be avoided.
 	 <dt> 
 	 <dt><b>Determine the modality of the goal:</b></dt> <dd> There are two modalities: the <span class="cmd">[Possibility]</span>and the <span class="cmd">[Necessity]</span>.
 	 In the case of a marking profile to be reached, the possibility implies that this marking profile exists for at least one stable state.
