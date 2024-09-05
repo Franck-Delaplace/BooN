@@ -74,7 +74,6 @@ class Boonify(QMainWindow):
         self.hindex = 0  # Index of the last BooN added in the  history.
         self.hupdate = False  # Flag determining whether the history is updated.
         self.saved = True  # Flag determining whether the current BooN is saved.
-        self.display_saved_flag()   # Show the save flag in the status bar
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
@@ -82,6 +81,8 @@ class Boonify(QMainWindow):
         self.editgraph = None  # Graph for edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.
         self.designsize = 2.  # Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.
+
+        self.display_saved_flag()  # Show the save flag in the status bar
         # STEP: Connect callback functions to Menu
 
         # File
@@ -312,7 +313,7 @@ class Boonify(QMainWindow):
         """Save file dialog."""
         if self.filename:
             self.boon.save(self.filename)
-            self.display_saved_flag()
+            self.display_saved_flag() # update the saved flag
         else:
             self.saveas()
 
@@ -322,7 +323,7 @@ class Boonify(QMainWindow):
         if filename:
             self.filename = filename[0]
             self.boon.save(self.filename)
-            self.display_saved_flag()
+            self.display_saved_flag()  # update the saved flag
 
     def importation(self):
         """Import file dialog."""
@@ -387,7 +388,7 @@ class Boonify(QMainWindow):
     def history_raz(self):
         """Clear the history."""
         self.history = [None] * HSIZE  # History cleaning
-        self.hindex = 0  # Index of the last BooN added in the  history
+        self.hindex = 0  # Index of the last BooN added in the history
         self.add_history()  # Initialize the history with the current BooN
         self.hupdate = False  # Flag determining whether the history is updated
         self.display_saved_flag()  # The BooN is saved.
