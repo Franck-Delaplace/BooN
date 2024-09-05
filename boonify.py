@@ -46,7 +46,7 @@ mpl.use("Qt5Agg")
 
 # Parameters
 HSIZE: int = 10  # size of the history
-STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SYMPY, "Mathematica": MATHEMATICA, "BoolNet":BOOLNET}
+STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SYMPY, "Mathematica": MATHEMATICA, "BoolNet": BOOLNET}
 ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.svg", False: ":/icon/resources/false.svg"}  # True/False icons
 MODELBOUND: int = 8  # Size bound of the dynamics model in terms of variables.
 
@@ -71,14 +71,14 @@ class Boonify(QMainWindow):
         self.boon = BooN()  # Current BooN
         self.filename = ""  # Current filename
         self.history = [None] * HSIZE  # History
-        self.hindex = 0  # Index of the last BooN added in the  history.
+        self.hindex = 0  # Index of the last BooN added in the history.
         self.hupdate = False  # Flag determining whether the history is updated.
         self.saved = True  # Flag determining whether the current BooN is saved.
         self.QView = None  # Widget of the View
         self.QStableStates = None  # Widget of the stable states
         self.QModel = None  # Widget of the dynamics model
         self.QControllability = None  # Widget of the controllability
-        self.editgraph = None  # Graph for edition
+        self.editgraph = None  # Graph for the edition
         self.disablecallback = True  # Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.
         self.designsize = 2.  # Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.
 
@@ -176,7 +176,7 @@ class Boonify(QMainWindow):
 
     def design(self):
         """interaction graph design callback."""
-        # The function captures the events of the EditableGraph and complete the BooN.
+        # The function captures the events of the EditableGraph and completes the BooN.
         if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
 
         # DEF: Definition of the interaction graph of the network from the drawing.
@@ -220,7 +220,7 @@ class Boonify(QMainWindow):
                 modularity = {int(module) for module in list(label.split(" ")) if re.match(INTPAT, module)}
 
                 if modularity:
-                    # re-set the label sign  w.r.t. the edge sign, used if the labels are not properly defined by the user.
+                    # re-set the label sign  w.r.t. the edge sign, used if the user does not properly define the labels.
                     match signs[edge]:
                         case 1:  # Positive
                             modularity = {abs(module) for module in modularity}
@@ -232,7 +232,7 @@ class Boonify(QMainWindow):
                 else:
                     modules.update({symbolic(edge): {signs[edge]}})
 
-            except KeyError:  # No edge labels = no modules => the module is the sign.
+            except KeyError:  # No edge labels = no modules ⇒ the module is the sign.
                 modules.update({symbolic(edge): {signs[edge]}})
 
         # STEP: Convert the edges symbolically for signs.
@@ -300,7 +300,7 @@ class Boonify(QMainWindow):
 
     # DEF: FILE MANAGEMENT
     def open(self):
-        """Open file dialog."""
+        """Open the file dialog."""
         filename = QFileDialog.getOpenFileName(self, "Open file", "", "Boon Files (*.boon);; All Files (*);;")
         if filename:
             self.filename = filename[0]
@@ -313,12 +313,12 @@ class Boonify(QMainWindow):
         """Save file dialog."""
         if self.filename:
             self.boon.save(self.filename)
-            self.display_saved_flag() # update the saved flag
+            self.display_saved_flag()  # update the saved flag
         else:
             self.saveas()
 
     def saveas(self):
-        """Save as file as dialog."""
+        """Save as the file as dialog."""
         filename = QFileDialog.getSaveFileName(self, "Save", "", "Boon Files (*.boon);; All Files (*);;")
         if filename:
             self.filename = filename[0]
@@ -358,7 +358,7 @@ class Boonify(QMainWindow):
 
         if self.saved:
             quitting = True
-        else:  # Otherwise ask whether it must be saved.
+        else:  # Otherwise, ask whether it must be saved.
             reply = QMessageBox.question(
                 self,
                 "Quit",
@@ -487,8 +487,8 @@ class Boonify(QMainWindow):
         self.QControllability.show()
 
     def display_saved_flag(self, val: bool = True):
-        NOTSAVED: str = '\u2B24' # Large black circle
-        SAVED: str = '\u25CB'    # Large empty circle
+        NOTSAVED: str = '\u2B24'  # Large black circle
+        SAVED: str = '\u25CB'  # Large empty circle
         self.saved = val
         if self.saved:
             self.statusBar().showMessage(SAVED)
@@ -723,7 +723,7 @@ class Model(QMainWindow):
         self.modeling()
 
     def cb_network_layout(self):
-        """Determine the layout of the network model from combo box."""
+        """Determine the layout of the network model from the combo box."""
         layout = self.NetworkLayout.currentText()
         match layout:
             case "Hypercube":
