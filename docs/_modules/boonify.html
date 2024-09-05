@@ -116,7 +116,7 @@
 
 <span class="c1"># Parameters</span>
 <span class="n">HSIZE</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># size of the history</span>
-<span class="n">STYLE</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Logical&quot;</span><span class="p">:</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="s2">&quot;Java&quot;</span><span class="p">:</span> <span class="n">JAVA</span><span class="p">,</span> <span class="s2">&quot;Python&quot;</span><span class="p">:</span> <span class="n">SYMPY</span><span class="p">,</span> <span class="s2">&quot;Mathematica&quot;</span><span class="p">:</span> <span class="n">MATHEMATICA</span><span class="p">,</span> <span class="s2">&quot;BoolNet&quot;</span><span class="p">:</span><span class="n">BOOLNET</span><span class="p">}</span>
+<span class="n">STYLE</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Logical&quot;</span><span class="p">:</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="s2">&quot;Java&quot;</span><span class="p">:</span> <span class="n">JAVA</span><span class="p">,</span> <span class="s2">&quot;Python&quot;</span><span class="p">:</span> <span class="n">SYMPY</span><span class="p">,</span> <span class="s2">&quot;Mathematica&quot;</span><span class="p">:</span> <span class="n">MATHEMATICA</span><span class="p">,</span> <span class="s2">&quot;BoolNet&quot;</span><span class="p">:</span> <span class="n">BOOLNET</span><span class="p">}</span>
 <span class="n">ICON01</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;:/icon/resources/none.svg&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;:/icon/resources/true.svg&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;:/icon/resources/false.svg&quot;</span><span class="p">}</span>  <span class="c1"># True/False icons</span>
 <span class="n">MODELBOUND</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># Size bound of the dynamics model in terms of variables.</span>
 
@@ -143,17 +143,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="p">()</span>  <span class="c1"># Current BooN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Current filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">HSIZE</span>  <span class="c1"># History</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the  history.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the history.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hupdate</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag determining whether the history is updated.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saved</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Flag determining whether the current BooN is saved.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>   <span class="c1"># Show the save flag in the status bar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QView</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the View</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QStableStates</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the stable states</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QModel</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the dynamics model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QControllability</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Widget of the controllability</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">editgraph</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Graph for edition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editgraph</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Graph for the edition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Flag indicating whether the BooN design callback function is enabled, initially disabled (True) because the editgraph is not set up.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">designsize</span> <span class="o">=</span> <span class="mf">2.</span>  <span class="c1"># Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># Show the save flag in the status bar</span>
         <span class="c1"># STEP: Connect callback functions to Menu</span>
 
         <span class="c1"># File</span>
@@ -252,7 +253,7 @@
 <a class="viewcode-back" href="../index.html#boonify.Boonify.design">[docs]</a>
     <span class="k">def</span> <span class="nf">design</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;interaction graph design callback.&quot;&quot;&quot;</span>
-        <span class="c1"># The function captures the events of the EditableGraph and complete the BooN.</span>
+        <span class="c1"># The function captures the events of the EditableGraph and completes the BooN.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span><span class="p">:</span> <span class="k">return</span>  <span class="c1"># Check whether the callback is enabled otherwise return.</span>
 
         <span class="c1"># DEF: Definition of the interaction graph of the network from the drawing.</span>
@@ -296,7 +297,7 @@
                 <span class="n">modularity</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">INTPAT</span><span class="p">,</span> <span class="n">module</span><span class="p">)}</span>
 
                 <span class="k">if</span> <span class="n">modularity</span><span class="p">:</span>
-                    <span class="c1"># re-set the label sign  w.r.t. the edge sign, used if the labels are not properly defined by the user.</span>
+                    <span class="c1"># re-set the label sign  w.r.t. the edge sign, used if the user does not properly define the labels.</span>
                     <span class="k">match</span> <span class="n">signs</span><span class="p">[</span><span class="n">edge</span><span class="p">]:</span>
                         <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Positive</span>
                             <span class="n">modularity</span> <span class="o">=</span> <span class="p">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modularity</span><span class="p">}</span>
@@ -308,7 +309,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">modules</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">symbolic</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span> <span class="p">{</span><span class="n">signs</span><span class="p">[</span><span class="n">edge</span><span class="p">]}})</span>
 
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># No edge labels = no modules =&gt; the module is the sign.</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># No edge labels = no modules ⇒ the module is the sign.</span>
                 <span class="n">modules</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">symbolic</span><span class="p">(</span><span class="n">edge</span><span class="p">):</span> <span class="p">{</span><span class="n">signs</span><span class="p">[</span><span class="n">edge</span><span class="p">]}})</span>
 
         <span class="c1"># STEP: Convert the edges symbolically for signs.</span>
@@ -382,7 +383,7 @@
 <div class="viewcode-block" id="Boonify.open">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open file dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open the file dialog.&quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Open file&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Boon Files (*.boon);; All Files (*);;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -398,7 +399,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save file dialog.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># update the saved flag</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">saveas</span><span class="p">()</span></div>
 
@@ -406,12 +407,12 @@
 <div class="viewcode-block" id="Boonify.saveas">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.saveas">[docs]</a>
     <span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save as file as dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save as the file as dialog.&quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Save&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Boon Files (*.boon);; All Files (*);;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># update the saved flag</span></div>
 
 
 <div class="viewcode-block" id="Boonify.importation">
@@ -455,7 +456,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved</span><span class="p">:</span>
             <span class="n">quitting</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Otherwise ask whether it must be saved.</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Otherwise, ask whether it must be saved.</span>
             <span class="n">reply</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span>
                 <span class="s2">&quot;Quit&quot;</span><span class="p">,</span>
@@ -491,7 +492,7 @@
     <span class="k">def</span> <span class="nf">history_raz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the history.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">HSIZE</span>  <span class="c1"># History cleaning</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the  history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the history</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_history</span><span class="p">()</span>  <span class="c1"># Initialize the history with the current BooN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hupdate</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag determining whether the history is updated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># The BooN is saved.</span></div>
@@ -621,8 +622,8 @@
 
 
     <span class="k">def</span> <span class="nf">display_saved_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">NOTSAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2B24</span><span class="s1">&#39;</span> <span class="c1"># Large black circle</span>
-        <span class="n">SAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u25CB</span><span class="s1">&#39;</span>    <span class="c1"># Large empty circle</span>
+        <span class="n">NOTSAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2B24</span><span class="s1">&#39;</span>  <span class="c1"># Large black circle</span>
+        <span class="n">SAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u25CB</span><span class="s1">&#39;</span>  <span class="c1"># Large empty circle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saved</span> <span class="o">=</span> <span class="n">val</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="n">SAVED</span><span class="p">)</span>
@@ -892,7 +893,7 @@
 <div class="viewcode-block" id="Model.cb_network_layout">
 <a class="viewcode-back" href="../index.html#boonify.Model.cb_network_layout">[docs]</a>
     <span class="k">def</span> <span class="nf">cb_network_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the layout of the network model from combo box.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the layout of the network model from the combo box.&quot;&quot;&quot;</span>
         <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NetworkLayout</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="k">match</span> <span class="n">layout</span><span class="p">:</span>
             <span class="k">case</span> <span class="s2">&quot;Hypercube&quot;</span><span class="p">:</span>
