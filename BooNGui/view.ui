@@ -101,6 +101,11 @@
          </item>
          <item>
           <property name="text">
+           <string>BoolNet</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Mathematica</string>
           </property>
          </item>
