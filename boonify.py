@@ -382,7 +382,7 @@ class Boonify(QMainWindow):
     def closeEvent(self, event):
         """Close window"""
         self.quit()
-        event.ignore()  # WARNING: If the application is closed, this line will not be executed.
+        event.ignore()  # WARNING: If the application is closed when quit() is triggered, this line will not be executed.
 
     # DEF: HISTORY MANAGEMENT
     def history_raz(self):
@@ -416,7 +416,7 @@ class Boonify(QMainWindow):
     def add_history(self):
         """Add current BooN to the history."""
         hindex = self.hindex
-        if self.boon != self.history[hindex]:  # WARNING: The BooN comparison operates on descriptors only.
+        if self.boon != self.history[hindex]:  # WARNING: The BooN comparison operates on descriptors only, not on positions.
 
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
             self.hupdate = True  # Descriptor is changed.
@@ -437,7 +437,7 @@ class Boonify(QMainWindow):
         # self.show_history()
 
     def show_history(self):
-        """Display the history."""
+        """Display the history. Used to debug the history management."""
         view = [([i] if i == self.hindex else i,
                  tabulate([(var, logic.prettyform(eq, theboon.style)) for var, eq in theboon.desc.items()], tablefmt='plain')
                  if theboon else '-') for i, theboon in enumerate(self.history)]
