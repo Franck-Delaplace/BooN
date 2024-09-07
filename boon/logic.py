@@ -304,12 +304,23 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     :rtype: Frozenset"""
     global prime_implicants_problem
     global trc_implicants
+    # The prime implicants method is based on linear integer programming.
+    # The prime implicants are the solutions to solving this integral system.
+    # References:
+    # Pizzuti, Clara - "Computing prime implicants by integer programming."
+    # In: Proceedings Eighth IEEE International Conference on Tools with Artificial Intelligence.
+    # IEEE, 1996.
+    #
+    # Manquinho, V. M., Oliveira, A. L., & Marques-Silva, J. (1998, September).
+    # "Models and algorithms for computing minimum-size prime implicants."
+    # In Proceedings of the International Workshop on Boolean Problems.
+
     cnf = formula if is_cnf(formula) else tseitin_cnf(formula)  # Convert the dnf into CNF by the Tseitin method if needed.
 
     #  Gather all literals from CNF
     literals = {lit for clause in cnf2clauses(cnf) for lit in clause2literals(clause)}
 
-    # Find the critical variables where a literal and its négation both occur in the CNF formula.
+    # Find the critical variables where a literal and its negation both occur in the CNF formula.
     negvars = {lit for lit in literals if isinstance(lit, Not)}
     posvars = literals - negvars
     negvars = set(map(firstsymbol, negvars))  # Extract the variables from the negative literals.
@@ -336,7 +347,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
         # Transform the current clause into constraints
         primes += pulp.lpSum([vlit[literal] for literal in literals_clause]) >= 1, "CLAUSE_" + str(i)
 
-    # Define the exclusive choice constraint between a variable and its negation, i.e., x + ~x <= 1
+    # Define the exclusive choice constraint between a variable and its negation for critical variables, i.e., x + ~x <= 1
     for var in criticalvars:
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
@@ -347,13 +358,13 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     while status == pulp.LpStatusOptimal:  # while a solution is found
         primes.solve(solver(msg=0))  # Quiet solving
         status = primes.status
-        if status == pulp.LpStatusOptimal:
+        if status == pulp.LpStatusOptimal: # A solution is found then convert it into a set of prime implicants.
             trc_implicants = trc_implicants + 1
             if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]     ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 
-            # Add the constraint discarding the found solution, e.g.  s = {x, ~y, z} --> x+~y+z <= 2 s.t. len(s)-1 = 2.
+            # Add the constraint discarding the found solution, e.g.  s = {x, ~y, z} -> x+~y+z <= 2 s.t. len(s)-1 = 2.
             discard_solution = pulp.lpSum(map(lambda lit: vlit[lit], solution)) <= len(solution) - 1, "OUT_" + str(trc_implicants)
             primes += discard_solution
     prime_implicants_problem = primes  # keep the specification of the problem in a global variable.
