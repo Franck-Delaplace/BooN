@@ -6,7 +6,6 @@
 # DEF means definition which is a code part gathering functions related to a process or an object definition,
 # STEP means main steps
 # WARNING is a warning.
-# These terms can be used to color comments in PyCharm or else.
 
 import inspect
 import pulp
