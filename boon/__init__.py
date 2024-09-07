@@ -385,8 +385,8 @@ class BooN:
                             formula = formula.replace(ops[Or], '|')  # Convert Or
                             formula = formula.replace(ops[Not], '~')  # Convert Not
 
-                            # for constant True, False the code can be also a part of the variable name (e.g., True = 0, False = 1 and X101 as variable)
-                            # Therefore the replacement occurs iff it is located after a space, a logical operator or at the start of the formula.
+                            # For constant True, False the code can be also a part of the variable name (e.g., True = 0, False = 1 and X101 as variable).
+                            # Therefore, the replacement occurs iff it is located after a space, a logical operator or at the start of the formula.
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[False], 'False', formula)  # Convert False
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[True], 'True', formula)  # Convert True
 
@@ -395,10 +395,10 @@ class BooN:
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
                             return
-                        desc.update({var: trueformula})
+                        desc.update({var: trueformula})  # Finally, update the descriptor with the parsed formula.
                 f.close()
         except FileNotFoundError:
-            errmsg("No such file or directory, no changes", fullfilename, "WARNING")
+            errmsg("No such file or directory, no changes is performed", fullfilename, "WARNING")
             return
 
         self.desc = desc
@@ -414,7 +414,7 @@ class BooN:
 
         :param filename: The file name to import the Boolean network.
         If the extension is missing, then .sbml is added.
-        :type  filename: Str"""
+        :type  filename: str"""
 
         sbml_file = filename if "." in filename else filename + EXTSBML
 
@@ -429,7 +429,7 @@ class BooN:
 
         model = document.getModel()  # Check whether a model exists.
         if model is None:
-            errmsg("No model present in SBML file.", kind="WARNING")
+            errmsg("No model are present in SBML file.", kind="WARNING")
             return
 
         qualitative_model = model.getPlugin("qual")  # Get the qualitative_model part of the model.
