@@ -28,7 +28,7 @@ SYMPY: dict = {'type': 'prefix', '(': "(", ')': ")",
                And: '&', Or: '|', Implies: 'Implies', Xor: 'Xor', Xnor: 'Xnor', Equivalent: 'Equivalent', Not: '~', False: 'False', True: 'True'}
 JAVA: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: 'false', True: 'true'}
 C: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: '0', True: '1'}
-BOOLNET:dict = {'type': 'normal form',  And: "&", Or: "|", Not: "!", False: "0", True: "1"}
+BOOLNET: dict = {'type': 'normal form', And: "&", Or: "|", Not: "!", False: "0", True: "1"}
 
 SOLVER = PULP_CBC_CMD  # Default PULP solver
 PATHSEP: str = "\\"  # Separator in the file path.
@@ -43,9 +43,10 @@ trc_implicants = 0  # global variables counting the number of prime implicants i
 def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     """Display an error message and exit in case of error (keyword ERROR).
 
-    :param msg: the error message.
-    :param arg: the argument of the error message (Default: "" no args).
-    :param kind: type of error (Default: ERROR). only the "ERROR" option will exit the application.
+    :param msg: The error message.
+    :param arg: The argument of the error message (Default: "" no args).
+    :param kind: Type of error (Default: ERROR).
+    Only the "ERROR" option will exit the application.
     :type msg: str
     :type arg: str
     :type kind: str"""
@@ -57,8 +58,8 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
 def firstsymbol(formula):
     """ Extract the first symbol from the symbols of a dnf.
 
-    :param formula: the input dnf.
-    :type formula: sympy formula
+    :param formula: The input dnf.
+    :type formula: Sympy formula
     :return: the first symbol."""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):  # The formula is reduced to a Boolean value, no symbols.
         return None
@@ -73,23 +74,23 @@ def cnf2clauses(cnf):
     :param cnf: CNF formula
     :type cnf: sympy formula
     :return: sequence of clauses.
-    :rtype: tuple[formula]"""
-    if isinstance(cnf, And):  # The cnf is  plain (And of Or-clauses).
+    :rtype: Tuple[formula]"""
+    if isinstance(cnf, And):  # The cnf is plain (And of Or-clauses).
         clauses = cnf.args
     elif isinstance(cnf, bool | BooleanFalse | BooleanTrue):  # The cnf is reduced to a boolean value.
         clauses = ()
     else:
-        clauses = (cnf,)  # Otherwise the cnf is reduced to a single clause.
+        clauses = (cnf,)  # Otherwise, the cnf is reduced to a single clause.
     return clauses
 
 
 def clause2literals(clause) -> set:
     """Convert a clause or a cube into of a sequence of literals.
 
-    :param  clause: the clause or cube.
-    :type clause: sympy formula
+    :param  clause: The clause or cube.
+    :type clause: Sympy formula
     :return: set of literals.
-    :rtype: set"""
+    :rtype: Set"""
     if isinstance(clause, Symbol | Not):  # clause reduced to a single literal.
         literals_clause = {clause}
     elif isinstance(clause, bool | BooleanFalse | BooleanTrue):  # clause reduced to Boolean value.
@@ -103,8 +104,8 @@ def clause2literals(clause) -> set:
 def prettyform(formula, style: dict = LOGICAL, depth=0):
     """Return a string of a formula in nice form.
 
-    :param formula: the input formula.
-    :param style: the style style of the logical operators (Default: LOGICAL)
+    :param formula: The input formula.
+    :param style: The style of the logical operators (Default: LOGICAL)
     :param depth: the current depth of the formula for setting parentheses (Default: 0)
     :type formula: sympy formula
     :type style: dict
@@ -137,10 +138,10 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
 def sympy2z3(formula):
     """Convert a sympy formula to z3 formula.
 
-    :param formula: the formula to convert.
-    :type formula: sympy formula
+    :param formula: The formula to convert.
+    :type formula: Sympy formula
     :return: the equivalent z3 formula.
-    :rtype: z3 formula"""
+    :rtype: Z3 formula"""
     if isinstance(formula, bool):
         return formula
     elif isinstance(formula, BooleanTrue):
@@ -171,10 +172,10 @@ _varcounter = 0  # counter1 used in newvar.
 def newvar(initialize: int | None = None):
     """Create a new sympy symbol of the form <prefix><number>. The prefix is given by TSEITIN constant.
 
-     :param initialize: initialize the counter  if the value is an integer or let the counter increment by 1 if it is set to None (Default value = None)
+     :param initialize: Initialize the counter if the value is an integer or let the counter increment by 1 if it is set to None (Default value = None)
      :type  initialize: int|None
      :return: a Simpy symbol.
-     :rtype: symbol"""
+     :rtype: Symbol"""
     global _varcounter
     if initialize is not None:
         _varcounter = initialize
@@ -184,12 +185,13 @@ def newvar(initialize: int | None = None):
 
 
 def tseitin(formula):
-    """ Characterize the Tseitin form of a formula. The additional variables are prefixed by TEITSIN constant
+    """ Characterize the Tseitin form of a formula.
+    TEITSIN constant prefixes the additional variables
 
-    :param formula: the formula.
-    :type formula: sympy formula
+    :param formula: The formula.
+    :type formula: Sympy formula
     :return: a pair: Tseitin variable, Tseitin CNF.
-    :rtype: tuple"""
+    :rtype: Tuple"""
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return formula, True
     elif isinstance(formula, Symbol):
@@ -232,10 +234,10 @@ def tseitin(formula):
 def tseitin_cnf(formula):
     """Convert a formula to CNF using Tseitin method.
 
-    :param formula: the formula to be converted.
-    :type formula: sympy formula
+    :param formula: The formula to be converted.
+    :type formula: Sympy formula
     :return: CNF formula.
-    :rtype: sympy formula"""
+    :rtype: Sympy formula"""
     newvar(0)  # initialize the counter1
     p, f = tseitin(formula)
     return And(p, f)
@@ -244,8 +246,8 @@ def tseitin_cnf(formula):
 def supercnf(formula, trace: bool = False):
     """ Convert the formula to CNF. The method is well adapted to large formula.
 
-    :param formula: the formula to convert.
-    :param trace: Boolean flag if True trace the computational steps  (Default value = False)
+    :param formula: The formula to convert.
+    :param trace: Boolean flag if True trace the computational steps (Default value = False)
     :type formula: sympy formula
     :type trace: bool
     :return: CNF formula
@@ -256,7 +258,7 @@ def supercnf(formula, trace: bool = False):
     # Basically, let f be a formula, we define the CNF as ¬(SAT(¬f)) as ¬¬f = f, namely the negation of the satisfiable models of ¬f.
     # Let f be a formula, we compute all the models for ¬f. For each datamodel if x = True then return ~x and x if x=False.
     # The SAT solver must necessarily admit non CNF formula and be efficient. We use z3 solver which answers to these requirements.
-    # This was really challenging to find an efficient method to convert very large formula in CNF, Yep ! I did it :-)
+    # This was really challenging to find an efficient method to convert very large formula in CNF, Yep! I did it :-)
     global trc_clauses
     global trc_cnf
     solver = z3.Solver()  # initialize Z3 solver
@@ -273,9 +275,9 @@ def supercnf(formula, trace: bool = False):
         models.append(model)
         # Block the current datamodel to enable the finding of another datamodel.
         block = [sol() != model[sol] for sol in model]
-        solver.add(z3.Or(block))  # if x=True, y=False then add x != True or y != False as constraint disabling the selection of the datamodel.
+        solver.add(z3.Or(block))  # if x=True, y= False, then add x != True or y != False as constraint disabling the selection of the datamodel.
 
-    # Convert the models into a CNF by negating the datamodel: x=True -> ~x, x=False -> x
+    # Convert the models into a CNF by negating the datamodel: x=True → ~x, x=False → x
     if trace:
         tqdm.write('')
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
@@ -290,16 +292,17 @@ def supercnf(formula, trace: bool = False):
 def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).name.startswith(TEITSIN), trace: bool = False, solver: type = SOLVER) -> frozenset:
     """Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
 
-    :param formula: the input formula. The formula does not need to be in CNF.
-    :param kept: predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
-    :param trace: Boolean flag determining whether the trace showing the resolution is activated (Default: False).
-    :param solver: the solver to use (Default: Pulp solver).
-    :type formula: sympy formula
+    :param formula: The input formula.
+    The formula does not need to be in CNF.
+    :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
+    :param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
+    :param solver: The solver to use (Default: Pulp solver).
+    :type formula: Sympy formula
     :type kept: function
     :type trace: bool
     :type solver: solver function
-    :return: all the prime implicants in the form of a set of sets where each subset represent one prime implicant filtered by kept.
-    :rtype: frozenset"""
+    :return: all the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.
+    :rtype: Frozenset"""
     global prime_implicants_problem
     global trc_implicants
     cnf = formula if is_cnf(formula) else tseitin_cnf(formula)  # Convert the dnf into CNF by the Tseitin method if needed.
@@ -328,13 +331,13 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     # Get the sequence of clauses of the CNF.
     clauses = cnf2clauses(cnf)
 
-    # Define the clauses as constraints  x |~y | z  --> x + ~y + z >= 1
+    # Define the clauses as constraints x |~y | z  --> x + ~y + z >= 1
     for i, clause in enumerate(clauses):  # Extract the literals of the current clause.
         literals_clause = clause2literals(clause)
         # Transform the current clause into constraints
         primes += pulp.lpSum([vlit[literal] for literal in literals_clause]) >= 1, "CLAUSE_" + str(i)
 
-    # Define the exclusive choice  constraint between a variable and its negation, i.e. x + ~x <= 1
+    # Define the exclusive choice constraint between a variable and its negation, i.e., x + ~x <= 1
     for var in criticalvars:
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
