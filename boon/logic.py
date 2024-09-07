@@ -186,7 +186,7 @@ def newvar(initialize: int | None = None):
 
 def tseitin(formula):
     """ Characterize the Tseitin form of a formula.
-    TEITSIN constant prefixes the additional variables
+    TEITSIN constant prefixes the additional variables.
 
     :param formula: The formula.
     :type formula: Sympy formula
