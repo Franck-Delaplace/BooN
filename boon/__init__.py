@@ -337,7 +337,8 @@ class BooN:
         return self
 
     def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> BooN:
-        """Export the Boolean network in a text file.
+        """
+        Export the Boolean network in a text file.
         If the file extension is missing, then .txt is added.
         The default format is BOOLNET.
 
@@ -365,11 +366,11 @@ class BooN:
         return self
 
     def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> BooN:
-        """Import the Boolean network from a text file.
+        """
+        Import the Boolean network from a text file.
         The syntax depends on the ops' descriptor.
         The formulas must be in normal form containing OR, AND, NOT operators only.
         The nodes are circularly mapped.
-
         :param filename: The file name to import the Boolean network.
         If the file extension is missing, then .txt is added.
         :param sep: The separator between definitions (default BOONSEP constant)
@@ -439,15 +440,14 @@ class BooN:
         return self
 
     def from_sbmlfile(self, filename: str) -> BooN:
-        """Import the Boolean network from a sbml file.
-
-        :param filename: The file name to import the Boolean network.
+        """
+        Import the Boolean network from a sbml file.
+        :param filename:  The file name to import the Boolean network.
         If the extension is missing, then .sbml is added.
         :type  filename: str
         :return: self
         :rtype: BooN
         """
-
         sbml_file = filename if "." in filename else filename + EXTSBML
 
         # STEP: Open the SBML file and get the qualitative_model model

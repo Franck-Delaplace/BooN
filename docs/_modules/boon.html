@@ -450,7 +450,8 @@
 <div class="viewcode-block" id="BooN.to_textfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.to_textfile">[docs]</a>
     <span class="k">def</span> <span class="nf">to_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BOOLNET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the Boolean network in a text file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export the Boolean network in a text file.</span>
 <span class="sd">        If the file extension is missing, then .txt is added.</span>
 <span class="sd">        The default format is BOOLNET.</span>
 
@@ -481,11 +482,11 @@
 <div class="viewcode-block" id="BooN.from_textfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.from_textfile">[docs]</a>
     <span class="k">def</span> <span class="nf">from_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BOOLNET</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a text file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import the Boolean network from a text file.</span>
 <span class="sd">        The syntax depends on the ops&#39; descriptor.</span>
 <span class="sd">        The formulas must be in normal form containing OR, AND, NOT operators only.</span>
 <span class="sd">        The nodes are circularly mapped.</span>
-
 <span class="sd">        :param filename: The file name to import the Boolean network.</span>
 <span class="sd">        If the file extension is missing, then .txt is added.</span>
 <span class="sd">        :param sep: The separator between definitions (default BOONSEP constant)</span>
@@ -558,15 +559,14 @@
 <div class="viewcode-block" id="BooN.from_sbmlfile">
 <a class="viewcode-back" href="../index.html#boon.BooN.from_sbmlfile">[docs]</a>
     <span class="k">def</span> <span class="nf">from_sbmlfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a sbml file.</span>
-
-<span class="sd">        :param filename: The file name to import the Boolean network.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import the Boolean network from a sbml file.</span>
+<span class="sd">        :param filename:  The file name to import the Boolean network.</span>
 <span class="sd">        If the extension is missing, then .sbml is added.</span>
 <span class="sd">        :type  filename: str</span>
 <span class="sd">        :return: self</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">sbml_file</span> <span class="o">=</span> <span class="n">filename</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="k">else</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">EXTSBML</span>
 
         <span class="c1"># STEP: Open the SBML file and get the qualitative_model model</span>

@@ -425,13 +425,9 @@ The method examines an exponential number of states, and thus it is restricted t
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_sbmlfile">
 <span class="sig-name descname"><span class="pre">from_sbmlfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#boon.BooN" title="boon.BooN"><span class="pre">BooN</span></a></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_sbmlfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_sbmlfile" title="Link to this definition"></a></dt>
-<dd><p>Import the Boolean network from a sbml file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> – The file name to import the Boolean network.</p>
-</dd>
-</dl>
-<p>If the extension is missing, then .sbml is added.
+<dd><p>Import the Boolean network from a sbml file.
+:param filename:  The file name to import the Boolean network.
+If the extension is missing, then .sbml is added.
 :type  filename: str
 :return: self
 :rtype: BooN</p>
@@ -443,13 +439,9 @@ The method examines an exponential number of states, and thus it is restricted t
 <dd><p>Import the Boolean network from a text file.
 The syntax depends on the ops’ descriptor.
 The formulas must be in normal form containing OR, AND, NOT operators only.
-The nodes are circularly mapped.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> – The file name to import the Boolean network.</p>
-</dd>
-</dl>
-<p>If the file extension is missing, then .txt is added.
+The nodes are circularly mapped.
+:param filename: The file name to import the Boolean network.
+If the file extension is missing, then .txt is added.
 :param sep: The separator between definitions (default BOONSEP constant)
 :param assign: the operator defining the formula for a variable, e.g., a = f(…) → assign is ‘=’ (Default: ‘,’).
 :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
