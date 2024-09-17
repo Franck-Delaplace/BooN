@@ -48,7 +48,10 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     Only the "ERROR" option will exit the application.
     :type msg: str
     :type arg: str
-    :type kind: str"""
+    :type kind: str
+    :return: None
+   """
+
     print(f"** {kind}: {inspect.stack()[1].filename.split(PATHSEP)[-1]} - {inspect.stack()[1].function}: {msg}: {arg}")
     if kind == "ERROR":
         exit()
@@ -163,7 +166,7 @@ def sympy2z3(formula):
         errmsg("a piece of the formula is not recognized", formula)
 
 
-# DEF: Advanced functionalities: fast CNF conversion, prime implicants computation.
+# DEF: CNF conversion
 TEITSIN: str = "_t6n"  # prefix of the new variables introduced in Teitsin conversion
 _varcounter = 0  # counter1 used in newvar.
 
@@ -287,12 +290,11 @@ def supercnf(formula, trace: bool = False):
                     for trc_cnf in range(len(models))])
     return cnf
 
-
+# DEF:  prime implicants computation.
 def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).name.startswith(TEITSIN), trace: bool = False, solver: type = SOLVER) -> frozenset:
-    """Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
-
-    :param formula: The input formula.
-    The formula does not need to be in CNF.
+    """
+    Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
+    :param formula: The input formula. The formula does not need to be in CNF.
     :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
     :param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
     :param solver: The solver to use (Default: Pulp solver).
@@ -301,7 +303,8 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     :type trace: bool
     :type solver: solver function
     :return: all the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.
-    :rtype: Frozenset"""
+    :rtype: Frozenset
+    """
     global prime_implicants_problem
     global trc_implicants
     # The prime implicants method is based on linear integer programming.

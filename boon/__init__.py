@@ -69,7 +69,8 @@ def core2actions(core: frozenset) -> list:
     :param core: The core.
     :type core: Frozenset of literals.
     :return: A list of combined actions where an action is defined as:[(variable, bool) ...]
-    :rtype: List[list[tuple]]"""
+    :rtype: List[list[tuple]]
+    """
 
     ACTION: dict = {"0": False, "1": True}
     lctrl = len(CONTROL)
@@ -85,7 +86,8 @@ def asynchronous(variables: list | set) -> frozenset:
     :param variables: List of variables.
     :type variables: List or set
     :return:  of sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
-    :rtype: frozenset[frozenset[Symbol]]"""
+    :rtype: frozenset[frozenset[Symbol]]
+    """
     return frozenset({frozenset({x}) for x in variables})
 
 
@@ -95,7 +97,8 @@ def synchronous(variables: list | set) -> frozenset:
         :param variables: list of variables.
         :type variables: list or set
         :return:  of sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
-        :rtype: frozenset[frozenset[Symbol]]"""
+        :rtype: frozenset[frozenset[Symbol]]
+        """
     return frozenset({frozenset({*variables})})
 
 
@@ -134,7 +137,8 @@ def int2state(int_state: int, variables: list | set) -> dict:
     :type int_state: Int
     :type variables: list or set
     :return: a dictionary representing the state {variable: boolean state…}.
-    :rtype: Dict"""
+    :rtype: Dict
+    """
     BIN2BOOL: dict = {'0': False, '1': True}
     bin_state = format(int_state, 'b').zfill(len(variables))
     return dict(zip(variables, [BIN2BOOL[state] for state in bin_state]))
@@ -146,7 +150,8 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
     :param arg: The dimension of the hypercube or the network to which the layout is applied.
     :type arg: Int or networkx Digraph
     :return: a dictionary {int:position} where int is the integer code of the hypercube labels.
-    :rtype: Dict"""
+    :rtype: Dict
+    """
     dim = 0
     if isinstance(arg, int):
         dim = arg
@@ -167,18 +172,20 @@ class BooN:
     :param  pos: the positions of the nodes in the interaction graph. {node:position, ...}.
     :type  desc: Dict
     :type  style: dict
-    :type  pos: dict"""
+    :type  pos: dict
+    """
     desc: dict = {}
     style: dict = {}
     pos: dict = {}
 
-    def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}) -> None:
+    def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}):
         """Initialize the BooN object.
 
-        :param  descriptor: The descriptor of a Boolean Network.
-        :param  style: The output style of formulas (Default: LOGICAL).
-        :param  pos: Positions of the variable in the interaction graph drawing.
-                If empty, the pos are generated during the drawing (Default: {}). """
+        :param descriptor: The descriptor of a Boolean Network.
+        :param style: The output style of formulas (Default: LOGICAL).
+        :param pos: Positions of the variable in the interaction graph drawing.
+        If empty, the positions are generated during the drawing (Default: {})
+        """
 
         if descriptor:
             self.desc = descriptor
@@ -186,17 +193,18 @@ class BooN:
             self.desc = {}
         self.style = style
         self.pos = pos
+        return
 
-    def __copy__(self):
+    def __copy__(self)->BooN:
         return BooN(self.desc, self.style, self.pos)
 
-    def __deepcopy__(self, memo):
+    def __deepcopy__(self, memo)->BooN:
         return BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
 
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
-    def str(self, sep: str = BOONSEP, assign: str = "="):
+    def str(self, sep: str = BOONSEP, assign: str = "=")->str:
         """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
         :param sep: the separator between formulas (default BOONSEP constant)
         :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '='). (Default: '=')
@@ -213,17 +221,22 @@ class BooN:
 
     @property
     def variables(self) -> set:
-        """Return the set of variables."""
-
+        """Return the set of variables.
+        :return: variables
+        :rtype: set[Symbol]
+        """
         return set(self.desc.keys())
 
-    def delete(self, variable) -> None:
+    def delete(self, variable) ->BooN:
         """Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
 
         :param  variable: The variable to delete.
-        :type variable: Symbol"""
+        :type variable: Symbol
+        :return: self
+        :rtype: BooN
+        """
 
-        def delete(formula, val):  # sub function deleting a variable in a formula.
+        def delete(formula, val)->BooN:  # sub function deleting a variable in a formula.
             if isinstance(formula, bool):
                 return formula
             elif isinstance(formula, Symbol):
@@ -256,13 +269,16 @@ class BooN:
         for var in self.desc:
             self.desc[var] = delete(self.desc[var], False)
 
-    def rename(self, source: Symbol, target: Symbol) -> None:
+        return self
+
+    def rename(self, source: Symbol, target: Symbol) -> BooN:
         """Rename a variable.
 
         :param  source:  The variable to rename.
         :param  target:  The variable renaming the source.
         :type source: Symbol
-        :type target: """
+        :type target: Symbol
+        """
 
         variables = self.variables
 
@@ -276,6 +292,7 @@ class BooN:
                 self.desc[var] = self.desc[var].subs(source, target)
 
         self.desc[target] = self.desc.pop(source)
+        return self
 
     def copy(self) -> BooN:
         """Perform a deep copy of the Boolean network."""
@@ -287,19 +304,24 @@ class BooN:
         If the extension is missing, then .boon is added.
 
         :param filename:  The name of the file to save the network (Default: BooN+date+hour.boon)
-        :type  filename: str"""
+        :type  filename: str
+        :return: None
+        :rtype: None
+        """
 
         fullfilename = filename if "." in filename else filename + EXTBOON
         with open(fullfilename, 'wb') as f:
             pickle.dump(self, f)
             f.close()
 
-    def load(self, filename: str) -> None:
+    def load(self, filename: str) -> BooN:
         """Load the Boolean Network from a file.
         If the extension is missing, then .boon is added.
 
         :param filename: The name of the file to load the network.
         :type  filename: Str
+        :return: self
+        :rtype: BooN
         """
 
         fullfilename = filename if "." in filename else filename + EXTBOON
@@ -312,8 +334,9 @@ class BooN:
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes", fullfilename, "WARNING")
+        return self
 
-    def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> None:
+    def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> BooN:
         """Export the Boolean network in a text file.
         If the file extension is missing, then .txt is added.
         The default format is BOOLNET.
@@ -327,6 +350,8 @@ class BooN:
         :type sep: str
         :type assign: str
         :type ops: dict
+        :return: self
+        :rtype: BooN
         """
 
         fullfilename = filename if "." in filename else filename + EXTXT
@@ -337,8 +362,9 @@ class BooN:
             f.write(text)
             self.style = tmp
             f.close()
+        return self
 
-    def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> None:
+    def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> BooN:
         """Import the Boolean network from a text file.
         The syntax depends on the ops' descriptor.
         The formulas must be in normal form containing OR, AND, NOT operators only.
@@ -353,6 +379,8 @@ class BooN:
         :type sep: str
         :type assign: str
         :type ops: dict
+        :return: self
+        :rtype: BooN
         """
 
         fullfilename = filename if "." in filename else filename + EXTXT
@@ -371,12 +399,12 @@ class BooN:
                             equal = line.index(assign)
                         except ValueError:
                             errmsg(f"Syntax error, the assignment (sign:{assign}) is missing, line {i} in file", fullfilename, "READ ERROR")
-                            return
+                            return self
                         try:  # Set the variable to Symbol.
                             var = symbols(line[:equal].strip())
                         except ValueError:
                             errmsg(f"Syntax error, wrong variable name, line {i} in file", fullfilename, "READ ERROR")
-                            return
+                            return self
 
                         try:  # Parse formula.
                             # STEP:  rewrite the operators to Python/Sympy operators
@@ -394,12 +422,12 @@ class BooN:
                             trueformula = parse_expr(formula)
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
-                            return
+                            return self
                         desc.update({var: trueformula})  # Finally, update the descriptor with the parsed formula.
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes is performed", fullfilename, "WARNING")
-            return
+            return self
 
         self.desc = desc
         ig = self.interaction_graph
@@ -408,13 +436,17 @@ class BooN:
                                                     , scale=(0.8, 0.8)
                                                     , reduce_edge_crossings=False)
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+        return self
 
-    def from_sbmlfile(self, filename: str) -> None:
+    def from_sbmlfile(self, filename: str) -> BooN:
         """Import the Boolean network from a sbml file.
 
         :param filename: The file name to import the Boolean network.
         If the extension is missing, then .sbml is added.
-        :type  filename: str"""
+        :type  filename: str
+        :return: self
+        :rtype: BooN
+        """
 
         sbml_file = filename if "." in filename else filename + EXTSBML
 
@@ -425,17 +457,17 @@ class BooN:
         if document.getNumErrors() > 0:  # Check if there
             # are no errors while reading the SBML files.
             errmsg("Error reading SBML file", document.getErrorLog().toString(), kind="WARNING")
-            return
+            return self
 
         model = document.getModel()  # Check whether a model exists.
         if model is None:
             errmsg("No model are present in SBML file.", kind="WARNING")
-            return
+            return self
 
         qualitative_model = model.getPlugin("qual")  # Get the qualitative_model part of the model.
         if qualitative_model is None:  # Check whether a Qual model exists.
             errmsg("The model does not have the Qual plugin", kind="WARNING")
-            return
+            return self
 
         # Create a dictionary associating the string name of a variable to its corresponding Symbol.
         vars_dic = {}
@@ -450,7 +482,7 @@ class BooN:
             output = transition.getListOfOutputs()
             if len(output) > 1:  # check whether there is a single output
                 errmsg("Multiple variables assigned. List of variables", output, kind="WARNING")
-                return
+                return self
             else:
                 variable = symbols(output[0].getQualitativeSpecies())
 
@@ -462,7 +494,7 @@ class BooN:
 
             if len(logic_terms) > 1:  # check whether there exists a single formula only, error otherwise
                 errmsg("Multiple logic terms present. Number of terms", len(logic_terms), kind="WARNING")
-                return
+                return self
             else:  # Get the SBML QUAL formula
                 formula = libsbml.formulaToL3String(logic_terms[0].getMath())
 
@@ -476,7 +508,7 @@ class BooN:
                 sympy_formula = parse_expr(normal_formula, vars_dic)
             except SyntaxError:
                 errmsg("Syntax error in the following formula", normal_formula, "SYNTAX ERROR")
-                return
+                return self
 
             desc[variable] = sympy_formula
 
@@ -488,18 +520,21 @@ class BooN:
                                                     , scale=(0.8, 0.8)
                                                     , reduce_edge_crossings=False)
         self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+        return self
 
     # DEF: NORMAL FORM CONVERSION
-    def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> None:
-        """Convert the formulas of the Boolean network to CNF.
+    def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) ->BooN:
+        """Convert the formulas of the Boolean network to CNF.Convert the formulas of the Boolean network to CNF.
 
-        :param  variable: The variable where the formula is to be converted in CNF (Default None).
-        If variable is None, then all the formulas are converted to CNF.
-        :param  simplify: Boolean flag determining whether the formula should be simplified (Default True).
-        :param  force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
-        :type  variable: Symbol
-        :type  simplify: bool
-        :type  force: bool"""
+        :param variable: The variable where the formula is to be converted in CNF (Default None).  If variable is None, then all the formulas are converted to CNF.
+        :param simplify:  Boolean flag determining whether the formula should be simplified (Default True).
+        :param force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
+        :type variable: Symbol
+        :type simplify: bool
+        :type force: bool
+        :return: self
+        :rtype: BooN
+        """
 
         if variable:
             try:
@@ -509,18 +544,21 @@ class BooN:
         else:
             for var in self.desc:
                 self.desc[var] = to_cnf(self.desc[var], simplify=simplify, force=force)
+        return self
 
-    def dnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> None:
-        """Convert formula(s) of the Boolean network to DNF.
-
-        :param  variable: The variable where the formula is to be converted in DNF (Default: None).
+    def dnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) ->BooN:
+        """
+        Convert formula(s) of the Boolean network to DNF.
+        :param variable:  The variable where the formula is to be converted in DNF (Default: None).
         If variable is None, then all the formulas are converted to DNF.
-        :param  simplify: Boolean flag determining whether the formula should be simplified (Default: True).
-        :param  force: Boolean flag forcing the complete simplification (Default: True).
+        :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).
+        :param force:  Boolean flag forcing the complete simplification (Default: True).
         :type  variable: Symbol
         :type  simplify: bool
-        :type  force: bool"""
-
+        :type  force: bool
+        :return: self
+        :rtype: BooN
+        """
         if variable:
             try:
                 self.desc[variable] = to_dnf(self.desc[variable], simplify=simplify, force=force)
@@ -529,6 +567,7 @@ class BooN:
         else:
             for var in self.desc:
                 self.desc[var] = to_dnf(self.desc[var], simplify=simplify, force=force)
+        return self
 
     # DEF: INTERACTION GRAPH
     @property
@@ -536,7 +575,8 @@ class BooN:
         """Build the interaction graph.
 
         :return: The interaction graph.
-        :rtype: Networkx DiGraph"""
+        :rtype: Networkx DiGraph
+        """
         all_dnf = all(map(is_dnf, self.desc.values()))  # Check whether all the formulas are in DNF.
         if all_dnf:
             net = self
@@ -596,22 +636,25 @@ class BooN:
         ig.add_nodes_from(variables)
         return ig
 
-    def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs):
-        """Draw the interaction graph.
-
+    def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs)->nx.DiGraph:
+        """
+        Draw the interaction graph.
         :param  IG: The interaction graph or None.
         If None, the interaction graph is generated from BooN (Default: None).
         :param  modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
         :param  kwargs: additional keyword arguments to pass to the interaction graph drawing
         :type   IG: networkx DiGraph
         :type   modular: bool
-        :type   kwargs: dict"""
+        :type   kwargs: dict
+        :return: interaction graph
+        :rtype: Networkx DiGraph
+        """
 
         ig = copy.deepcopy(IG) if IG else self.interaction_graph
 
         if not ig.nodes():
             errmsg("The interaction graph has no nodes", "", "WARNING")
-            return  # The Graph must have nodes to be drawn.
+            return ig  # The Graph must have nodes to be drawn.
 
         signs = nx.get_edge_attributes(ig, 'sign')
         sign_color = {edge: SIGNCOLOR[signs[edge]] for edge in signs}
@@ -638,10 +681,13 @@ class BooN:
                  **kwargs)
         return ig
 
-    def from_ig(self, IG: nx.DiGraph):
+    def from_ig(self, IG: nx.DiGraph)->Boon:
         """Define the descriptor of a BooN from an interaction graph.
 
-        :param  IG:  Interaction graph."""
+        :param  IG:  Interaction graph.
+        :return: self
+        :rtype: BooN
+        """
         # Find the maximal number of modules for each targetvariable.
         max_nb_modules = {node: 0 for node in IG.nodes()}
         modules = nx.get_edge_attributes(IG, 'module')
@@ -665,6 +711,7 @@ class BooN:
 
         # convert into formula
         self.desc = {node: Or(*(And(*clause) for clause in nodes[node])) for node in nodes}
+        return self
 
     # DEF: DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
@@ -674,7 +721,9 @@ class BooN:
         :param  mode: Determines the mode policy applied to the datamodel (Default: asynchronous).
         :type self_loop: Bool
         :type mode:  function
-        :return: a Digraph representing the complete state-based dynamics."""
+        :return: a Digraph representing the complete state-based dynamics.
+        :rtype: Networkx Digraph
+        """
 
         def next_state(state, change):  # update a state from changes.
             target = state.copy()
@@ -707,7 +756,8 @@ class BooN:
         return G
 
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
-        """Draw the graph representing the datamodel of dynamics.
+        """
+        Draw the graph representing the datamodel of dynamics.
 
         :param  model: Input datamodel graph of the BooN or None (Default: None).
         If it is None, the asynchronous datamodel computed from the BooN.
@@ -717,7 +767,10 @@ class BooN:
         :type model: Networkx DiGraph
         :type mode: function
         :type color: list
-        :type kwargs: dict"""
+        :type kwargs: dict
+        :return: None
+        :rtype: None
+        """
 
         themodel = model if model else self.model(mode)
         eqs = self.equilibria(themodel)
@@ -751,9 +804,11 @@ class BooN:
                          arrowstyle='-|>',
                          **kwargs
                          )
+        return None
 
     def equilibria(self, model: nx.DiGraph | None, mode: Callable = asynchronous) -> list[list]:
-        """Calculate equilibria for the network based on datamodel dynamics.
+        """
+        Calculate equilibria for the network based on datamodel dynamics.
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
         :param  model: Data model from which the equilibria are calculated.
@@ -763,7 +818,8 @@ class BooN:
         :type model: Networkx DiGraph
         :type mode: function
         :return: Equilibria structure as a list of lists where each sublist is an attractor.
-        :rtype: List[list]"""
+        :rtype: List[list]
+        """
 
         themodel = model if model else self.model(mode=mode)
 
@@ -781,7 +837,8 @@ class BooN:
         """Compute all the stable states of a BooN. The algorithm is based on SAT solver.
 
         :return: List of stable states.
-        :rtype: List[dict]"""
+        :rtype: List[dict]
+        """
 
         solver = z3.Solver()  # initialize z3 solver
         solver.add(logic.sympy2z3(self.stability_constraints()))  # add stability constraints translated in z3.
@@ -810,6 +867,8 @@ class BooN:
         :param frozentrue: List, set or sequence of variables that should be frozen to true by control.
         :type frozenfalse: Iterable object (list, set, tuple)
         :type frozentrue: iterable object (list, set, tuple)
+        :return: self
+        :rtype: BooN
         """
 
         variables = self.variables
@@ -825,6 +884,7 @@ class BooN:
                 self.desc[var] = Or(self.desc[var], Not(u1))
             else:
                 errmsg("The variable is not found, skipped", var, "WARNING")
+        return self
 
     def possibly(self, query):
         """Compute the possibility constraint.
@@ -832,7 +892,8 @@ class BooN:
         :param query: A formula characterizing the query, objective or goal.
         :type query: Sympy formula
         :return: a formula specifying the possibility.
-        :rtype: Sympy formula"""
+        :rtype: Sympy formula
+        """
         return And(self.stability_constraints(), query)
 
     def necessary(self, query, trace: bool = False):
@@ -843,7 +904,8 @@ class BooN:
         :type query: Sympy formula
         :type trace: bool
         :return: CNF specifying the necessity.
-        :rtype: Sympy formula"""
+        :rtype: Sympy formula
+        """
 
         if not self.desc:
             return True
@@ -869,7 +931,8 @@ class BooN:
         :type trace: bool
         :type solver: type
         :return: the core of control
-        :rtype: frozenset[sympy formula]"""
+        :rtype: frozenset[sympy formula]
+        """
 
         # predicate determining whether a literal is a negative control (e.g. ~ _u1).
         def isnegctrl(lit) -> bool:

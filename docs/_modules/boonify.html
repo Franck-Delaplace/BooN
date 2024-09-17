@@ -483,7 +483,7 @@
     <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close window&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-        <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>  <span class="c1"># WARNING: If the application is closed, this line will not be executed.</span></div>
+        <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>  <span class="c1"># WARNING: If the application is closed when quit() is triggered, this line will not be executed.</span></div>
 
 
     <span class="c1"># DEF: HISTORY MANAGEMENT</span>
@@ -529,7 +529,7 @@
     <span class="k">def</span> <span class="nf">add_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add current BooN to the history.&quot;&quot;&quot;</span>
         <span class="n">hindex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]:</span>  <span class="c1"># WARNING: The BooN comparison operates on descriptors only.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]:</span>  <span class="c1"># WARNING: The BooN comparison operates on descriptors only, not on positions.</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Prevent disruptive updates by disabling callback.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hupdate</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Descriptor is changed.</span>
@@ -553,7 +553,7 @@
 <div class="viewcode-block" id="Boonify.show_history">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.show_history">[docs]</a>
     <span class="k">def</span> <span class="nf">show_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the history.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the history. Used to debug the history management.&quot;&quot;&quot;</span>
         <span class="n">view</span> <span class="o">=</span> <span class="p">[([</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
                  <span class="n">tabulate</span><span class="p">([(</span><span class="n">var</span><span class="p">,</span> <span class="n">logic</span><span class="o">.</span><span class="n">prettyform</span><span class="p">(</span><span class="n">eq</span><span class="p">,</span> <span class="n">theboon</span><span class="o">.</span><span class="n">style</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">theboon</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
                  <span class="k">if</span> <span class="n">theboon</span> <span class="k">else</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">theboon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">)]</span>
