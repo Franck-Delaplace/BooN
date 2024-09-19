@@ -38,15 +38,17 @@ import libsbml
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
 COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
 EXTBOON: str = ".boon"  # file extension for save and load.
-EXTXT: str = ".txt"     # file extension for to_textfile and from_textfile.
+EXTXT: str = ".txt"  # file extension for to_textfile and from_textfile.
 EXTSBML: str = ".sbml"  # file extension of SBML file for from_sbmlfile.
-CONTROL: str = "_u"     # prefix name of the controllers.
-BOONSEP: str = "\n"     # separator between the equations of a BooN.
+CONTROL: str = "_u"  # prefix name of the controllers.
+BOONSEP: str = "\n"  # separator between the equations of a BooN.
 # color list for graph drawing
-COLOR: list[str] = ['gold', 'tomato', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
+COLOR: list[str] = [ 'tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
                     'darkkhaki', 'forestgreen', 'salmon', 'lightcoral', 'cornflowerblue', 'orange',
                     'paleviolet', 'coral', 'dodgerblue', 'yellowgreen', 'orangered', 'pink', 'blueviolet', 'crimson']
 
+BOOLNETSKIP: str = r'(targets\s*,\s*factors)|(#.*)'  # regexp describing the line to skip in a boolnet format.
+PYTHONSKIP: str = r'#.*'  # regexp describing python comment to skip.
 
 def is_controlled(formula) -> bool:
     """Check whether a formula is controlled.
@@ -195,16 +197,16 @@ class BooN:
         self.pos = pos
         return
 
-    def __copy__(self)->BooN:
+    def __copy__(self) -> BooN:
         return BooN(self.desc, self.style, self.pos)
 
-    def __deepcopy__(self, memo)->BooN:
+    def __deepcopy__(self, memo) -> BooN:
         return BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
 
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
-    def str(self, sep: str = BOONSEP, assign: str = "=")->str:
+    def str(self, sep: str = BOONSEP, assign: str = "=") -> str:
         """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
         :param sep: the separator between formulas (default BOONSEP constant)
         :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '='). (Default: '=')
@@ -222,12 +224,12 @@ class BooN:
     @property
     def variables(self) -> set:
         """Return the set of variables.
-        :return: variables
+        :return: Variables
         :rtype: set[Symbol]
         """
         return set(self.desc.keys())
 
-    def delete(self, variable) ->BooN:
+    def delete(self, variable) -> BooN:
         """Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
 
         :param  variable: The variable to delete.
@@ -236,7 +238,7 @@ class BooN:
         :rtype: BooN
         """
 
-        def delete(formula, val)->BooN:  # sub function deleting a variable in a formula.
+        def delete(formula, val) -> BooN:  # sub function deleting a variable in a formula.
             if isinstance(formula, bool):
                 return formula
             elif isinstance(formula, Symbol):
@@ -365,7 +367,7 @@ class BooN:
             f.close()
         return self
 
-    def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> BooN:
+    def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, skipline: str = BOOLNETSKIP) -> BooN:
         """
         Import the Boolean network from a text file.
         The syntax depends on the ops' descriptor.
@@ -376,10 +378,13 @@ class BooN:
         :param sep: The separator between definitions (default BOONSEP constant)
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
+        :param skipline: Regular expression describing which lines must be skipped and not analyzed.
+        The regular expression must fully match with the skipped line once stripped (Default: BOOLNETSKIP).
         :type  filename: Str
         :type sep: str
         :type assign: str
         :type ops: dict
+        :type skipline:str
         :return: self
         :rtype: BooN
         """
@@ -389,14 +394,14 @@ class BooN:
         try:
             with open(fullfilename, 'r') as f:
                 text = " ".join(f.readlines())  # Join all the lines in 1 string.
-                text = map(lambda s: s.strip(), text.split(sep))  # And next separate the string w.r.t. the separator BOONSEP
-                for i, line in enumerate(text, 1):  # Parse the network description. A line is of the form: <var> = <formula>, comment line start with '#'
-                    if line.startswith('#'):  # Skip comment.
+                text = map(lambda s: s.strip(), text.split(sep))  # And next separate the string w.r.t. the separator sep.
+                for i, line in enumerate(text, 1):  # Parse the network description.
+                    if re.fullmatch(skipline, line.strip()):  # Skip line that must be skipped.
                         pass
                     elif line == '':  # Skip empty line.
                         pass
                     else:
-                        try:  # Find '=' operator.
+                        try:  # Find connective operator.
                             equal = line.index(assign)
                         except ValueError:
                             errmsg(f"Syntax error, the assignment (sign:{assign}) is missing, line {i} in file", fullfilename, "READ ERROR")
@@ -523,7 +528,7 @@ class BooN:
         return self
 
     # DEF: NORMAL FORM CONVERSION
-    def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) ->BooN:
+    def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> BooN:
         """Convert the formulas of the Boolean network to CNF.Convert the formulas of the Boolean network to CNF.
 
         :param variable: The variable where the formula is to be converted in CNF (Default None).  If variable is None, then all the formulas are converted to CNF.
@@ -546,7 +551,7 @@ class BooN:
                 self.desc[var] = to_cnf(self.desc[var], simplify=simplify, force=force)
         return self
 
-    def dnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) ->BooN:
+    def dnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> BooN:
         """
         Convert formula(s) of the Boolean network to DNF.
         :param variable:  The variable where the formula is to be converted in DNF (Default: None).
@@ -636,7 +641,7 @@ class BooN:
         ig.add_nodes_from(variables)
         return ig
 
-    def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs)->nx.DiGraph:
+    def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs) -> nx.DiGraph:
         """
         Draw the interaction graph.
         :param  IG: The interaction graph or None.
@@ -681,11 +686,12 @@ class BooN:
                  **kwargs)
         return ig
 
-    def from_ig(self, IG: nx.DiGraph)->Boon:
-        """Define the descriptor of a BooN from an interaction graph.
+    def from_ig(self, IG: nx.DiGraph) -> Boon:
+        """
+        Define the descriptor of a BooN from an interaction graph.
 
         :param  IG:  Interaction graph.
-        :return: self
+        :return: Self
         :rtype: BooN
         """
         # Find the maximal number of modules for each targetvariable.
@@ -715,7 +721,8 @@ class BooN:
 
     # DEF: DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
-        """Compute the dynamical datamodel of the BooN w.r.t. a mode.
+        """
+        Compute the dynamical datamodel of the BooN w.r.t. a mode.
 
         :param  self_loop: Determines whether the boon loops are included in the datamodel (Default: False).
         :param  mode: Determines the mode policy applied to the datamodel (Default: asynchronous).
