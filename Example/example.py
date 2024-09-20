@@ -98,7 +98,7 @@ print(boon2)
 # exportation and import from  text file
 print("- EXPORT & IMPORT -")
 boon2.to_textfile('boolnet')
-boon2.from_textfile('boolnet.txt')  # static method of BooN
+boon2.from_textfile('boolnet.bnet')  # static method of BooN
 print(boon2)
 
 # show the models and the interaction graph
