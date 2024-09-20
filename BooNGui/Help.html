@@ -114,7 +114,7 @@ syntax of a variable.</dd>
         <dt> <span class="cmd">[Open]</span></dt><dd>Open/load the file.</dd>
         <dt> <span class="cmd">[Save]</span> </dt> <dd>Save the BooN with the current file name.</dd>
         <dt> <span class="cmd">[Save as]</span> </dt> <dd>Save the BooN with a new file name.</dd>
-         <dt> <span class="cmd">[Import]</span> </dt> <dd>Import a text or SBML file containing the BooN description. The admitted extensions are .txt, .sbml, .xml</dd>
+         <dt> <span class="cmd">[Import]</span> </dt> <dd>Import a text, Boolnet, or SBML file containing the BooN description. The admitted extensions are <code>.txt,.bnet, .sbml, .xml</code></dd>
          <dt> <span class="cmd">[Export]</span> </dt> <dd>Export the BooN as text</dd>
     </dl>
 
@@ -122,7 +122,9 @@ syntax of a variable.</dd>
         <ul class="info">
             <li> The extension of a BooN file is <code>.boon</code>.</li>
             <li> The exportation or importation is defined from a text file
-                specification of a BooN  with <code>.txt</code> as default extension. </li>
+                specification of a BooN  with <code>.bnet</code> as default extension. </li>
+            <li> setting the extension to <code>.txt</code> leads to import or export in Sympy format.</li>
+            <li> setting the extension to <code>.bnet</code> leads to import or export in Bool Net format</li>
             <li> The imported SBML files must correspond to the Qualitative Model or the "qual" extension for SBML</li>
             <li>The coordinates of the nodes are lost during the exportation, to keep them save the BooN before. </li>
             <li>The nodes of an imported BooN are circularly arranged The node layout computation may take time.</li>
@@ -134,19 +136,32 @@ syntax of a variable.</dd>
             </li>
         </ul>
 
-    <h3>Syntax of the imported text follows the BoolNet format </h3>
-    <p> The file contains a set of
+    <h3>Syntax of the imported text follows the BoolNet or the text format </h3>
+    <h4>Boolnet format (extension .bnet)</h4>
+    <p> For the Boolnet format, the file contains a set of
         equations where a Boolean equation must be written in the same
-        line.&nbsp; Comments can be added and start by&nbsp; #.&nbsp; The
+        line.&nbsp; Comments start by&nbsp; <code>#</code>.&nbsp; The
         formula must follow the <a href="http://colomoto.org/biolqm/doc/format-bnet.html" title="BoolNet Documentation">BoolNet</a>
         syntax where: AND = &amp;, OR = |, NOT = !.
     <p> The grammar of a formula definition related to a variable is :<span class="cmd"> &lt;variable&gt; ',' &lt;formula&gt;</span>. For example, we have:<br>
     </p>
     <p class="info"><span class="info-title">EXAMPLE:</span><br>
         <span style="font-family: Consolas, monospace; text-align:left;"># Example of BooN<br>
-          x , (!x &amp; y) | z <br>
-          y , !z | x <br>
-          z , y &amp; x &amp; !z </span></p>
+            target, factors <br>
+            x , (!x &amp; y) | z <br>
+            y , !z | x <br>
+            z , y &amp; x &amp; !z </span>
+    </p>
+     <h4>Text format (extension .txt)</h4>
+    <p> For the text format, vomments start by&nbsp; <code>#</code> and the logical operators are Python operators: AND = &amp;, OR = |, NOT = ~.
+    <p> The grammar of a formula definition related to a variable is :<span class="cmd"> &lt;variable&gt; '=' &lt;formula&gt;</span>. For example, we have:<br>
+    </p>
+    <p class="info"><span class="info-title">EXAMPLE:</span><br>
+        <span style="font-family: Consolas, monospace; text-align:left;"># Example of BooN<br>
+          x  =  (~x &amp; y) | z <br>
+          y  =  ~z | x <br>
+          z  = y &amp; x &amp; ~z </span></p>
+
     <h2 id="analysis"> Boolean Network Analysis </h2>
     The different items are:
      <dl>

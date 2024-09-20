@@ -11,10 +11,9 @@
 from __future__ import annotations
 import re
 import copy
-import datetime
 import pickle
 from typing import Dict, Any
-
+from datetime import datetime
 import z3
 import math
 from collections.abc import Callable
@@ -39,16 +38,20 @@ SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of
 COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
 EXTBOON: str = ".boon"  # file extension for save and load.
 EXTXT: str = ".txt"  # file extension for to_textfile and from_textfile.
+EXTBOOLNET: str = ".bnet"
 EXTSBML: str = ".sbml"  # file extension of SBML file for from_sbmlfile.
 CONTROL: str = "_u"  # prefix name of the controllers.
 BOONSEP: str = "\n"  # separator between the equations of a BooN.
 # color list for graph drawing
-COLOR: list[str] = [ 'tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
+COLOR: list[str] = ['tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
                     'darkkhaki', 'forestgreen', 'salmon', 'lightcoral', 'cornflowerblue', 'orange',
                     'paleviolet', 'coral', 'dodgerblue', 'yellowgreen', 'orangered', 'pink', 'blueviolet', 'crimson']
 
 BOOLNETSKIP: str = r'(targets\s*,\s*factors)|(#.*)'  # regexp describing the line to skip in a boolnet format.
 PYTHONSKIP: str = r'#.*'  # regexp describing python comment to skip.
+PYTHONHEADER: str = '# BooN saved on ' + datetime.now().strftime("%d-%m-%Y") #header for basic save (.txt)
+BOOLNETHEADER: str = PYTHONHEADER + '\ntargets, factors' #header for boolnet format
+
 
 def is_controlled(formula) -> bool:
     """Check whether a formula is controlled.
@@ -301,7 +304,7 @@ class BooN:
         return copy.deepcopy(self)
 
     # DEF: FILE
-    def save(self, filename: str = "BooN" + datetime.datetime.now().strftime("%d-%b-%y-%H") + EXTBOON) -> None:
+    def save(self, filename: str = "BooN" + datetime.now().strftime("%d-%b-%y-%H") + EXTBOON) -> None:
         """Save the Boolean Network to file.
         If the extension is missing, then .boon is added.
 
@@ -338,30 +341,32 @@ class BooN:
             errmsg("No such file or directory, no changes", fullfilename, "WARNING")
         return self
 
-    def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET) -> BooN:
+    def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, header: str = BOOLNETHEADER) -> BooN:
         """
         Export the Boolean network in a text file.
         If the file extension is missing, then .txt is added.
         The default format is BOOLNET.
 
         :param filename: The file name to export the Boolean network.
-        If the file extension is missing, then .txt is added.
+        If the file extension is missing, then .bnet is added.
         :param sep: The separator between formulas (default BOONSEP constant)
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
+        :param header: Header text inserted at the beginning of the saved file.
         :type  filename: Str
         :type sep: str
         :type assign: str
         :type ops: dict
+        :type header: str
         :return: self
         :rtype: BooN
         """
 
-        fullfilename = filename if "." in filename else filename + EXTXT
+        fullfilename = filename if "." in filename else filename + EXTBOOLNET
         with open(fullfilename, 'w') as f:
             tmp = self.style
             self.style = ops  # assign ops to style
-            text = self.str(sep, assign)  # convert to string with regard to sep and assign
+            text = header + "\n" + self.str(sep, assign)  # convert to string with regard to sep and assign
             f.write(text)
             self.style = tmp
             f.close()
@@ -374,7 +379,7 @@ class BooN:
         The formulas must be in normal form containing OR, AND, NOT operators only.
         The nodes are circularly mapped.
         :param filename: The file name to import the Boolean network.
-        If the file extension is missing, then .txt is added.
+        If the file extension is missing, then .bnet is added.
         :param sep: The separator between definitions (default BOONSEP constant)
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
@@ -389,7 +394,7 @@ class BooN:
         :rtype: BooN
         """
 
-        fullfilename = filename if "." in filename else filename + EXTXT
+        fullfilename = filename if "." in filename else filename + EXTBOOLNET
         desc = {}
         try:
             with open(fullfilename, 'r') as f:
