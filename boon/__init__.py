@@ -108,17 +108,16 @@ def synchronous(variables: list | set) -> frozenset:
 
 
 def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
-    """Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
-
+    """
+    Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
     :param state: State of the variables.
     :param variables: List of variables.
-    If the list is empty, then the encoding order corresponds to the variable occur.
-    (Defaults [])
-    :type state: dict or tuple
+    :type state: Dict or tuple
     :type variables: list or set
     :return: an integer such that its binary profile represents the state.
     :rtype: Int
     """
+
     BOOL2BIN: dict = {False: '0', True: '1', 0: '0', 1: '1'}
     if variables:
         order = variables
@@ -348,9 +347,8 @@ class BooN:
         The default format is BOOLNET.
 
         :param filename: The file name to export the Boolean network.
-        If the file extension is missing, then .bnet is added.
         :param sep: The separator between formulas (default BOONSEP constant)
-        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
+        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
         :param header: Header text inserted at the beginning of the saved file.
         :type  filename: Str
@@ -770,7 +768,6 @@ class BooN:
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
         """
         Draw the graph representing the datamodel of dynamics.
-
         :param  model: Input datamodel graph of the BooN or None (Default: None).
         If it is None, the asynchronous datamodel computed from the BooN.
         :param  mode: Function characterizing the mode of the datamodel (Default: asynchronous)
@@ -783,7 +780,6 @@ class BooN:
         :return: None
         :rtype: None
         """
-
         themodel = model if model else self.model(mode)
         eqs = self.equilibria(themodel)
         if len(eqs) > len(color):
@@ -823,10 +819,8 @@ class BooN:
         Calculate equilibria for the network based on datamodel dynamics.
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
-        :param  model: Data model from which the equilibria are calculated.
-        If the datamodel is None, then the datamodel will be calculated from BooN.
-        (Default: None)
-        :param  mode: updating mode function, used if the datamodel is None (Default: asynchronous).
+        :param model: Data model from which the equilibria are calculated.
+        :param mode: updating mode function, used if the datamodel is None (Default: asynchronous).
         :type model: Networkx DiGraph
         :type mode: function
         :return: Equilibria structure as a list of lists where each sublist is an attractor.

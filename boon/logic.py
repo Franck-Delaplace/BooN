@@ -19,7 +19,9 @@ from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent, Xor, Xnor, Bo
 from sympy.logic.boolalg import is_cnf
 from tqdm import tqdm
 
-# Dictionary defining the output style of the formula, see prettyform
+# Dictionary defining the output style of the formula, see prettyform also used for from_textfile and to_textfile.
+# The type determines the type of the formula for operators which differ from And, Or, Not.
+# let OP be an operator: prefix prints OP( <parameters>), infix prints <p1> OP <p2> ..., and normal form restrict the formula to a normal form and prohibit these operators.
 LOGICAL: dict = {'type': 'infix', And: '\u2227', Or: '\u2228', Implies: '\u21D2', Equivalent: '\u21D4', Xor: '\u22BB', Not: '\u00AC', False: 'false', True: 'true'}
 MATHEMATICA: dict = {'type': 'prefix', '(': "[", ')': "]",
                      And: '&&', Or: '||', Xor: 'Xor', Xnor: 'Xnor', Implies: 'Implies', Equivalent: 'Equivalent', Not: '!', False: 'False', True: 'True'}
@@ -40,17 +42,18 @@ trc_implicants = 0  # global variables counting the number of prime implicants i
 
 # DEF: Basic functions
 def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
-    """Display an error message and exit in case of error (keyword ERROR).
+    """
+    Display an error message and exit in case of error (kind = "ERROR").
 
     :param msg: The error message.
     :param arg: The argument of the error message (Default: "" no args).
-    :param kind: Type of error (Default: ERROR).
-    Only the "ERROR" option will exit the application.
+    :param kind: Type of error (Default: ERROR). Only the "ERROR" option will exit the application.
     :type msg: str
     :type arg: str
     :type kind: str
     :return: None
-   """
+    :rtype: None
+    """
 
     print(f"** {kind}: {inspect.stack()[1].filename.split(PATHSEP)[-1]} - {inspect.stack()[1].function}: {msg}: {arg}")
     if kind == "ERROR":
@@ -363,7 +366,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
         status = primes.status
         if status == pulp.LpStatusOptimal: # A solution is found then convert it into a set of prime implicants.
             trc_implicants = trc_implicants + 1
-            if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]     ', end='')
+            if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]                      ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 

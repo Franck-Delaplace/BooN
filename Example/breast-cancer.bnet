@@ -1,6 +1,6 @@
 # Breast Cancer Model 2018
 # BoolNet Format
-target, factors
+targets, factors
 EGFR , !BRCA1
 ERK12 ,  EGFR
 PIK3CA , !PTEN & EGFR
