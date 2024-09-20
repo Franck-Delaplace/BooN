@@ -16,7 +16,7 @@ from tabulate import tabulate
 import BooNGui.booneries_rc  # resources
 
 import boon
-from boon import BooN, SIGNCOLOR, COLORSIGN, EXTSBML, EXTXT
+from boon import BooN, SIGNCOLOR, COLORSIGN, EXTSBML, EXTXT, BOONSEP, PYTHONSKIP, PYTHONHEADER
 import boon.logic as logic
 from boon.logic import LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET
 
@@ -327,20 +327,22 @@ class Boonify(QMainWindow):
 
     def importation(self):
         """Import file dialog."""
-        filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text or SBML Files (*.txt *.xml *.sbml);; All Files (*);;")
+        filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text or SBML Files (*.bnet *.txt *.xml *.sbml);; All Files (*);;")
         if filename:
             self.filename = None  # no file name since the BooN is not saved in the internal format.
 
             _, extension = os.path.splitext(filename[0])
             match extension:
-                case ".txt":
+                case ".bnet":
                     self.boon.from_textfile(filename[0])
+                case ".txt":
+                    self.boon.from_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, skipline=PYTHONSKIP)
                 case ".sbml":
                     self.boon.from_sbmlfile(filename[0])
                 case ".xml":
                     self.boon.from_sbmlfile(filename[0])
                 case _:
-                    QMessageBox.critical(self, "File extension error", f"The extension is unknown. \nFound {extension}\nAdmitted extension: .txt, .sbml, .xml")
+                    QMessageBox.critical(self, "File extension error", f"The extension is unknown. \nFound {extension}\nAdmitted extension: .txt, .bnet, .sbml, .xml")
 
             self.refresh()
             self.setup_design()
@@ -348,9 +350,14 @@ class Boonify(QMainWindow):
 
     def exportation(self):
         """Export file dialog."""
-        filename = QFileDialog.getSaveFileName(self, "", "Export to text file.", "Text Files (*.txt);; All Files (*);;")
+        filename = QFileDialog.getSaveFileName(self, "Export to BoolNet or Text format.", "", "Text Files (*.bnet *.txt);;")
         if filename:
-            self.boon.to_textfile(filename[0])
+            _, extension = os.path.splitext(filename[0])
+            match extension:
+                case ".bnet":
+                    self.boon.to_textfile(filename[0])
+                case ".txt":
+                    self.boon.to_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, header=PYTHONHEADER)
 
     def quit(self):
         """Quit application."""
