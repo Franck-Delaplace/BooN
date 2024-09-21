@@ -419,7 +419,7 @@ class BooN:
                             # STEP:  rewrite the operators to Python/Sympy operators
                             formula = line[equal + 1:].strip()
                             formula = formula.replace(ops[And], '&')  # Convert And
-                            formula = formula.replace(ops[Or], '|')  # Convert Or
+                            formula = formula.replace(ops[Or], '|')   # Convert Or
                             formula = formula.replace(ops[Not], '~')  # Convert Not
 
                             # For constant True, False the code can be also a part of the variable name (e.g., True = 0, False = 1 and X101 as variable).
@@ -427,7 +427,7 @@ class BooN:
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[False], 'False', formula)  # Convert False
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[True], 'True', formula)  # Convert True
 
-                            # STEP: Now the formula is rewritten in Python/Sympy syntax then parse it.
+                            # STEP: Now the formula is a string rewritten in Python/Sympy syntax then parse it.
                             trueformula = parse_expr(formula)
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
@@ -435,7 +435,7 @@ class BooN:
                         desc.update({var: trueformula})  # Finally, update the descriptor with the parsed formula.
                 f.close()
         except FileNotFoundError:
-            errmsg("No such file or directory, no changes is performed", fullfilename, "WARNING")
+            errmsg("No such file or directory, no changes are made", fullfilename, "WARNING")
             return self
 
         self.desc = desc

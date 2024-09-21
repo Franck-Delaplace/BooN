@@ -332,14 +332,14 @@ class Boonify(QMainWindow):
             self.filename = None  # no file name since the BooN is not saved in the internal format.
 
             _, extension = os.path.splitext(filename[0])
-            match extension:
-                case ".bnet":
+            match extension:  # Select the appropriate format to import file
+                case ".bnet": # BoolNet Format
                     self.boon.from_textfile(filename[0])
-                case ".txt":
+                case ".txt":  # Python Format
                     self.boon.from_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, skipline=PYTHONSKIP)
-                case ".sbml":
+                case ".sbml": # SBML Format
                     self.boon.from_sbmlfile(filename[0])
-                case ".xml":
+                case ".xml":  # SBML Format
                     self.boon.from_sbmlfile(filename[0])
                 case _:
                     QMessageBox.critical(self, "File extension error", f"The extension is unknown. \nFound {extension}\nAdmitted extension: .txt, .bnet, .sbml, .xml")
@@ -350,7 +350,7 @@ class Boonify(QMainWindow):
 
     def exportation(self):
         """Export file dialog."""
-        filename = QFileDialog.getSaveFileName(self, "Export to BoolNet or Text format.", "", "Text Files (*.bnet *.txt);;")
+        filename = QFileDialog.getSaveFileName(self, "Export to BoolNet or Python format.", "", "Text Files (*.bnet *.txt);;")
         if filename:
             _, extension = os.path.splitext(filename[0])
             match extension:
