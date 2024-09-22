@@ -49,8 +49,8 @@ COLOR: list[str] = ['tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine',
 
 BOOLNETSKIP: str = r'(targets\s*,\s*factors)|(#.*)'  # regexp describing the line to skip in a boolnet format.
 PYTHONSKIP: str = r'#.*'  # regexp describing python comment to skip.
-PYTHONHEADER: str = '# BooN saved on ' + datetime.now().strftime("%d-%m-%Y") #header for basic save (.txt)
-BOOLNETHEADER: str = PYTHONHEADER + '\ntargets, factors' #header for boolnet format
+PYTHONHEADER: str = '# BooN saved on ' + datetime.now().strftime("%d-%m-%Y")  # header for basic save (.txt)
+BOOLNETHEADER: str = PYTHONHEADER + '\ntargets, factors'  # header for boolnet format
 
 
 def is_controlled(formula) -> bool:
@@ -318,27 +318,30 @@ class BooN:
             pickle.dump(self, f)
             f.close()
 
-    def load(self, filename: str) -> BooN:
+    @classmethod
+    def load(cls, filename: str) -> BooN:
         """Load the Boolean Network from a file.
         If the extension is missing, then .boon is added.
+        The method is a class method
 
         :param filename: The name of the file to load the network.
         :type  filename: Str
         :return: self
         :rtype: BooN
         """
+        boon = cls()    # create an empty object
 
         fullfilename = filename if "." in filename else filename + EXTBOON
         try:
             with open(fullfilename, 'rb') as f:
                 boon = pickle.load(f)
-                self.desc = boon.desc
-                self.style = boon.style
-                self.pos = boon.pos
+                boon.desc = boon.desc
+                boon.style = boon.style
+                boon.pos = boon.pos
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes", fullfilename, "WARNING")
-        return self
+        return boon
 
     def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, header: str = BOOLNETHEADER) -> BooN:
         """
@@ -370,12 +373,13 @@ class BooN:
             f.close()
         return self
 
-    def from_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, skipline: str = BOOLNETSKIP) -> BooN:
+    @classmethod
+    def from_textfile(cls, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, skipline: str = BOOLNETSKIP) -> BooN:
         """
-        Import the Boolean network from a text file.
-        The syntax depends on the ops' descriptor.
+        Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
         The formulas must be in normal form containing OR, AND, NOT operators only.
         The nodes are circularly mapped.
+        The method is a class method.
         :param filename: The file name to import the Boolean network.
         If the file extension is missing, then .bnet is added.
         :param sep: The separator between definitions (default BOONSEP constant)
@@ -388,10 +392,11 @@ class BooN:
         :type assign: str
         :type ops: dict
         :type skipline:str
-        :return: self
+        :return: BooN
         :rtype: BooN
         """
 
+        boon = cls()  # create an empty object
         fullfilename = filename if "." in filename else filename + EXTBOOLNET
         desc = {}
         try:
@@ -408,18 +413,18 @@ class BooN:
                             equal = line.index(assign)
                         except ValueError:
                             errmsg(f"Syntax error, the assignment (sign:{assign}) is missing, line {i} in file", fullfilename, "READ ERROR")
-                            return self
+                            return boon
                         try:  # Set the variable to Symbol.
                             var = symbols(line[:equal].strip())
                         except ValueError:
                             errmsg(f"Syntax error, wrong variable name, line {i} in file", fullfilename, "READ ERROR")
-                            return self
+                            return boon
 
                         try:  # Parse formula.
                             # STEP:  rewrite the operators to Python/Sympy operators
                             formula = line[equal + 1:].strip()
                             formula = formula.replace(ops[And], '&')  # Convert And
-                            formula = formula.replace(ops[Or], '|')   # Convert Or
+                            formula = formula.replace(ops[Or], '|')  # Convert Or
                             formula = formula.replace(ops[Not], '~')  # Convert Not
 
                             # For constant True, False the code can be also a part of the variable name (e.g., True = 0, False = 1 and X101 as variable).
@@ -431,31 +436,35 @@ class BooN:
                             trueformula = parse_expr(formula)
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
-                            return self
+                            return boon
                         desc.update({var: trueformula})  # Finally, update the descriptor with the parsed formula.
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes are made", fullfilename, "WARNING")
-            return self
+            return boon
 
-        self.desc = desc
-        ig = self.interaction_graph
+        boon.desc = desc
+        ig = boon.interaction_graph
         circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
                                                     , origin=(0.1, 0.15)
                                                     , scale=(0.8, 0.8)
                                                     , reduce_edge_crossings=False)
-        self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
-        return self
+        boon.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+        return boon
 
-    def from_sbmlfile(self, filename: str) -> BooN:
+    @classmethod
+    def from_sbmlfile(cls, filename: str) -> BooN:
         """
         Import the Boolean network from a sbml file.
+        The method is a class method.
         :param filename:  The file name to import the Boolean network.
         If the extension is missing, then .sbml is added.
         :type  filename: str
         :return: self
         :rtype: BooN
         """
+
+        boon = cls()  # create an empty object
         sbml_file = filename if "." in filename else filename + EXTSBML
 
         # STEP: Open the SBML file and get the qualitative_model model
@@ -465,17 +474,17 @@ class BooN:
         if document.getNumErrors() > 0:  # Check if there
             # are no errors while reading the SBML files.
             errmsg("Error reading SBML file", document.getErrorLog().toString(), kind="WARNING")
-            return self
+            return boon
 
         model = document.getModel()  # Check whether a model exists.
         if model is None:
             errmsg("No model are present in SBML file.", kind="WARNING")
-            return self
+            return boon
 
         qualitative_model = model.getPlugin("qual")  # Get the qualitative_model part of the model.
         if qualitative_model is None:  # Check whether a Qual model exists.
             errmsg("The model does not have the Qual plugin", kind="WARNING")
-            return self
+            return boon
 
         # Create a dictionary associating the string name of a variable to its corresponding Symbol.
         vars_dic = {}
@@ -490,7 +499,7 @@ class BooN:
             output = transition.getListOfOutputs()
             if len(output) > 1:  # check whether there is a single output
                 errmsg("Multiple variables assigned. List of variables", output, kind="WARNING")
-                return self
+                return boon
             else:
                 variable = symbols(output[0].getQualitativeSpecies())
 
@@ -502,7 +511,7 @@ class BooN:
 
             if len(logic_terms) > 1:  # check whether there exists a single formula only, error otherwise
                 errmsg("Multiple logic terms present. Number of terms", len(logic_terms), kind="WARNING")
-                return self
+                return boon
             else:  # Get the SBML QUAL formula
                 formula = libsbml.formulaToL3String(logic_terms[0].getMath())
 
@@ -516,19 +525,19 @@ class BooN:
                 sympy_formula = parse_expr(normal_formula, vars_dic)
             except SyntaxError:
                 errmsg("Syntax error in the following formula", normal_formula, "SYNTAX ERROR")
-                return self
+                return boon
 
             desc[variable] = sympy_formula
 
         # STEP: define the BooN with a circular layout for nodes
-        self.desc = desc
-        ig = self.interaction_graph
+        boon.desc = desc
+        ig = boon.interaction_graph
         circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
                                                     , origin=(0.1, 0.15)
                                                     , scale=(0.8, 0.8)
                                                     , reduce_edge_crossings=False)
-        self.pos = {symbols(var): pos for var, pos in circular_positions.items()}
-        return self
+        boon.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+        return boon
 
     # DEF: NORMAL FORM CONVERSION
     def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> BooN:
@@ -676,6 +685,7 @@ class BooN:
             )
         else:
             module_args = dict()
+
         ng.Graph(ig,
                  node_color='antiquewhite',
                  node_labels=True,
@@ -820,7 +830,7 @@ class BooN:
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
         :param model: Data model from which the equilibria are calculated.
-        :param mode: updating mode function, used if the datamodel is None (Default: asynchronous).
+        :param mode: Updating mode function, used if the datamodel is None (Default: asynchronous).
         :type model: Networkx DiGraph
         :type mode: function
         :return: Equilibria structure as a list of lists where each sublist is an attractor.

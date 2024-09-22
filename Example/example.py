@@ -1,11 +1,10 @@
-# The program illustrates the basic features of BooN
+# The program illustrates the basic features of BooN.
 import matplotlib.pyplot as plt
 import networkx as nx
 from sympy.abc import w, x, y, z, v
 from tabulate import tabulate
 from boon import *
 from boon.logic import *
-
 #%%
 # Define the initial Boolean network
 boon = BooN({x: y, y: x & z, z: w | ~x & v | y, w: x & y | ~x & z & ~w & ~v, v: ~v & w})
@@ -74,13 +73,15 @@ boon.draw_IG(IG, modular=True, ax=ax1)
 #%%
 # retrieve BooN from the interaction graph
 print("- FROM INTERACTION GRAPH -")
-boon2 = BooN().from_ig(IG)
+boon2= BooN().from_ig(IG)
 print(boon2)
 #%%
 # save and re-load in a new BooN boon2
 print("SAVE and LOAD")
 boon.save("bn")
-boon2 = BooN().load("bn")  # load is a static method of BooN
+print("BooN saved in bn.boon - next re loaded.")
+
+boon2 = BooN.load("bn") # load is a static method of BooN
 print(boon2)
 #%%
 print("- CNF Conversion -")
@@ -91,8 +92,9 @@ print(" - DNF conversion -")
 boon2.dnf()
 print(boon2)
 #%%
-# exportation and import from a BoolNet file
+# exportation and import from BoolNet file
 print("- EXPORT & IMPORT -")
-boon2.to_textfile('boolnet')
-boon2.from_textfile('boolnet.bnet')
+boon2.to_textfile('bn')
+print("BooN exported as Bool Net format in bn.bnet - next imported. ")
+boon2 = BooN.from_textfile('bn.bnet')
 print(boon2)
