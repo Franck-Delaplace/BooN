@@ -73,7 +73,7 @@ boon.draw_IG(IG, modular=True, ax=ax1)
 #%%
 # retrieve BooN from the interaction graph
 print("- FROM INTERACTION GRAPH -")
-boon2= BooN().from_ig(IG)
+boon2= BooN.from_ig(IG)
 print(boon2)
 #%%
 # save and re-load in a new BooN boon2

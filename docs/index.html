@@ -338,9 +338,13 @@ influencing or directing the course of events or outcomes towards an expected go
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.dnf">
 <span class="sig-name descname"><span class="pre">dnf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Symbol</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simplify</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#boon.BooN" title="boon.BooN"><span class="pre">BooN</span></a></span></span><a class="reference internal" href="_modules/boon.html#BooN.dnf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.dnf" title="Link to this definition"></a></dt>
-<dd><p>Convert formula(s) of the Boolean network to DNF.
-:param variable:  The variable where the formula is to be converted in DNF (Default: None).
-If variable is None, then all the formulas are converted to DNF.
+<dd><p>Convert formula(s) of the Boolean network to DNF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>variable</strong> – The variable where the formula is to be converted in DNF (Default: None).</p>
+</dd>
+</dl>
+<p>If variable is None, then all the formulas are converted to DNF.
 :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).
 :param force:  Boolean flag forcing the complete simplification (Default: True).
 :type  variable: Symbol
@@ -353,33 +357,43 @@ If variable is None, then all the formulas are converted to DNF.
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.draw_IG">
 <span class="sig-name descname"><span class="pre">draw_IG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IG</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modular</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DiGraph</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.draw_IG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.draw_IG" title="Link to this definition"></a></dt>
-<dd><p>Draw the interaction graph.
-:param  IG: The interaction graph or None.
-If None, the interaction graph is generated from BooN (Default: None).
-:param  modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
-:param  kwargs: additional keyword arguments to pass to the interaction graph drawing
-:type   IG: networkx DiGraph
-:type   modular: bool
-:type   kwargs: dict
-:return: interaction graph
-:rtype: Networkx DiGraph</p>
+<dd><p>Draw the interaction graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>IG</strong> (<em>networkx DiGraph</em>) – The interaction graph or None. If None, the interaction graph is generated from BooN (Default: None).</p></li>
+<li><p><strong>modular</strong> (<em>bool</em>) – Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – additional keyword arguments to pass to the interaction graph drawing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>interaction graph</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Networkx DiGraph</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.draw_model">
 <span class="sig-name descname"><span class="pre">draw_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">model:</span> <span class="pre">~networkx.classes.digraph.DiGraph</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">mode:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">asynchronous&gt;,</span> <span class="pre">color:</span> <span class="pre">list[str]</span> <span class="pre">=</span> <span class="pre">['tomato',</span> <span class="pre">'gold',</span> <span class="pre">'yellowgreen',</span> <span class="pre">'plum',</span> <span class="pre">'mediumaquamarine',</span> <span class="pre">'darkorange',</span> <span class="pre">'darkkhaki',</span> <span class="pre">'forestgreen',</span> <span class="pre">'salmon',</span> <span class="pre">'lightcoral',</span> <span class="pre">'cornflowerblue',</span> <span class="pre">'orange',</span> <span class="pre">'paleviolet',</span> <span class="pre">'coral',</span> <span class="pre">'dodgerblue',</span> <span class="pre">'yellowgreen',</span> <span class="pre">'orangered',</span> <span class="pre">'pink',</span> <span class="pre">'blueviolet',</span> <span class="pre">'crimson'],</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.draw_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.draw_model" title="Link to this definition"></a></dt>
-<dd><p>Draw the graph representing the datamodel of dynamics.
-:param  model: Input datamodel graph of the BooN or None (Default: None).
-If it is None, the asynchronous datamodel computed from the BooN.
-:param  mode: Function characterizing the mode of the datamodel (Default: asynchronous)
-:param  color: list of colors for highlighting the equlibria (Default: COLOR)
-:param  kwargs: extra parameters of nx.draw_networkx.
-:type model: Networkx DiGraph
+<dd><p>Draw the graph representing the datamodel of dynamics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.</p></li>
+<li><p><strong>mode</strong> – Function characterizing the mode of the datamodel (Default: asynchronous)</p></li>
+<li><p><strong>color</strong> – list of colors for highlighting the equlibria (Default: COLOR)</p></li>
+<li><p><strong>kwargs</strong> – extra parameters of nx.draw_networkx.</p></li>
+</ul>
+</dd>
+</dl>
+<p>type model: Networkx DiGraph
 :type mode: function
 :type color: list
 :type kwargs: dict
-:return: None
-:rtype: None</p>
+:return: None</p>
 </dd></dl>
 
 <dl class="py method">
@@ -405,14 +419,15 @@ The method examines an exponential number of states, and thus it is restricted t
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.from_ig">
-<span class="sig-name descname"><span class="pre">from_ig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IG</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">nx.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Boon</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_ig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_ig" title="Link to this definition"></a></dt>
-<dd><p>Define the descriptor of a BooN from an interaction graph.</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IG</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">nx.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Boon</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_ig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_ig" title="Link to this definition"></a></dt>
+<dd><p>Define the descriptor of a BooN from an interaction graph.
+The method is a class method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>IG</strong> – Interaction graph.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Self</p>
+<dd class="field-even"><p>BooN</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#boon.BooN" title="boon.BooN">BooN</a></p>
@@ -424,9 +439,13 @@ The method examines an exponential number of states, and thus it is restricted t
 <dt class="sig sig-object py" id="boon.BooN.from_sbmlfile">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sbmlfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#boon.BooN" title="boon.BooN"><span class="pre">BooN</span></a></span></span><a class="reference internal" href="_modules/boon.html#BooN.from_sbmlfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.from_sbmlfile" title="Link to this definition"></a></dt>
 <dd><p>Import the Boolean network from a sbml file.
-The method is a class method.
-:param filename:  The file name to import the Boolean network.
-If the extension is missing, then .sbml is added.
+The method is a class method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The file name to import the Boolean network.</p>
+</dd>
+</dl>
+<p>If the extension is missing, then .sbml is added.
 :type  filename: str
 :return: self
 :rtype: BooN</p>
@@ -438,19 +457,20 @@ If the extension is missing, then .sbml is added.
 <dd><p>Import the Boolean network from a text file, the syntax of which depends on the ops’ descriptor.
 The formulas must be in normal form containing OR, AND, NOT operators only.
 The nodes are circularly mapped.
-The method is a class method.
-:param filename: The file name to import the Boolean network.
-If the file extension is missing, then .bnet is added.
-:param sep: The separator between definitions (default BOONSEP constant)
-:param assign: the operator defining the formula for a variable, e.g., a = f(…) → assign is ‘=’ (Default: ‘,’).
-:param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
-:param skipline: Regular expression describing which lines must be skipped and not analyzed.
-The regular expression must fully match with the skipped line once stripped (Default: BOOLNETSKIP).
-:type  filename: Str
-:type sep: str
-:type assign: str
-:type ops: dict
-:type skipline:str
+The default format is the Bool Net format (see ops and assign defaults).
+The method is a class method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>Str</em>) – The file name to import the Boolean network. If the file extension is missing, then .bnet is added.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – The separator between definitions (default BOONSEP constant)</p></li>
+<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g., a = f(…) → assign is ‘=’ (Default: ‘,’).</p></li>
+<li><p><strong>ops</strong> (<em>dict</em>) – A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).</p></li>
+<li><p><strong>skipline</strong> – Regular expression describing which lines must be skipped and not analyzed.</p></li>
+</ul>
+</dd>
+</dl>
+<p>:type skipline:str (regexp)
 :return: BooN
 :rtype: BooN</p>
 </dd></dl>
@@ -561,7 +581,7 @@ The method is a class method</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN22-sept.-24-17.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BooN22-sept.-24-18.boon'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.save" title="Link to this definition"></a></dt>
 <dd><p>Save the Boolean Network to file.
 If the extension is missing, then .boon is added.</p>
 <dl class="field-list simple">
@@ -600,11 +620,15 @@ If the extension is missing, then .boon is added.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.str">
 <span class="sig-name descname"><span class="pre">str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'='</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/boon.html#BooN.str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.str" title="Link to this definition"></a></dt>
-<dd><p>Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
-:param sep: the separator between formulas (default BOONSEP constant)
-:param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(…) → assign is ‘=’). (Default: ‘=’)
-:type sep: str
-:type assign: str</p>
+<dd><p>Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sep</strong> (<em>str</em>) – the separator between formulas (default BOONSEP constant)</p></li>
+<li><p><strong>assign</strong> (<em>str</em>) – the operator defining the assignment of a formula to a variable (e.g., a = f(…) → assign is ‘=’). (Default: ‘=’)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -734,13 +758,21 @@ The actions are sorted by length, meaning that the more parsimonious actions are
 <dl class="py function">
 <dt class="sig sig-object py" id="boon.state2int">
 <span class="sig-prename descclassname"><span class="pre">boon.</span></span><span class="sig-name descname"><span class="pre">state2int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/boon.html#state2int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.state2int" title="Link to this definition"></a></dt>
-<dd><p>Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
-:param state: State of the variables.
-:param variables: List of variables.
-:type state: Dict or tuple
-:type variables: list or set
-:return: an integer such that its binary profile represents the state.
-:rtype: Int</p>
+<dd><p>Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<em>Dict</em><em> or </em><em>tuple</em>) – State of the variables.</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em> or </em><em>set</em>) – List of variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an integer such that its binary profile represents the state.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -868,17 +900,23 @@ The actions are sorted by length, meaning that the more parsimonious actions are
 <dl class="py function">
 <dt class="sig sig-object py" id="boon.logic.prime_implicants">
 <span class="sig-prename descclassname"><span class="pre">boon.logic.</span></span><span class="sig-name descname"><span class="pre">prime_implicants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kept:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver:</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'pulp.apis.coin_api.PULP_CBC_CMD'&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">frozenset</span></span></span><a class="reference internal" href="_modules/boon/logic.html#prime_implicants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.logic.prime_implicants" title="Link to this definition"></a></dt>
-<dd><p>Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
-:param formula: The input formula. The formula does not need to be in CNF.
-:param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
-:param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
-:param solver: The solver to use (Default: Pulp solver).
-:type formula: Sympy formula
-:type kept: function
-:type trace: bool
-:type solver: solver function
-:return: all the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.
-:rtype: Frozenset</p>
+<dd><p>Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formula</strong> (<em>Sympy formula</em>) – The input formula. The formula does not need to be in CNF.</p></li>
+<li><p><strong>kept</strong> (<em>function</em>) – Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)</p></li>
+<li><p><strong>trace</strong> (<em>bool</em>) – a Boolean flag determining whether the trace showing the resolution is activated (Default: False).</p></li>
+<li><p><strong>solver</strong> (<em>solver function</em>) – The solver to use (Default: Pulp solver).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>all the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Frozenset</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

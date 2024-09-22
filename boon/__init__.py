@@ -108,8 +108,8 @@ def synchronous(variables: list | set) -> frozenset:
 
 
 def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
-    """
-    Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
+    """Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
+
     :param state: State of the variables.
     :param variables: List of variables.
     :type state: Dict or tuple
@@ -210,6 +210,7 @@ class BooN:
 
     def str(self, sep: str = BOONSEP, assign: str = "=") -> str:
         """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
+
         :param sep: the separator between formulas (default BOONSEP constant)
         :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '='). (Default: '=')
         :type sep: str
@@ -375,23 +376,22 @@ class BooN:
 
     @classmethod
     def from_textfile(cls, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, skipline: str = BOOLNETSKIP) -> BooN:
-        """
-        Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
+        """Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
         The formulas must be in normal form containing OR, AND, NOT operators only.
         The nodes are circularly mapped.
+        The default format is the Bool Net format (see ops and assign defaults).
         The method is a class method.
-        :param filename: The file name to import the Boolean network.
-        If the file extension is missing, then .bnet is added.
+
+        :param filename: The file name to import the Boolean network. If the file extension is missing, then .bnet is added.
         :param sep: The separator between definitions (default BOONSEP constant)
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
         :param skipline: Regular expression describing which lines must be skipped and not analyzed.
-        The regular expression must fully match with the skipped line once stripped (Default: BOOLNETSKIP).
-        :type  filename: Str
+        :type filename: Str
         :type sep: str
         :type assign: str
         :type ops: dict
-        :type skipline:str
+        :type skipline:str (regexp)
         :return: BooN
         :rtype: BooN
         """
@@ -457,6 +457,7 @@ class BooN:
         """
         Import the Boolean network from a sbml file.
         The method is a class method.
+
         :param filename:  The file name to import the Boolean network.
         If the extension is missing, then .sbml is added.
         :type  filename: str
@@ -564,8 +565,8 @@ class BooN:
         return self
 
     def dnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> BooN:
-        """
-        Convert formula(s) of the Boolean network to DNF.
+        """Convert formula(s) of the Boolean network to DNF.
+
         :param variable:  The variable where the formula is to be converted in DNF (Default: None).
         If variable is None, then all the formulas are converted to DNF.
         :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).
@@ -576,6 +577,7 @@ class BooN:
         :return: self
         :rtype: BooN
         """
+
         if variable:
             try:
                 self.desc[variable] = to_dnf(self.desc[variable], simplify=simplify, force=force)
@@ -654,12 +656,11 @@ class BooN:
         return ig
 
     def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs) -> nx.DiGraph:
-        """
-        Draw the interaction graph.
-        :param  IG: The interaction graph or None.
-        If None, the interaction graph is generated from BooN (Default: None).
-        :param  modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
-        :param  kwargs: additional keyword arguments to pass to the interaction graph drawing
+        """Draw the interaction graph.
+
+        :param IG: The interaction graph or None. If None, the interaction graph is generated from BooN (Default: None).
+        :param modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
+        :param kwargs: additional keyword arguments to pass to the interaction graph drawing
         :type   IG: networkx DiGraph
         :type   modular: bool
         :type   kwargs: dict
@@ -699,14 +700,17 @@ class BooN:
                  **kwargs)
         return ig
 
-    def from_ig(self, IG: nx.DiGraph) -> Boon:
+    @classmethod
+    def from_ig(cls, IG: nx.DiGraph) -> Boon:
         """
         Define the descriptor of a BooN from an interaction graph.
+        The method is a class method.
 
         :param  IG:  Interaction graph.
-        :return: Self
+        :return: BooN
         :rtype: BooN
         """
+
         # Find the maximal number of modules for each targetvariable.
         max_nb_modules = {node: 0 for node in IG.nodes()}
         modules = nx.get_edge_attributes(IG, 'module')
@@ -729,8 +733,7 @@ class BooN:
                     nodes[target][abs(module) - 1].add(lit)
 
         # convert into formula
-        self.desc = {node: Or(*(And(*clause) for clause in nodes[node])) for node in nodes}
-        return self
+        return cls({node: Or(*(And(*clause) for clause in nodes[node])) for node in nodes})
 
     # DEF: DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
@@ -776,20 +779,19 @@ class BooN:
         return G
 
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
-        """
-        Draw the graph representing the datamodel of dynamics.
-        :param  model: Input datamodel graph of the BooN or None (Default: None).
-        If it is None, the asynchronous datamodel computed from the BooN.
-        :param  mode: Function characterizing the mode of the datamodel (Default: asynchronous)
-        :param  color: list of colors for highlighting the equlibria (Default: COLOR)
-        :param  kwargs: extra parameters of nx.draw_networkx.
-        :type model: Networkx DiGraph
+        """Draw the graph representing the datamodel of dynamics.
+
+        :param model: Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.
+        :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)
+        :param color: list of colors for highlighting the equlibria (Default: COLOR)
+        :param kwargs: extra parameters of nx.draw_networkx.
+        type model: Networkx DiGraph
         :type mode: function
         :type color: list
         :type kwargs: dict
         :return: None
-        :rtype: None
         """
+
         themodel = model if model else self.model(mode)
         eqs = self.equilibria(themodel)
         if len(eqs) > len(color):

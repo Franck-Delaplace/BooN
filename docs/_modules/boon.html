@@ -192,8 +192,8 @@
 <div class="viewcode-block" id="state2int">
 <a class="viewcode-back" href="../index.html#boon.state2int">[docs]</a>
 <span class="k">def</span> <span class="nf">state2int</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="nb">set</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.</span>
+
 <span class="sd">    :param state: State of the variables.</span>
 <span class="sd">    :param variables: List of variables.</span>
 <span class="sd">    :type state: Dict or tuple</span>
@@ -305,6 +305,7 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.str">[docs]</a>
     <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)</span>
+
 <span class="sd">        :param sep: the separator between formulas (default BOONSEP constant)</span>
 <span class="sd">        :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is &#39;=&#39;). (Default: &#39;=&#39;)</span>
 <span class="sd">        :type sep: str</span>
@@ -491,23 +492,22 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.from_textfile">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_textfile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BOOLNET</span><span class="p">,</span> <span class="n">skipline</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOOLNETSKIP</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Import the Boolean network from a text file, the syntax of which depends on the ops&#39; descriptor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the Boolean network from a text file, the syntax of which depends on the ops&#39; descriptor.</span>
 <span class="sd">        The formulas must be in normal form containing OR, AND, NOT operators only.</span>
 <span class="sd">        The nodes are circularly mapped.</span>
+<span class="sd">        The default format is the Bool Net format (see ops and assign defaults).</span>
 <span class="sd">        The method is a class method.</span>
-<span class="sd">        :param filename: The file name to import the Boolean network.</span>
-<span class="sd">        If the file extension is missing, then .bnet is added.</span>
+
+<span class="sd">        :param filename: The file name to import the Boolean network. If the file extension is missing, then .bnet is added.</span>
 <span class="sd">        :param sep: The separator between definitions (default BOONSEP constant)</span>
 <span class="sd">        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is &#39;=&#39; (Default: &#39;,&#39;).</span>
 <span class="sd">        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).</span>
 <span class="sd">        :param skipline: Regular expression describing which lines must be skipped and not analyzed.</span>
-<span class="sd">        The regular expression must fully match with the skipped line once stripped (Default: BOOLNETSKIP).</span>
-<span class="sd">        :type  filename: Str</span>
+<span class="sd">        :type filename: Str</span>
 <span class="sd">        :type sep: str</span>
 <span class="sd">        :type assign: str</span>
 <span class="sd">        :type ops: dict</span>
-<span class="sd">        :type skipline:str</span>
+<span class="sd">        :type skipline:str (regexp)</span>
 <span class="sd">        :return: BooN</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -576,6 +576,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Import the Boolean network from a sbml file.</span>
 <span class="sd">        The method is a class method.</span>
+
 <span class="sd">        :param filename:  The file name to import the Boolean network.</span>
 <span class="sd">        If the extension is missing, then .sbml is added.</span>
 <span class="sd">        :type  filename: str</span>
@@ -689,8 +690,8 @@
 <div class="viewcode-block" id="BooN.dnf">
 <a class="viewcode-back" href="../index.html#boon.BooN.dnf">[docs]</a>
     <span class="k">def</span> <span class="nf">dnf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">:</span> <span class="n">Symbol</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">simplify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert formula(s) of the Boolean network to DNF.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert formula(s) of the Boolean network to DNF.</span>
+
 <span class="sd">        :param variable:  The variable where the formula is to be converted in DNF (Default: None).</span>
 <span class="sd">        If variable is None, then all the formulas are converted to DNF.</span>
 <span class="sd">        :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).</span>
@@ -701,6 +702,7 @@
 <span class="sd">        :return: self</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">variable</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_dnf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="n">simplify</span><span class="o">=</span><span class="n">simplify</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
@@ -782,12 +784,11 @@
 <div class="viewcode-block" id="BooN.draw_IG">
 <a class="viewcode-back" href="../index.html#boon.BooN.draw_IG">[docs]</a>
     <span class="k">def</span> <span class="nf">draw_IG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">IG</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">modular</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Draw the interaction graph.</span>
-<span class="sd">        :param  IG: The interaction graph or None.</span>
-<span class="sd">        If None, the interaction graph is generated from BooN (Default: None).</span>
-<span class="sd">        :param  modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)</span>
-<span class="sd">        :param  kwargs: additional keyword arguments to pass to the interaction graph drawing</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the interaction graph.</span>
+
+<span class="sd">        :param IG: The interaction graph or None. If None, the interaction graph is generated from BooN (Default: None).</span>
+<span class="sd">        :param modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)</span>
+<span class="sd">        :param kwargs: additional keyword arguments to pass to the interaction graph drawing</span>
 <span class="sd">        :type   IG: networkx DiGraph</span>
 <span class="sd">        :type   modular: bool</span>
 <span class="sd">        :type   kwargs: dict</span>
@@ -813,6 +814,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">module_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
         <span class="n">ng</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">ig</span><span class="p">,</span>
                  <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;antiquewhite&#39;</span><span class="p">,</span>
                  <span class="n">node_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -829,14 +831,17 @@
 
 <div class="viewcode-block" id="BooN.from_ig">
 <a class="viewcode-back" href="../index.html#boon.BooN.from_ig">[docs]</a>
-    <span class="k">def</span> <span class="nf">from_ig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">IG</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Boon</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_ig</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">IG</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Boon</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Define the descriptor of a BooN from an interaction graph.</span>
+<span class="sd">        The method is a class method.</span>
 
 <span class="sd">        :param  IG:  Interaction graph.</span>
-<span class="sd">        :return: Self</span>
+<span class="sd">        :return: BooN</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c1"># Find the maximal number of modules for each targetvariable.</span>
         <span class="n">max_nb_modules</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">IG</span><span class="o">.</span><span class="n">nodes</span><span class="p">()}</span>
         <span class="n">modules</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_edge_attributes</span><span class="p">(</span><span class="n">IG</span><span class="p">,</span> <span class="s1">&#39;module&#39;</span><span class="p">)</span>
@@ -859,8 +864,7 @@
                     <span class="n">nodes</span><span class="p">[</span><span class="n">target</span><span class="p">][</span><span class="nb">abs</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span>
 
         <span class="c1"># convert into formula</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="o">*</span><span class="n">clause</span><span class="p">)</span> <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]))</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">}</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">({</span><span class="n">node</span><span class="p">:</span> <span class="n">Or</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="o">*</span><span class="n">clause</span><span class="p">)</span> <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]))</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">})</span></div>
 
 
     <span class="c1"># DEF: DYNAMICS</span>
@@ -912,20 +916,19 @@
 <div class="viewcode-block" id="BooN.draw_model">
 <a class="viewcode-back" href="../index.html#boon.BooN.draw_model">[docs]</a>
     <span class="k">def</span> <span class="nf">draw_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">COLOR</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Draw the graph representing the datamodel of dynamics.</span>
-<span class="sd">        :param  model: Input datamodel graph of the BooN or None (Default: None).</span>
-<span class="sd">        If it is None, the asynchronous datamodel computed from the BooN.</span>
-<span class="sd">        :param  mode: Function characterizing the mode of the datamodel (Default: asynchronous)</span>
-<span class="sd">        :param  color: list of colors for highlighting the equlibria (Default: COLOR)</span>
-<span class="sd">        :param  kwargs: extra parameters of nx.draw_networkx.</span>
-<span class="sd">        :type model: Networkx DiGraph</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the graph representing the datamodel of dynamics.</span>
+
+<span class="sd">        :param model: Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.</span>
+<span class="sd">        :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)</span>
+<span class="sd">        :param color: list of colors for highlighting the equlibria (Default: COLOR)</span>
+<span class="sd">        :param kwargs: extra parameters of nx.draw_networkx.</span>
+<span class="sd">        type model: Networkx DiGraph</span>
 <span class="sd">        :type mode: function</span>
 <span class="sd">        :type color: list</span>
 <span class="sd">        :type kwargs: dict</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        :rtype: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">themodel</span> <span class="o">=</span> <span class="n">model</span> <span class="k">if</span> <span class="n">model</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
         <span class="n">eqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equilibria</span><span class="p">(</span><span class="n">themodel</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eqs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>

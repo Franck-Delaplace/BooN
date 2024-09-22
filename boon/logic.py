@@ -297,6 +297,7 @@ def supercnf(formula, trace: bool = False):
 def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).name.startswith(TEITSIN), trace: bool = False, solver: type = SOLVER) -> frozenset:
     """
     Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
+
     :param formula: The input formula. The formula does not need to be in CNF.
     :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
     :param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
