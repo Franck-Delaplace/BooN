@@ -1,8 +1,9 @@
-@software{delaplace2024,
-  author = {Franck, Delaplace},
-  month = {02},
-  title = {{BooN a software solution dedicated to Boolean network analysis}},
-  url = {https://github.com/Franck-Delaplace/BooN},
-  version = {1.23},
-  year = {2024}
-}
+message:  "If you use this software, please cite it as below."
+authors:
+  - family-names: Delaplace
+    given-names: Franck
+    orcid: https://orcid.org/0000-0002-1035-7754
+title: "BooN"
+version: 1.25
+identifiers:
+date-released: 2024-09-22
