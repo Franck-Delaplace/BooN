@@ -7,5 +7,5 @@ title: "BooN"
 url: "https://github.com/Franck-Delaplace/BooN"
 repository-code:"https://github.com/Franck-Delaplace/BooN"
 version: 1.25
-identifiers:
+abstract: "Software solution dedicated to Boolean network analysis including controllability."
 date-released: 2024-09-22
