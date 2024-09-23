@@ -1,1 +1,8 @@
-To cite and be cited.
+@software{delaplace2024,
+  author = {Franck, Delaplace},
+  month = {02},
+  title = {{BooN a software solution dedicated to Boolean network analysis}},
+  url = {https://github.com/github-linguist/linguist},
+  version = {1.23},
+  year = {2024
+}
