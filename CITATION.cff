@@ -1,0 +1,21 @@
+title: BooN
+message: if you use this software please cite with this citation
+type: software
+authors:
+  - given-names: Franck
+    family-names: Delaplace
+    email: franck.delaplace@univ-evry.fr
+    affiliation: 'Paris-Saclay University, Evry'
+    orcid: 'https://orcid.org/0000-0002-1035-7754'
+repository-code: 'https://github.com/Franck-Delaplace/BooN'
+abstract: >-
+  A software solution for Boolean network analysis including
+  controllability.
+keywords:
+  - Boolean Netwok
+  - Dynamical System
+  - Genetic Network
+  - Controllability Analysis
+  - Formal Method
+version: '1.25'
+date-released: '2024-09-22'
