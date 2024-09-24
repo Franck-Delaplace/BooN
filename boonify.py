@@ -249,7 +249,7 @@ class Boonify(QMainWindow):
 
         # STEP: Convert the ig to BooN.
         try:
-            self.boon.from_ig(ig)  # Find the BooN from the ig.
+            self.boon = BooN.from_ig(ig)  # Find the BooN from the ig.
         except ValueError:  # To prevent the transient error due to edge labeling.
             pass
 
