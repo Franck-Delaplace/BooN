@@ -334,7 +334,7 @@ class Boonify(QMainWindow):
             self.filename = None  # no file name since the BooN is not saved in the internal format.
 
             _, extension = os.path.splitext(filename[0])
-            match extension:  # Select the appropriate format to import file
+            match extension:  # Select the appropriate format to import a file
                 case ".bnet":  # BoolNet Format
                     self.boon = BooN.from_textfile(filename[0])
                 case ".txt":  # Python Format
