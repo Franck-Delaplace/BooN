@@ -83,9 +83,10 @@ class Boonify(QMainWindow):
         self.designsize = 2.  # Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.
 
         self.display_saved_flag()  # Show the save flag in the status bar
+
         # STEP: Connect callback functions to Menu
 
-        # File
+        # File Management
         self.ActionOpen.triggered.connect(self.open)
         self.ActionSave.triggered.connect(self.save)
         self.ActionSaveAs.triggered.connect(self.saveas)
@@ -98,7 +99,7 @@ class Boonify(QMainWindow):
         self.ActionUndo.triggered.connect(self.undo)
         self.ActionRedo.triggered.connect(self.redo)
 
-        # Network
+        # Network Management
         self.ActionView.triggered.connect(self.view)
         self.ActionModel.triggered.connect(self.model)
         self.ActionStableStates.triggered.connect(self.stablestates)
@@ -133,17 +134,18 @@ class Boonify(QMainWindow):
 
         # STEP: Creation of the pattern-network used for edge styling.
         # To prevent its inclusion in the BooN, the variable names are strings while the other nodes are integers or symbols.
+
         # network structure:  NEG <--[-]-- REG --[+]--> POS
         g = nx.DiGraph([(REG, POS), (REG, NEG)])
         edge_color = {(REG, POS): SIGNCOLOR[1], (REG, NEG): SIGNCOLOR[-1], (NEG, NEG): SIGNCOLOR[-1], (POS, POS): SIGNCOLOR[1]}
         positions = {NEG: (0.25, 0.045), REG: (0.5, 0.045), POS: (0.75, 0.045)}
 
-        # STEP: Extend this network by adding the interaction graph of the current BooN.
+        # STEP: Add  the interaction graph of the current BooN.
         ig = self.boon.interaction_graph  # Get the IG.
         g.add_nodes_from(ig.nodes())
         g.add_edges_from(ig.edges())
 
-        # STEP: find the edge color from signs.
+        # STEP: Find the edge color from signs.
         signs = nx.get_edge_attributes(ig, 'sign')
         edge_color.update({edge: SIGNCOLOR[signs[edge]] for edge in signs})  # Transform sign in color.
         positions.update(self.boon.pos)  # Complete the position.
@@ -152,7 +154,7 @@ class Boonify(QMainWindow):
         modules = nx.get_edge_attributes(ig, 'module')
         modules = {edge: " ".join([str(module) for module in modules[edge]]) for edge in modules}
 
-        # STEP: Define the editgraph.
+        # STEP: Define the editgraph from the information previously extracted.
         self.canvas.axes.clear()
         self.canvas.axes.set_xlim(-1000, 1000)
         # WARNING : the definition of EditableGraph is the same as the definition in resizeEvent function. Any modification of one must be reported to the other.
