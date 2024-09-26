@@ -335,11 +335,11 @@ class Boonify(QMainWindow):
 
             _, extension = os.path.splitext(filename[0])
             match extension:  # Select the appropriate format to import file
-                case ".bnet": # BoolNet Format
+                case ".bnet":  # BoolNet Format
                     self.boon = BooN.from_textfile(filename[0])
                 case ".txt":  # Python Format
                     self.boon = BooN.from_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, skipline=PYTHONSKIP)
-                case ".sbml": # SBML Format
+                case ".sbml":  # SBML Format
                     self.boon = BooN.from_sbmlfile(filename[0])
                 case ".xml":  # SBML Format
                     self.boon = BooN.from_sbmlfile(filename[0])
