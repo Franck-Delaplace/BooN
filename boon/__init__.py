@@ -36,11 +36,11 @@ import libsbml
 # CONSTANTS
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
 COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
-EXTBOON: str = ".boon"  # file extension for save and load.
-EXTXT: str = ".txt"  # file extension for to_textfile and from_textfile.
-EXTBOOLNET: str = ".bnet"
-EXTSBML: str = ".sbml"  # file extension of SBML file for from_sbmlfile.
-CONTROL: str = "_u"  # prefix name of the controllers.
+EXTBOON: str = ".boon"  # file extension for BooN format.
+EXTXT: str = ".txt"  # file extension of Python format for an imported file.
+EXTBOOLNET: str = ".bnet"  # file extension of BOOLNET format for an imported file.
+EXTSBML: str = ".sbml"  # file extension of SBML file for an imported file.
+CONTROL: str = "_u"  # prefix name of the controllers (control parameters).
 BOONSEP: str = "\n"  # separator between the equations of a BooN.
 # color list for graph drawing
 COLOR: list[str] = ['tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
@@ -156,7 +156,7 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
     :return: a dictionary {int:position} where int is the integer code of the hypercube labels.
     :rtype: Dict
     """
-    dim = 0
+    dim = 0  # dim gives the dimension of the hypercube, captured from arg.
     if isinstance(arg, int):
         dim = arg
     elif isinstance(arg, nx.DiGraph):
@@ -185,7 +185,8 @@ class BooN:
     def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}):
         """Initialize the BooN object.
 
-        :param descriptor: The descriptor of a Boolean Network.
+        :param descriptor: The descriptor of a Boolean Network {variable: formula, ...}
+        (Default None).
         :param style: The output style of formulas (Default: LOGICAL).
         :param pos: Positions of the variable in the interaction graph drawing.
         If empty, the positions are generated during the drawing (Default: {})
@@ -211,7 +212,7 @@ class BooN:
     def str(self, sep: str = BOONSEP, assign: str = "=") -> str:
         """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
 
-        :param sep: the separator between formulas (default BOONSEP constant)
+        :param sep: The separator between formulas (default BOONSEP constant)
         :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '='). (Default: '=')
         :type sep: str
         :type assign: str
@@ -227,6 +228,7 @@ class BooN:
     @property
     def variables(self) -> set:
         """Return the set of variables.
+        (property)
         :return: Variables
         :rtype: set[Symbol]
         """
@@ -241,7 +243,7 @@ class BooN:
         :rtype: BooN
         """
 
-        def delete(formula, val) -> BooN:  # sub function deleting a variable in a formula.
+        def delete(formula, val: bool = False) -> BooN:  # subfunction deleting a variable by substituting it appropriately.
             if isinstance(formula, bool):
                 return formula
             elif isinstance(formula, Symbol):
@@ -272,7 +274,7 @@ class BooN:
             self.dnf()
 
         for var in self.desc:
-            self.desc[var] = delete(self.desc[var], False)
+            self.desc[var] = delete(self.desc[var])
 
         return self
 
@@ -330,18 +332,15 @@ class BooN:
         :return: self
         :rtype: BooN
         """
-        boon = cls()    # create an empty object
+        boon = cls()  # create an empty object
 
         fullfilename = filename if "." in filename else filename + EXTBOON
         try:
             with open(fullfilename, 'rb') as f:
                 boon = pickle.load(f)
-                boon.desc = boon.desc
-                boon.style = boon.style
-                boon.pos = boon.pos
                 f.close()
         except FileNotFoundError:
-            errmsg("No such file or directory, no changes", fullfilename, "WARNING")
+            errmsg("No such file or directory", fullfilename, "WARNING")
         return boon
 
     def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, header: str = BOOLNETHEADER) -> BooN:
@@ -395,34 +394,36 @@ class BooN:
         :return: BooN
         :rtype: BooN
         """
-
+        # the parsing follows a meta grammar <variable> <assign> <formula>.
         boon = cls()  # create an empty object
         fullfilename = filename if "." in filename else filename + EXTBOOLNET
-        desc = {}
+
         try:
             with open(fullfilename, 'r') as f:
                 text = " ".join(f.readlines())  # Join all the lines in 1 string.
                 text = map(lambda s: s.strip(), text.split(sep))  # And next separate the string w.r.t. the separator sep.
+
+                desc = {}
                 for i, line in enumerate(text, 1):  # Parse the network description.
                     if re.fullmatch(skipline, line.strip()):  # Skip line that must be skipped.
                         pass
                     elif line == '':  # Skip empty line.
                         pass
                     else:
-                        try:  # Find connective operator.
-                            equal = line.index(assign)
+                        try:  # Find the position of the assignment.
+                            assign_pos = line.index(assign)
                         except ValueError:
                             errmsg(f"Syntax error, the assignment (sign:{assign}) is missing, line {i} in file", fullfilename, "READ ERROR")
                             return boon
                         try:  # Set the variable to Symbol.
-                            var = symbols(line[:equal].strip())
+                            var = symbols(line[:assign_pos].strip())
                         except ValueError:
                             errmsg(f"Syntax error, wrong variable name, line {i} in file", fullfilename, "READ ERROR")
                             return boon
 
                         try:  # Parse formula.
                             # STEP:  rewrite the operators to Python/Sympy operators
-                            formula = line[equal + 1:].strip()
+                            formula = line[assign_pos + 1:].strip()
                             formula = formula.replace(ops[And], '&')  # Convert And
                             formula = formula.replace(ops[Or], '|')  # Convert Or
                             formula = formula.replace(ops[Not], '~')  # Convert Not
@@ -438,12 +439,13 @@ class BooN:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
                             return boon
                         desc.update({var: trueformula})  # Finally, update the descriptor with the parsed formula.
+
+                boon.desc = desc  # update the descriptor when all lines are filled.
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes are made", fullfilename, "WARNING")
             return boon
 
-        boon.desc = desc
         ig = boon.interaction_graph
         circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
                                                     , origin=(0.1, 0.15)
@@ -472,8 +474,7 @@ class BooN:
         reader = libsbml.SBMLReader()
         document = reader.readSBML(sbml_file)
 
-        if document.getNumErrors() > 0:  # Check if there
-            # are no errors while reading the SBML files.
+        if document.getNumErrors() > 0:  # Check if there are no errors while reading the SBML files.
             errmsg("Error reading SBML file", document.getErrorLog().toString(), kind="WARNING")
             return boon
 
@@ -785,7 +786,7 @@ class BooN:
         :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)
         :param color: list of colors for highlighting the equlibria (Default: COLOR)
         :param kwargs: extra parameters of nx.draw_networkx.
-        type model: Networkx DiGraph
+        Type model: Networkx DiGraph
         :type mode: function
         :type color: list
         :type kwargs: dict
