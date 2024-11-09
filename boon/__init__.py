@@ -9,6 +9,8 @@
 # These terms can be used to color comments in PyCharm or else.
 
 from __future__ import annotations
+
+import random
 import re
 import copy
 import pickle
@@ -18,6 +20,8 @@ import z3
 import math
 from collections.abc import Callable
 from itertools import product
+
+from graphviz import Digraph
 from pulp import PULP_CBC_CMD
 
 import netgraph as ng
@@ -26,7 +30,7 @@ from matplotlib.colors import to_rgb
 from sympy import symbols
 from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent
-from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf
+from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf, simplify_logic
 from sympy.parsing.sympy_parser import parse_expr
 from boon.logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 import boon.logic as logic
@@ -42,6 +46,7 @@ EXTBOOLNET: str = ".bnet"  # file extension of BOOLNET format for an imported fi
 EXTSBML: str = ".sbml"  # file extension of SBML file for an imported file.
 CONTROL: str = "_u"  # prefix name of the controllers (control parameters).
 BOONSEP: str = "\n"  # separator between the equations of a BooN.
+VARPREFIX: str = "x"  # Prefix of the generated variables (random)
 # color list for graph drawing
 COLOR: list[str] = ['tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
                     'darkkhaki', 'forestgreen', 'salmon', 'lightcoral', 'cornflowerblue', 'orange',
@@ -225,6 +230,8 @@ class BooN:
             return NotImplemented
         return self.desc == other.desc
 
+    # DEF: BASIC OPERATIONS
+
     @property
     def variables(self) -> set:
         """Return the set of variables.
@@ -304,6 +311,70 @@ class BooN:
     def copy(self) -> BooN:
         """Perform a deep copy of the Boolean network."""
         return copy.deepcopy(self)
+
+    @classmethod
+    def random(cls, n: int, p_link: float, p_pos: float = 0.5, topology: str = 'Erdos-Reny', min_clauses: int = 1, max_clauses: int = 5, prefix: str = VARPREFIX) -> BooN:
+        """ generate a random BooN where the formulas are in DNF.
+        :param n: the number of variables.
+        :type n: int
+        :param p_link: probability related to interaction between variables, the use depends on the topology class.
+        :param p_pos: the probability of defining a variable as a positive term (default 0.5).
+        :type  p_pos: float
+        :param topology: the topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
+        :type topology: str
+        :param min_clauses: the minimum number of clauses required to define a formula (default 1).
+        :type  min_clauses: int
+        :param max_clauses: the minimum number of clauses required to define a formula (default 5).
+        :type  max_clauses: int
+        :param prefix: the prefix of the variable name.
+        the variables are of the form <prefix><int> (default 'x').
+        :type prefix: str
+        :return: A random BooN.
+        :rtype: BooN
+        """
+        assert 0 < n
+        assert 0 <= p_link <= 1
+        assert 0 <= p_pos <= 1
+        assert 0 < min_clauses <= max_clauses
+
+        # Generate a Digraph corresponding to the interaction graph w.r.t a topology class.
+        match topology:
+            case 'Erdos-Reny':
+                ig = nx.gnp_random_graph(n, p_link, directed=True)  # Erdös Reny
+            case 'Scale-Free':
+                ig = nx.scale_free_graph(n, alpha=p_link, beta=1 - p_link - 0.05, gamma=0.05, delta_in=0.2)  # Scale-Free
+            case 'Small-World':
+                ig0 = nx.newman_watts_strogatz_graph(n, 4, p_link)
+                ig = nx.DiGraph()
+                for edge in ig0.edges():
+                    i = random.choice([0, 1])
+                    ig.add_edge(edge[i], edge[1 - i])
+            case _:
+                ig = nx.gnp_random_graph(n, p_link, directed=True)  # Erdös Reny by default
+
+        # Associate to each node which are integer a variable name.
+        variables = {node: symbols("{prefix}{counter:d}".format(prefix=prefix, counter=node)) for node in ig.nodes}
+
+        boon = cls()
+        # Generate a formula for each node w.r.t. it predecessor.
+        for node in ig.nodes:
+            # Get the predecessors of a node.
+            pred = list(ig.predecessors(node))
+            # Define the number of cubes.
+            nbclauses = random.randint(min_clauses, min(len(pred), max_clauses)) if len(pred) > 1 else 1
+
+            # Generate the formula.
+            if len(pred) == 0:
+                boon.desc[variables[node]] = random.choice([True, False])
+            else:
+                # Form a list of list of predecessors of size nbclauses.
+                predlst = [random.choices(pred, k=random.randint(1, len(pred) // 2) if len(pred) > 3 else 1) for _ in range(nbclauses)]
+                # Translate it into a DNF formula where each sub list is a cube.
+                boon.desc[variables[node]] = simplify_logic(Or(*[And(*[variables[node] if random.random() < p_pos
+                                                                       else Not(variables[node]) for node in c
+                                                                       ]) for c in predlst]))
+
+        return boon
 
     # DEF: FILE
     def save(self, filename: str = "BooN" + datetime.now().strftime("%d-%b-%y-%H") + EXTBOON) -> None:
@@ -689,6 +760,7 @@ class BooN:
             module_args = dict()
 
         ng.Graph(ig,
+                 node_layout=self.pos,
                  node_color='antiquewhite',
                  node_labels=True,
                  node_size=6,
@@ -696,7 +768,6 @@ class BooN:
                  arrows=True,
                  edge_width=1,
                  edge_color=sign_color,
-                 pos=self.pos,
                  **module_args,
                  **kwargs)
         return ig
@@ -739,7 +810,7 @@ class BooN:
     # DEF: DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
         """
-        Compute the dynamical datamodel of the BooN w.r.t. a mode.
+        Compute the dynamical model of the BooN with respect to a mode.
 
         :param  self_loop: Determines whether the boon loops are included in the datamodel (Default: False).
         :param  mode: Determines the mode policy applied to the datamodel (Default: asynchronous).
