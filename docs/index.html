@@ -589,14 +589,16 @@ The method is a class method.</p>
 <li><p><strong>topology</strong> (<em>str</em>) – the topology class of the interaction graph: ‘Erdos-Reny’, ‘Scale-Free’, ‘Small-World’ (default ‘Erdos-Reny’)</p></li>
 <li><p><strong>min_clauses</strong> (<em>int</em>) – the minimum number of clauses required to define a formula (default 1).</p></li>
 <li><p><strong>max_clauses</strong> (<em>int</em>) – the minimum number of clauses required to define a formula (default 5).</p></li>
-<li><p><strong>prefix</strong> – the prefix of the variable name.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – the prefix of the variable name, the variables are of the form &lt;prefix&gt;&lt;int&gt; (default ‘x’).</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BooN randomly generated.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#boon.BooN" title="boon.BooN">BooN</a></p>
+</dd>
 </dl>
-<p>The variables are of the form &lt;prefix&gt;&lt;int&gt; (default ‘x’).
-:type prefix: str
-:return: a BooN randomly generated.
-:rtype: BooN</p>
 </dd></dl>
 
 <dl class="py method">
