@@ -386,14 +386,19 @@ If variable is None, then all the formulas are converted to DNF.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.</p></li>
-<li><p><strong>mode</strong> – Function characterizing the mode of the datamodel (Default: asynchronous)</p></li>
-<li><p><strong>color</strong> – list of colors for highlighting the equlibria (Default: COLOR)</p></li>
-<li><p><strong>kwargs</strong> – extra parameters of nx.draw_networkx.</p></li>
+<li><p><strong>model</strong> (<em>Networkx DiGraph</em>) – Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.</p></li>
+<li><p><strong>mode</strong> (<em>function</em>) – Function characterizing the mode of the datamodel (Default: asynchronous)</p></li>
+<li><p><strong>color</strong> (<em>list</em>) – list of colors for highlighting the equlibria (Default: COLOR)</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – extra parameters of nx.draw_networkx.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
 </dl>
-<p>Type model: Networkx DiGraph</p>
 </dd></dl>
 
 <dl class="py method">
@@ -442,13 +447,15 @@ The method is a class method.</p>
 The method is a class method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> – The file name to import the Boolean network.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the name of the file, if the extension is missing then .sbml is added.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>BooN</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#boon.BooN" title="boon.BooN">BooN</a></p>
 </dd>
 </dl>
-<p>If the extension is missing, then .sbml is added.
-:type  filename: str
-:return: self
-:rtype: BooN</p>
 </dd></dl>
 
 <dl class="py method">
@@ -466,13 +473,16 @@ The method is a class method.</p>
 <li><p><strong>sep</strong> (<em>str</em>) – The separator between definitions (default BOONSEP constant)</p></li>
 <li><p><strong>assign</strong> (<em>str</em>) – the operator defining the formula for a variable, e.g., a = f(…) → assign is ‘=’ (Default: ‘,’).</p></li>
 <li><p><strong>ops</strong> (<em>dict</em>) – A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).</p></li>
-<li><p><strong>skipline</strong> – Regular expression describing which lines must be skipped and not analyzed.</p></li>
+<li><p><strong>skipline</strong> (<em>str</em><em> (</em><em>regexp</em><em>)</em>) – Regular expression describing which lines must be skipped and not analyzed.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>BooN</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#boon.BooN" title="boon.BooN">BooN</a></p>
+</dd>
 </dl>
-<p>:type skipline:str (regexp)
-:return: BooN
-:rtype: BooN</p>
 </dd></dl>
 
 <dl class="py property">
@@ -568,22 +578,22 @@ The method is a class method</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="boon.BooN.random">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Erdos-Reny'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_clauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_clauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'x'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#boon.BooN" title="boon.BooN"><span class="pre">BooN</span></a></span></span><a class="reference internal" href="_modules/boon.html#BooN.random"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boon.BooN.random" title="Link to this definition"></a></dt>
-<dd><p>generate a random BooN where the formulas are in DNF.
+<dd><p>Generate a random BooN where the formulas are in DNF.
 The method is a class method.
-:param n: the number of variables.
-:type n: int
+:param n: The number of variables.
+:type n: Int
 :param p_link: probability related to interaction between variables, the use depends on the topology class.
-:param p_pos: the probability of defining a variable as a positive term (default 0.5).
-:type  p_pos: float
+:param p_pos: The probability of defining a variable as a positive term (default 0.5).
+:type  p_pos: Float
 :param topology: the topology class of the interaction graph: ‘Erdos-Reny’, ‘Scale-Free’, ‘Small-World’ (default ‘Erdos-Reny’)
 :type topology: str
 :param min_clauses: the minimum number of clauses required to define a formula (default 1).
-:type  min_clauses: int
+:type  min_clauses: Int
 :param max_clauses: the minimum number of clauses required to define a formula (default 5).
-:type  max_clauses: int
+:type  max_clauses: Int
 :param prefix: the prefix of the variable name.
-the variables are of the form &lt;prefix&gt;&lt;int&gt; (default ‘x’).
-:type prefix: str
+The variables are of the form &lt;prefix&gt;&lt;int&gt; (default ‘x’).
+:type prefix: Str
 :return: A random BooN.
 :rtype: BooN</p>
 </dd></dl>

@@ -420,22 +420,22 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.random">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">p_link</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">p_pos</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">topology</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Erdos-Reny&#39;</span><span class="p">,</span> <span class="n">min_clauses</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_clauses</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">VARPREFIX</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; generate a random BooN where the formulas are in DNF.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Generate a random BooN where the formulas are in DNF.</span>
 <span class="sd">        The method is a class method.</span>
-<span class="sd">        :param n: the number of variables.</span>
-<span class="sd">        :type n: int</span>
+<span class="sd">        :param n: The number of variables.</span>
+<span class="sd">        :type n: Int</span>
 <span class="sd">        :param p_link: probability related to interaction between variables, the use depends on the topology class.</span>
-<span class="sd">        :param p_pos: the probability of defining a variable as a positive term (default 0.5).</span>
-<span class="sd">        :type  p_pos: float</span>
+<span class="sd">        :param p_pos: The probability of defining a variable as a positive term (default 0.5).</span>
+<span class="sd">        :type  p_pos: Float</span>
 <span class="sd">        :param topology: the topology class of the interaction graph: &#39;Erdos-Reny&#39;, &#39;Scale-Free&#39;, &#39;Small-World&#39; (default &#39;Erdos-Reny&#39;)</span>
 <span class="sd">        :type topology: str</span>
 <span class="sd">        :param min_clauses: the minimum number of clauses required to define a formula (default 1).</span>
-<span class="sd">        :type  min_clauses: int</span>
+<span class="sd">        :type  min_clauses: Int</span>
 <span class="sd">        :param max_clauses: the minimum number of clauses required to define a formula (default 5).</span>
-<span class="sd">        :type  max_clauses: int</span>
+<span class="sd">        :type  max_clauses: Int</span>
 <span class="sd">        :param prefix: the prefix of the variable name.</span>
-<span class="sd">        the variables are of the form &lt;prefix&gt;&lt;int&gt; (default &#39;x&#39;).</span>
-<span class="sd">        :type prefix: str</span>
+<span class="sd">        The variables are of the form &lt;prefix&gt;&lt;int&gt; (default &#39;x&#39;).</span>
+<span class="sd">        :type prefix: Str</span>
 <span class="sd">        :return: A random BooN.</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -580,7 +580,7 @@
 <span class="sd">        :type sep: str</span>
 <span class="sd">        :type assign: str</span>
 <span class="sd">        :type ops: dict</span>
-<span class="sd">        :type skipline:str (regexp)</span>
+<span class="sd">        :type skipline: str (regexp)</span>
 <span class="sd">        :return: BooN</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -653,10 +653,9 @@
 <span class="sd">        Import the Boolean network from a sbml file.</span>
 <span class="sd">        The method is a class method.</span>
 
-<span class="sd">        :param filename:  The file name to import the Boolean network.</span>
-<span class="sd">        If the extension is missing, then .sbml is added.</span>
-<span class="sd">        :type  filename: str</span>
-<span class="sd">        :return: self</span>
+<span class="sd">        :param filename: the name of the file, if the extension is missing then .sbml is added.</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :return: BooN</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -997,7 +996,12 @@
 <span class="sd">        :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)</span>
 <span class="sd">        :param color: list of colors for highlighting the equlibria (Default: COLOR)</span>
 <span class="sd">        :param kwargs: extra parameters of nx.draw_networkx.</span>
-<span class="sd">        Type model: Networkx DiGraph</span>
+<span class="sd">        :type model: Networkx DiGraph</span>
+<span class="sd">        :type mode: function</span>
+<span class="sd">        :type color: list</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">themodel</span> <span class="o">=</span> <span class="n">model</span> <span class="k">if</span> <span class="n">model</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
