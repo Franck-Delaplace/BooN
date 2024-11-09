@@ -422,6 +422,7 @@
     <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">p_link</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">p_pos</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">topology</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Erdos-Reny&#39;</span><span class="p">,</span> <span class="n">min_clauses</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_clauses</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">VARPREFIX</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Generate a random BooN where the formulas are in DNF.</span>
 <span class="sd">        The method is a class method.</span>
+
 <span class="sd">        :param n: The number of variables.</span>
 <span class="sd">        :type n: Int</span>
 <span class="sd">        :param p_link: probability related to interaction between variables, the use depends on the topology class.</span>
@@ -430,13 +431,13 @@
 <span class="sd">        :param topology: the topology class of the interaction graph: &#39;Erdos-Reny&#39;, &#39;Scale-Free&#39;, &#39;Small-World&#39; (default &#39;Erdos-Reny&#39;)</span>
 <span class="sd">        :type topology: str</span>
 <span class="sd">        :param min_clauses: the minimum number of clauses required to define a formula (default 1).</span>
-<span class="sd">        :type  min_clauses: Int</span>
+<span class="sd">        :type  min_clauses: int</span>
 <span class="sd">        :param max_clauses: the minimum number of clauses required to define a formula (default 5).</span>
-<span class="sd">        :type  max_clauses: Int</span>
+<span class="sd">        :type  max_clauses: int</span>
 <span class="sd">        :param prefix: the prefix of the variable name.</span>
 <span class="sd">        The variables are of the form &lt;prefix&gt;&lt;int&gt; (default &#39;x&#39;).</span>
-<span class="sd">        :type prefix: Str</span>
-<span class="sd">        :return: A random BooN.</span>
+<span class="sd">        :type prefix: str</span>
+<span class="sd">        :return: a BooN randomly generated.</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span>
