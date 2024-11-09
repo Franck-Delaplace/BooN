@@ -585,10 +585,18 @@ The method is a class method.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> (<em>int</em>) – The number of variables.</p></li>
 <li><p><strong>p_link</strong> – probability related to interaction between variables, the use depends on the topology class.</p></li>
-<li><p><strong>p_pos</strong> (<em>Float</em>) – The probability of defining a variable as a positive term (default 0.5).</p></li>
+<li><p><strong>p_pos</strong> (<em>float</em>) – The probability of defining a variable as a positive term (default 0.5).</p></li>
+<li><p><strong>topology</strong> (<em>str</em>) – the topology class of the interaction graph: ‘Erdos-Reny’, ‘Scale-Free’, ‘Small-World’ (default ‘Erdos-Reny’)</p></li>
+<li><p><strong>min_clauses</strong> (<em>int</em>) – the minimum number of clauses required to define a formula (default 1).</p></li>
+<li><p><strong>max_clauses</strong> (<em>int</em>) – the minimum number of clauses required to define a formula (default 5).</p></li>
+<li><p><strong>prefix</strong> – the prefix of the variable name.</p></li>
 </ul>
 </dd>
 </dl>
+<p>The variables are of the form &lt;prefix&gt;&lt;int&gt; (default ‘x’).
+:type prefix: str
+:return: a BooN randomly generated.
+:rtype: BooN</p>
 </dd></dl>
 
 <dl class="py method">

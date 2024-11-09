@@ -427,8 +427,18 @@
 <span class="sd">        :type n: int</span>
 <span class="sd">        :param p_link: probability related to interaction between variables, the use depends on the topology class.</span>
 <span class="sd">        :param p_pos: The probability of defining a variable as a positive term (default 0.5).</span>
-<span class="sd">        :type  p_pos: Float</span>
-<span class="sd">      </span>
+<span class="sd">        :type  p_pos: float</span>
+<span class="sd">        :param topology: the topology class of the interaction graph: &#39;Erdos-Reny&#39;, &#39;Scale-Free&#39;, &#39;Small-World&#39; (default &#39;Erdos-Reny&#39;)</span>
+<span class="sd">        :type topology: str</span>
+<span class="sd">        :param min_clauses: the minimum number of clauses required to define a formula (default 1).</span>
+<span class="sd">        :type  min_clauses: int</span>
+<span class="sd">        :param max_clauses: the minimum number of clauses required to define a formula (default 5).</span>
+<span class="sd">        :type  max_clauses: int</span>
+<span class="sd">        :param prefix: the prefix of the variable name.</span>
+<span class="sd">        The variables are of the form &lt;prefix&gt;&lt;int&gt; (default &#39;x&#39;).</span>
+<span class="sd">        :type prefix: str</span>
+<span class="sd">        :return: a BooN randomly generated.</span>
+<span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p_link</span> <span class="o">&lt;=</span> <span class="mi">1</span>
