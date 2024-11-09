@@ -155,9 +155,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">designsize</span> <span class="o">=</span> <span class="mf">2.</span>  <span class="c1"># Size related to the EditableGraph and used for many parameters. It is modified when the window is rescaled to let the nodes and edges width invariant.</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># Show the save flag in the status bar</span>
+
         <span class="c1"># STEP: Connect callback functions to Menu</span>
 
-        <span class="c1"># File</span>
+        <span class="c1"># File Management</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionOpen</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionSave</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionSaveAs</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saveas</span><span class="p">)</span>
@@ -170,7 +171,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionUndo</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">undo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionRedo</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redo</span><span class="p">)</span>
 
-        <span class="c1"># Network</span>
+        <span class="c1"># Network Management</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionView</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionModel</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ActionStableStates</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stablestates</span><span class="p">)</span>
@@ -207,17 +208,18 @@
 
         <span class="c1"># STEP: Creation of the pattern-network used for edge styling.</span>
         <span class="c1"># To prevent its inclusion in the BooN, the variable names are strings while the other nodes are integers or symbols.</span>
+
         <span class="c1"># network structure:  NEG &lt;--[-]-- REG --[+]--&gt; POS</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">([(</span><span class="n">REG</span><span class="p">,</span> <span class="n">POS</span><span class="p">),</span> <span class="p">(</span><span class="n">REG</span><span class="p">,</span> <span class="n">NEG</span><span class="p">)])</span>
         <span class="n">edge_color</span> <span class="o">=</span> <span class="p">{(</span><span class="n">REG</span><span class="p">,</span> <span class="n">POS</span><span class="p">):</span> <span class="n">SIGNCOLOR</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="n">REG</span><span class="p">,</span> <span class="n">NEG</span><span class="p">):</span> <span class="n">SIGNCOLOR</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="n">NEG</span><span class="p">,</span> <span class="n">NEG</span><span class="p">):</span> <span class="n">SIGNCOLOR</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="n">POS</span><span class="p">,</span> <span class="n">POS</span><span class="p">):</span> <span class="n">SIGNCOLOR</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
         <span class="n">positions</span> <span class="o">=</span> <span class="p">{</span><span class="n">NEG</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.045</span><span class="p">),</span> <span class="n">REG</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.045</span><span class="p">),</span> <span class="n">POS</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.045</span><span class="p">)}</span>
 
-        <span class="c1"># STEP: Extend this network by adding the interaction graph of the current BooN.</span>
+        <span class="c1"># STEP: Add  the interaction graph of the current BooN.</span>
         <span class="n">ig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">interaction_graph</span>  <span class="c1"># Get the IG.</span>
         <span class="n">g</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">ig</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
         <span class="n">g</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">ig</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
 
-        <span class="c1"># STEP: find the edge color from signs.</span>
+        <span class="c1"># STEP: Find the edge color from signs.</span>
         <span class="n">signs</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_edge_attributes</span><span class="p">(</span><span class="n">ig</span><span class="p">,</span> <span class="s1">&#39;sign&#39;</span><span class="p">)</span>
         <span class="n">edge_color</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">edge</span><span class="p">:</span> <span class="n">SIGNCOLOR</span><span class="p">[</span><span class="n">signs</span><span class="p">[</span><span class="n">edge</span><span class="p">]]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">signs</span><span class="p">})</span>  <span class="c1"># Transform sign in color.</span>
         <span class="n">positions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>  <span class="c1"># Complete the position.</span>
@@ -226,7 +228,7 @@
         <span class="n">modules</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_edge_attributes</span><span class="p">(</span><span class="n">ig</span><span class="p">,</span> <span class="s1">&#39;module&#39;</span><span class="p">)</span>
         <span class="n">modules</span> <span class="o">=</span> <span class="p">{</span><span class="n">edge</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">[</span><span class="n">edge</span><span class="p">]])</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">}</span>
 
-        <span class="c1"># STEP: Define the editgraph.</span>
+        <span class="c1"># STEP: Define the editgraph from the information previously extracted.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
         <span class="c1"># WARNING : the definition of EditableGraph is the same as the definition in resizeEvent function. Any modification of one must be reported to the other.</span>
@@ -326,7 +328,7 @@
 
         <span class="c1"># STEP: Convert the ig to BooN.</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">from_ig</span><span class="p">(</span><span class="n">ig</span><span class="p">)</span>  <span class="c1"># Find the BooN from the ig.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="o">.</span><span class="n">from_ig</span><span class="p">(</span><span class="n">ig</span><span class="p">)</span>  <span class="c1"># Find the BooN from the ig.</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># To prevent the transient error due to edge labeling.</span>
             <span class="k">pass</span>
 
@@ -424,12 +426,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># no file name since the BooN is not saved in the internal format.</span>
 
             <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">match</span> <span class="n">extension</span><span class="p">:</span>  <span class="c1"># Select the appropriate format to import file</span>
-                <span class="k">case</span> <span class="s2">&quot;.bnet&quot;</span><span class="p">:</span> <span class="c1"># BoolNet Format</span>
+            <span class="k">match</span> <span class="n">extension</span><span class="p">:</span>  <span class="c1"># Select the appropriate format to import a file</span>
+                <span class="k">case</span> <span class="s2">&quot;.bnet&quot;</span><span class="p">:</span>  <span class="c1"># BoolNet Format</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="o">.</span><span class="n">from_textfile</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="k">case</span> <span class="s2">&quot;.txt&quot;</span><span class="p">:</span>  <span class="c1"># Python Format</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="o">.</span><span class="n">from_textfile</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">SYMPY</span><span class="p">,</span> <span class="n">skipline</span><span class="o">=</span><span class="n">PYTHONSKIP</span><span class="p">)</span>
-                <span class="k">case</span> <span class="s2">&quot;.sbml&quot;</span><span class="p">:</span> <span class="c1"># SBML Format</span>
+                <span class="k">case</span> <span class="s2">&quot;.sbml&quot;</span><span class="p">:</span>  <span class="c1"># SBML Format</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="o">.</span><span class="n">from_sbmlfile</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="k">case</span> <span class="s2">&quot;.xml&quot;</span><span class="p">:</span>  <span class="c1"># SBML Format</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="o">.</span><span class="n">from_sbmlfile</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
