@@ -327,10 +327,9 @@ class BooN:
         :type  min_clauses: int
         :param max_clauses: the minimum number of clauses required to define a formula (default 5).
         :type  max_clauses: int
-        :param prefix: the prefix of the variable name.
-        The variables are of the form <prefix><int> (default 'x').
+        :param prefix: the prefix of the variable name, the variables are of the form <prefix><int> (default 'x').
         :type prefix: str
-        :return: a BooN randomly generated.
+        :return: a random BooN
         :rtype: BooN
         """
         assert 0 < n
