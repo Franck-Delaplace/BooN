@@ -21,7 +21,6 @@ import math
 from collections.abc import Callable
 from itertools import product
 
-from graphviz import Digraph
 from pulp import PULP_CBC_CMD
 
 import netgraph as ng
@@ -314,11 +313,13 @@ class BooN:
 
     @classmethod
     def random(cls, n: int, p_link: float, p_pos: float = 0.5, topology: str = 'Erdos-Reny', min_clauses: int = 1, max_clauses: int = 5, prefix: str = VARPREFIX) -> BooN:
-        """ generate a random BooN where the formulas are in DNF.
-        :param n: the number of variables.
+        """ Generate a random BooN where the formulas are in DNF.
+        The method is a class method.
+
+        :param n: The number of variables.
         :type n: int
         :param p_link: probability related to interaction between variables, the use depends on the topology class.
-        :param p_pos: the probability of defining a variable as a positive term (default 0.5).
+        :param p_pos: The probability of defining a variable as a positive term (default 0.5).
         :type  p_pos: float
         :param topology: the topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
         :type topology: str
@@ -327,9 +328,9 @@ class BooN:
         :param max_clauses: the minimum number of clauses required to define a formula (default 5).
         :type  max_clauses: int
         :param prefix: the prefix of the variable name.
-        the variables are of the form <prefix><int> (default 'x').
+        The variables are of the form <prefix><int> (default 'x').
         :type prefix: str
-        :return: A random BooN.
+        :return: a BooN randomly generated.
         :rtype: BooN
         """
         assert 0 < n
@@ -352,7 +353,7 @@ class BooN:
             case _:
                 ig = nx.gnp_random_graph(n, p_link, directed=True)  # Erdös Reny by default
 
-        # Associate to each node which are integer a variable name.
+        # Associate to each node that an integer a variable name.
         variables = {node: symbols("{prefix}{counter:d}".format(prefix=prefix, counter=node)) for node in ig.nodes}
 
         boon = cls()
@@ -461,7 +462,7 @@ class BooN:
         :type sep: str
         :type assign: str
         :type ops: dict
-        :type skipline:str (regexp)
+        :type skipline: str (regexp)
         :return: BooN
         :rtype: BooN
         """
@@ -531,10 +532,9 @@ class BooN:
         Import the Boolean network from a sbml file.
         The method is a class method.
 
-        :param filename:  The file name to import the Boolean network.
-        If the extension is missing, then .sbml is added.
-        :type  filename: str
-        :return: self
+        :param filename: the name of the file, if the extension is missing then .sbml is added.
+        :type filename: str
+        :return: BooN
         :rtype: BooN
         """
 
@@ -640,13 +640,13 @@ class BooN:
         """Convert formula(s) of the Boolean network to DNF.
 
         :param variable:  The variable where the formula is to be converted in DNF (Default: None).
-        If variable is None, then all the formulas are converted to DNF.
-        :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).
-        :param force:  Boolean flag forcing the complete simplification (Default: True).
+            If variable is None, then all the formulas are converted to DNF.
         :type  variable: Symbol
+        :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).
         :type  simplify: bool
+        :param force:  Boolean flag forcing the complete simplification (Default: True).
         :type  force: bool
-        :return: self
+        :return: modified BooN
         :rtype: BooN
         """
 
@@ -851,17 +851,18 @@ class BooN:
         return G
 
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
-        """Draw the graph representing the datamodel of dynamics.
+        """Draw the graph representing the model of dynamics.
 
         :param model: Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.
         :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)
         :param color: list of colors for highlighting the equlibria (Default: COLOR)
         :param kwargs: extra parameters of nx.draw_networkx.
-        Type model: Networkx DiGraph
+        :type model: Networkx DiGraph
         :type mode: function
         :type color: list
         :type kwargs: dict
         :return: None
+        :rtype: None
         """
 
         themodel = model if model else self.model(mode)
