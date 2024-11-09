@@ -341,7 +341,7 @@ class BooN:
         # Generate a Digraph corresponding to the interaction graph w.r.t a topology class.
         match topology:
             case 'Erdos-Reny':
-                ig = nx.gnp_random_graph(n, p_link, directed=True)  # Erdös Reny
+                ig = nx.fast_gnp_random_graph(n, p_link, directed=True)
             case 'Scale-Free':
                 ig = nx.scale_free_graph(n, alpha=p_link, beta=1 - p_link - 0.05, gamma=0.05, delta_in=0.2)  # Scale-Free
             case 'Small-World':
@@ -426,7 +426,7 @@ class BooN:
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
         :param header: Header text inserted at the beginning of the saved file.
-        :type  filename: Str
+        :type  filename: str
         :type sep: str
         :type assign: str
         :type ops: dict
@@ -812,8 +812,8 @@ class BooN:
         """
         Compute the dynamical model of the BooN with respect to a mode.
 
-        :param  self_loop: Determines whether the boon loops are included in the datamodel (Default: False).
-        :param  mode: Determines the mode policy applied to the datamodel (Default: asynchronous).
+        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).
+        :param  mode: Determines the mode policy applied to the model (Default: asynchronous).
         :type self_loop: Bool
         :type mode:  function
         :return: a Digraph representing the complete state-based dynamics.
@@ -853,8 +853,8 @@ class BooN:
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
         """Draw the graph representing the model of dynamics.
 
-        :param model: Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.
-        :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)
+        :param model: Input graph model of the BooN or None (Default: None). If it is None, the asynchronous model computed from the BooN.
+        :param mode:  Function characterizing the mode of the model (Default: asynchronous)
         :param color: list of colors for highlighting the equlibria (Default: COLOR)
         :param kwargs: extra parameters of nx.draw_networkx.
         :type model: Networkx DiGraph
@@ -901,11 +901,11 @@ class BooN:
 
     def equilibria(self, model: nx.DiGraph | None, mode: Callable = asynchronous) -> list[list]:
         """
-        Calculate equilibria for the network based on datamodel dynamics.
+        Calculate equilibria for the network based on model of dynamics.
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
         :param model: Data model from which the equilibria are calculated.
-        :param mode: Updating mode function, used if the datamodel is None (Default: asynchronous).
+        :param mode: Updating mode function, used if the model is None (Default: asynchronous).
         :type model: Networkx DiGraph
         :type mode: function
         :return: Equilibria structure as a list of lists where each sublist is an attractor.
@@ -939,7 +939,7 @@ class BooN:
         while solver.check() == z3.sat:
             model = solver.model()
             models.append(model)
-            # Block the current datamodel to enable the finding of another datamodel.
+            # Block the current model to enable the finding of another model.
             block = [sol() != model[sol] for sol in model]
             solver.add(z3.Or(block))
 

@@ -448,7 +448,7 @@
         <span class="c1"># Generate a Digraph corresponding to the interaction graph w.r.t a topology class.</span>
         <span class="k">match</span> <span class="n">topology</span><span class="p">:</span>
             <span class="k">case</span> <span class="s1">&#39;Erdos-Reny&#39;</span><span class="p">:</span>
-                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">gnp_random_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_link</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Erdös Reny</span>
+                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">fast_gnp_random_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_link</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">case</span> <span class="s1">&#39;Scale-Free&#39;</span><span class="p">:</span>
                 <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">scale_free_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">p_link</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_link</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">delta_in</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>  <span class="c1"># Scale-Free</span>
             <span class="k">case</span> <span class="s1">&#39;Small-World&#39;</span><span class="p">:</span>
@@ -542,7 +542,7 @@
 <span class="sd">        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is &#39;=&#39; (Default: &#39;,&#39; Boolnet Format).</span>
 <span class="sd">        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).</span>
 <span class="sd">        :param header: Header text inserted at the beginning of the saved file.</span>
-<span class="sd">        :type  filename: Str</span>
+<span class="sd">        :type  filename: str</span>
 <span class="sd">        :type sep: str</span>
 <span class="sd">        :type assign: str</span>
 <span class="sd">        :type ops: dict</span>
@@ -949,8 +949,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the dynamical model of the BooN with respect to a mode.</span>
 
-<span class="sd">        :param  self_loop: Determines whether the boon loops are included in the datamodel (Default: False).</span>
-<span class="sd">        :param  mode: Determines the mode policy applied to the datamodel (Default: asynchronous).</span>
+<span class="sd">        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).</span>
+<span class="sd">        :param  mode: Determines the mode policy applied to the model (Default: asynchronous).</span>
 <span class="sd">        :type self_loop: Bool</span>
 <span class="sd">        :type mode:  function</span>
 <span class="sd">        :return: a Digraph representing the complete state-based dynamics.</span>
@@ -993,8 +993,8 @@
     <span class="k">def</span> <span class="nf">draw_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">COLOR</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw the graph representing the model of dynamics.</span>
 
-<span class="sd">        :param model: Input datamodel graph of the BooN or None (Default: None). If it is None, the asynchronous datamodel computed from the BooN.</span>
-<span class="sd">        :param mode:  Function characterizing the mode of the datamodel (Default: asynchronous)</span>
+<span class="sd">        :param model: Input graph model of the BooN or None (Default: None). If it is None, the asynchronous model computed from the BooN.</span>
+<span class="sd">        :param mode:  Function characterizing the mode of the model (Default: asynchronous)</span>
 <span class="sd">        :param color: list of colors for highlighting the equlibria (Default: COLOR)</span>
 <span class="sd">        :param kwargs: extra parameters of nx.draw_networkx.</span>
 <span class="sd">        :type model: Networkx DiGraph</span>
@@ -1044,11 +1044,11 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.equilibria">[docs]</a>
     <span class="k">def</span> <span class="nf">equilibria</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate equilibria for the network based on datamodel dynamics.</span>
+<span class="sd">        Calculate equilibria for the network based on model of dynamics.</span>
 <span class="sd">        The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).</span>
 
 <span class="sd">        :param model: Data model from which the equilibria are calculated.</span>
-<span class="sd">        :param mode: Updating mode function, used if the datamodel is None (Default: asynchronous).</span>
+<span class="sd">        :param mode: Updating mode function, used if the model is None (Default: asynchronous).</span>
 <span class="sd">        :type model: Networkx DiGraph</span>
 <span class="sd">        :type mode: function</span>
 <span class="sd">        :return: Equilibria structure as a list of lists where each sublist is an attractor.</span>
@@ -1086,7 +1086,7 @@
         <span class="k">while</span> <span class="n">solver</span><span class="o">.</span><span class="n">check</span><span class="p">()</span> <span class="o">==</span> <span class="n">z3</span><span class="o">.</span><span class="n">sat</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
             <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-            <span class="c1"># Block the current datamodel to enable the finding of another datamodel.</span>
+            <span class="c1"># Block the current model to enable the finding of another model.</span>
             <span class="n">block</span> <span class="o">=</span> <span class="p">[</span><span class="n">sol</span><span class="p">()</span> <span class="o">!=</span> <span class="n">model</span><span class="p">[</span><span class="n">sol</span><span class="p">]</span> <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">model</span><span class="p">]</span>
             <span class="n">solver</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">z3</span><span class="o">.</span><span class="n">Or</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
 
