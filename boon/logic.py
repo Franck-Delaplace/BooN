@@ -274,9 +274,9 @@ def supercnf(formula, trace: bool = False):
     trc_clauses = 0
     while solver.check() == z3.sat:
         model = solver.model()
-        trc_clauses = trc_clauses + 1
-        if trace:
-            tqdm.write(f'\rBooN >> # models:[{trc_clauses:5d}]', end='')
+        trc_clauses += 1
+        if trace: tqdm.write(f'\rBooN >> # SAT models:[{trc_clauses:5d}]', end='')
+
         models.append(model)
         # Block the current datamodel to enable the finding of another datamodel.
         block = [sol() != model[sol] for sol in model]
@@ -337,9 +337,10 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     # This dictionary is used to convert the literals into pulp variables (vlit[lit])
     vlit = {lit: pulp.LpVariable(str(lit), lowBound=0, upBound=1, cat=pulp.LpInteger) for lit in literals}
 
-    if trace: tqdm.write("BooN >> Initialize prime implicants solving.", end="")
+    if trace: tqdm.write("\rBooN >> Initialize prime implicants solving.", end="")
     # Initialize the prime implicants problem in pulp.
     primes = pulp.LpProblem("Prime_Implicants", pulp.LpMinimize)
+    if trace: tqdm.write("\rBooN >> Prime implicants problem initialized.", end="")
 
     # Objective function = sum of all literals selected by kept function.
     objective_function = pulp.lpSum([vlit[lit] for lit in literals if kept(lit)])
@@ -358,6 +359,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     for var in criticalvars:
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
+    if trace: tqdm.write("\rBooN >> Start Resolution.                     ", end="")
     # Find all the solutions until no solutions are found.
     solutions = set()
     status = pulp.LpStatusOptimal
@@ -367,7 +369,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
         status = primes.status
         if status == pulp.LpStatusOptimal: # A solution is found then convert it into a set of prime implicants.
             trc_implicants = trc_implicants + 1
-            if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]                      ', end='')
+            if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]                           ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 
