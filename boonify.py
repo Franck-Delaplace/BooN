@@ -592,12 +592,12 @@ class View(QDialog):
     def change_formula(self):
         """Update the BooN from a formula change."""
         row = self.BooNContent.currentRow()  # get the current modified row
-        text = self.formulas[row].text()  # get the text of the lineedit formula
+        text = self.formulas[row].text()  # get the text of the line edit formula
 
         try:
             formula = parse_expr(text)  # parse the input
         except SyntaxError:
-            QMessageBox.critical(self, "SYNTAX ERROR", "Syntax Error.\nThe formula is not changed.")
+            QMessageBox.critical(self, "SYNTAX ERROR", "Syntax Error.\nThe formula is not changed.\nTIP: please select the Python output form. ")
             return
 
         if isinstance(formula, bool):  # Determine whether a new variable is used.

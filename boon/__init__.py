@@ -25,12 +25,15 @@ from pulp import PULP_CBC_CMD
 
 import netgraph as ng
 import networkx as nx
+
 from matplotlib.colors import to_rgb
+
 from sympy import symbols
 from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent
 from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf, simplify_logic
 from sympy.parsing.sympy_parser import parse_expr
+
 from boon.logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 import boon.logic as logic
 
@@ -340,19 +343,19 @@ class BooN:
         # Generate a Digraph corresponding to the interaction graph w.r.t a topology class.
         match topology:
             case 'Erdos-Reny':
-                ig = nx.fast_gnp_random_graph(n, p_link, directed=True)
+                ig = nx.fast_gnp_random_graph(n, p_link, directed=True)  # Erdös-Reny
             case 'Scale-Free':
                 ig = nx.scale_free_graph(n, alpha=p_link, beta=1 - p_link - 0.05, gamma=0.05, delta_in=0.2)  # Scale-Free
             case 'Small-World':
-                ig0 = nx.newman_watts_strogatz_graph(n, 4, p_link)
-                ig = nx.DiGraph()
+                ig0 = nx.newman_watts_strogatz_graph(n, 4, p_link)  # Small World
+                ig = nx.DiGraph()  # direct the graph.
                 for edge in ig0.edges():
                     i = random.choice([0, 1])
                     ig.add_edge(edge[i], edge[1 - i])
             case _:
-                ig = nx.gnp_random_graph(n, p_link, directed=True)  # Erdös Reny by default
+                ig = nx.fast_gnp_random_graph(n, p_link, directed=True)  # Erdös Reny by default
 
-        # Associate to each node that an integer a variable name.
+        # Associate to each node that is an integer variable name.
         variables = {node: symbols("{prefix}{counter:d}".format(prefix=prefix, counter=node)) for node in ig.nodes}
 
         boon = cls()
@@ -379,7 +382,7 @@ class BooN:
     # DEF: FILE
     def save(self, filename: str = "BooN" + datetime.now().strftime("%d-%b-%y-%H") + EXTBOON) -> None:
         """Save the Boolean Network to file.
-        If the extension is missing, then .boon is added.
+        If the extension is freestates, then .boon is added.
 
         :param filename:  The name of the file to save the network (Default: BooN+date+hour.boon)
         :type  filename: str
@@ -395,7 +398,7 @@ class BooN:
     @classmethod
     def load(cls, filename: str) -> BooN:
         """Load the Boolean Network from a file.
-        If the extension is missing, then .boon is added.
+        If the extension is freestates, then .boon is added.
         The method is a class method
 
         :param filename: The name of the file to load the network.
@@ -417,7 +420,7 @@ class BooN:
     def to_textfile(self, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, header: str = BOOLNETHEADER) -> BooN:
         """
         Export the Boolean network in a text file.
-        If the file extension is missing, then .txt is added.
+        If the file extension is freestates, then .txt is added.
         The default format is BOOLNET.
 
         :param filename: The file name to export the Boolean network.
@@ -452,7 +455,7 @@ class BooN:
         The default format is the Bool Net format (see ops and assign defaults).
         The method is a class method.
 
-        :param filename: The file name to import the Boolean network. If the file extension is missing, then .bnet is added.
+        :param filename: The file name to import the Boolean network. If the file extension is freestates, then .bnet is added.
         :param sep: The separator between definitions (default BOONSEP constant)
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
@@ -484,7 +487,7 @@ class BooN:
                         try:  # Find the position of the assignment.
                             assign_pos = line.index(assign)
                         except ValueError:
-                            errmsg(f"Syntax error, the assignment (sign:{assign}) is missing, line {i} in file", fullfilename, "READ ERROR")
+                            errmsg(f"Syntax error, the assignment (sign:{assign}) is freestates, line {i} in file", fullfilename, "READ ERROR")
                             return boon
                         try:  # Set the variable to Symbol.
                             var = symbols(line[:assign_pos].strip())
@@ -531,7 +534,7 @@ class BooN:
         Import the Boolean network from a sbml file.
         The method is a class method.
 
-        :param filename: the name of the file, if the extension is missing then .sbml is added.
+        :param filename: the name of the file, if the extension is freestates, then .sbml is added.
         :type filename: str
         :return: BooN
         :rtype: BooN
@@ -900,7 +903,7 @@ class BooN:
 
     def equilibria(self, model: nx.DiGraph | None, mode: Callable = asynchronous) -> list[list]:
         """
-        Calculate equilibria for the network based on model of dynamics.
+        Calculate equilibria for the network based on the model of dynamics.
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
         :param model: Data model from which the equilibria are calculated.
@@ -1024,7 +1027,7 @@ class BooN:
         :rtype: frozenset[sympy formula]
         """
 
-        # predicate determining whether a literal is a negative control (e.g. ~ _u1).
+        # Predicate determining whether a literal is a negative control (e.g. ~ _u1).
         def isnegctrl(lit) -> bool:
             return firstsymbol(lit).name.startswith(CONTROL) and isinstance(lit, Not)
 
