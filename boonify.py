@@ -42,6 +42,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+from pulp import PULP_CBC_CMD
+
 mpl.use("Qt5Agg")
 
 # Parameters
@@ -49,6 +51,7 @@ HSIZE: int = 10  # size of the history
 STYLE: dict = {"Logical": LOGICAL, "Java": JAVA, "Python": SYMPY, "Mathematica": MATHEMATICA, "BoolNet": BOOLNET}
 ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.svg", False: ":/icon/resources/false.svg"}  # True/False icons
 MODELBOUND: int = 8  # Size bound of the dynamics model in terms of variables.
+LPSOLVER = PULP_CBC_CMD  # LP-Solver related to the controllability resolution. (destify)
 
 # Node names for the pattern network
 REG: str = '\u03b1'  # lambda
@@ -918,7 +921,7 @@ class Controllability(QMainWindow):
         destiny = And(possibility, necessity)
 
         # STEP: Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
-        core = BooN.destify(destiny, trace=self.Trace)
+        core = BooN.destify(destiny, trace=self.Trace, solver = LPSOLVER)
         self.actions = boon.core2actions(core)
 
         # STEP: Define the tree model to show the resulting actions.

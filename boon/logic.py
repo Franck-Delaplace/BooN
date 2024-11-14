@@ -275,7 +275,7 @@ def supercnf(formula, trace: bool = False):
     while solver.check() == z3.sat:
         model = solver.model()
         trc_clauses += 1
-        if trace: tqdm.write(f'\rBooN >> # SAT models:[{trc_clauses:5d}]', end='')
+        if trace: tqdm.write(f'\rBooN CNF >> # SAT models:[{trc_clauses:5d}]', end='')
 
         models.append(model)
         # Block the current datamodel to enable the finding of another datamodel.
@@ -286,7 +286,7 @@ def supercnf(formula, trace: bool = False):
     if trace:
         tqdm.write('')
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
-                    for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='BooN >> CNF formatting', ncols=80,
+                    for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='BooN CNF >> CNF formatting', ncols=80,
                                         bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')])
     else:
         cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
@@ -337,10 +337,10 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     # This dictionary is used to convert the literals into pulp variables (vlit[lit])
     vlit = {lit: pulp.LpVariable(str(lit), lowBound=0, upBound=1, cat=pulp.LpInteger) for lit in literals}
 
-    if trace: tqdm.write("\rBooN >> Initialize prime implicants solving.", end="")
+    if trace: tqdm.write("\rBooN PI >> Initialize prime implicants solving.", end="")
     # Initialize the prime implicants problem in pulp.
     primes = pulp.LpProblem("Prime_Implicants", pulp.LpMinimize)
-    if trace: tqdm.write("\rBooN >> Prime implicants problem initialized.", end="")
+    if trace: tqdm.write("\rBooN PI >> Prime implicants problem initialized.", end="")
 
     # Objective function = sum of all literals selected by kept function.
     objective_function = pulp.lpSum([vlit[lit] for lit in literals if kept(lit)])
@@ -359,17 +359,18 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     for var in criticalvars:
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
-    if trace: tqdm.write("\rBooN >> Start Resolution.                     ", end="")
+    if trace: tqdm.write("\rBooN PI >> Solve.                       ", end="")
     # Find all the solutions until no solutions are found.
     solutions = set()
     status = pulp.LpStatusOptimal
     trc_implicants = 0
     while status == pulp.LpStatusOptimal:  # while a solution is found
+
         primes.solve(solver(msg=0))  # Quiet solving
         status = primes.status
         if status == pulp.LpStatusOptimal: # A solution is found then convert it into a set of prime implicants.
-            trc_implicants = trc_implicants + 1
-            if trace: tqdm.write(f'\rBooN >> # solutions:[{trc_implicants:3d}]                           ', end='')
+            trc_implicants +=1
+            if trace: tqdm.write(f'\rBooN PI >> # solutions:[{trc_implicants:3d}]                           ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 
