@@ -359,7 +359,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     for var in criticalvars:
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
-    if trace: tqdm.write("\rBooN PI >> Solve.                       ", end="")
+    if trace: tqdm.write("\rBooN PI >> Solve.                                  ", end="")
     # Find all the solutions until no solutions are found.
     solutions = set()
     status = pulp.LpStatusOptimal
