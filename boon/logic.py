@@ -37,7 +37,7 @@ PATHSEP: str = "\\"  # Separator in the file path.
 prime_implicants_problem = None  # Global variable storing the last prime implicants problem specification.
 trc_clauses = 0  # global variables counting the number of CNF clauses in supercnf function
 trc_cnf = 0  # global variables counting the number of clauses converted to CNF in supercnf function
-trc_implicants = 0  # global variables counting the number of prime implicants in prime_implicants
+nb_implicants = 0  # global variables counting the number of prime implicants in prime_implicants
 
 
 # DEF: Basic functions
@@ -294,23 +294,25 @@ def supercnf(formula, trace: bool = False):
     return cnf
 
 # DEF:  prime implicants computation.
-def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).name.startswith(TEITSIN), trace: bool = False, solver: type = SOLVER) -> frozenset:
+def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).name.startswith(TEITSIN), max_solutions:int = sys.maxsize, trace: bool = False, solver: type = SOLVER) -> frozenset:
     """
     Compute all the prime implicants of a propositional formula where the literals are filtered by kept function.
 
     :param formula: The input formula. The formula does not need to be in CNF.
-    :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
-    :param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
-    :param solver: The solver to use (Default: Pulp solver).
     :type formula: Sympy formula
+    :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
     :type kept: function
+    :param max_solutions: maximal number of solutions (Default sys.maxsize)
+    :type max_solutions: int
+    :param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
     :type trace: bool
+    :param solver: The solver to use (Default: Pulp solver).
     :type solver: solver function
     :return: all the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.
-    :rtype: Frozenset
+    :rtype: frozenset
     """
     global prime_implicants_problem
-    global trc_implicants
+    global nb_implicants
     # The prime implicants method is based on linear integer programming.
     # The prime implicants are the solutions to solving this integral system.
     # References:
@@ -360,22 +362,22 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
     if trace: tqdm.write("\rBooN PI >> Solve.                                  ", end="")
-    # Find all the solutions until no solutions are found.
+    # Find all the solutions until no solutions are found or their number exceeds max_solutions.
     solutions = set()
     status = pulp.LpStatusOptimal
-    trc_implicants = 0
-    while status == pulp.LpStatusOptimal:  # while a solution is found
+    nb_implicants = 0
+    while status == pulp.LpStatusOptimal and nb_implicants < max_solutions :  # while a solution is found
 
         primes.solve(solver(msg=0))  # Quiet solving
         status = primes.status
         if status == pulp.LpStatusOptimal: # A solution is found then convert it into a set of prime implicants.
-            trc_implicants +=1
-            if trace: tqdm.write(f'\rBooN PI >> # solutions:[{trc_implicants:3d}]                           ', end='')
+            nb_implicants +=1
+            if trace: tqdm.write(f'\rBooN PI >> # solutions:[{nb_implicants:3d}]                           ', end='')
             solution = frozenset({lit for lit in literals if kept(lit) and vlit[lit].varValue == 1.})
             solutions.add(solution)
 
             # Add the constraint discarding the found solution, e.g.  s = {x, ~y, z} -> x+~y+z <= 2 s.t. len(s)-1 = 2.
-            discard_solution = pulp.lpSum(map(lambda lit: vlit[lit], solution)) <= len(solution) - 1, "OUT_" + str(trc_implicants)
+            discard_solution = pulp.lpSum(map(lambda lit: vlit[lit], solution)) <= len(solution) - 1, "OUT_" + str(nb_implicants)
             primes += discard_solution
     prime_implicants_problem = primes  # keep the specification of the problem in a global variable.
     if trace: tqdm.write('')

@@ -428,7 +428,7 @@ class Boonify(QMainWindow):
     def add_history(self):
         """Add current BooN to the history."""
         hindex = self.hindex
-        if self.boon != self.history[hindex]:  # WARNING: The BooN comparison operates on descriptors only, not on positions.
+        if self.boon != self.history[hindex]:  # WARNING: The BooN comparison operates on descriptors only, not on positions or style.
 
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
             self.hupdate = True  # Descriptor is changed.

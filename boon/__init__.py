@@ -14,6 +14,7 @@ import random
 import re
 import copy
 import pickle
+import sys
 from typing import Dict, Any
 from datetime import datetime
 import z3
@@ -1012,17 +1013,23 @@ class BooN:
         return necessary
 
     @staticmethod
-    def destify(query, trace: bool = False, solver=PULP_CBC_CMD):
+    def destify(query, max_solutions: int= sys.maxsize, trace: bool = False, solver=PULP_CBC_CMD):
         """Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
         Destify is a neologism that refers to the deliberate and purposeful act of shaping destiny by
         influencing or directing the course of events or outcomes towards an expected goal.
 
         :param query: The query defining the expected destiny or goal as propositional formula.
-        :param trace: Boolean flag determining whether the trace is activated (Default: False).
-        :param solver: The PulpSolver used for solving the problem (Default: PULP_CBC_CMD).
         :type query: Sympy formula
+
+        :param max_solutions: maximal number of solutions (Default sys.maxsize)
+        :type max_solutions: int
+
+        :param trace: Boolean flag determining whether the trace is activated (Default: False).
         :type trace: bool
-        :type solver: type
+
+        :param solver: The PulpSolver used for solving the problem (Default: PULP_CBC_CMD).
+        :type solver: Pulp function
+
         :return: the core of control
         :rtype: frozenset[sympy formula]
         """
@@ -1036,7 +1043,7 @@ class BooN:
             errmsg("The query has no controls of prefix", CONTROL, kind="WARNING")
             return frozenset(set())
 
-        allprimes = logic.prime_implicants(query, isnegctrl, trace=trace, solver=solver)
+        allprimes = logic.prime_implicants(query, isnegctrl, max_solutions= max_solutions, trace=trace, solver=solver)
         # The result is of the form ~ _u0X or ~_u1X. We need to get the control variable i.e. _u0X, _u1X
         ctrlprimes = {frozenset({firstsymbol(prime) for prime in primes}) for primes in allprimes}
 
