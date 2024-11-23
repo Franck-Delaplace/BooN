@@ -811,14 +811,15 @@ class BooN:
         return cls({node: Or(*(And(*clause) for clause in nodes[node])) for node in nodes})
 
     # DEF: DYNAMICS
-    def model(self, mode: Callable = asynchronous, self_loop: bool = False) -> nx.DiGraph:
-        """
-        Compute the dynamical model of the BooN with respect to a mode.
+    def model(self, mode: Callable = asynchronous, self_loop: bool = False, trace: bool = False) -> nx.DiGraph:
+        """ Compute the dynamical model of the BooN with respect to a mode.
 
-        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).
         :param  mode: Determines the mode policy applied to the model (Default: asynchronous).
+        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).
+        :param trace: define whether the trace of the execution is enabled (Default: False (disabled)).
         :type self_loop: Bool
         :type mode:  function
+        :type trace: bool
         :return: a Digraph representing the complete state-based dynamics.
         :rtype: Networkx Digraph
         """
@@ -828,29 +829,55 @@ class BooN:
             target.update(change)
             return target
 
+        if trace: print("\rBooN model >> Generate all states        ", end="")
+
         variables = self.variables
         modalities = mode(variables)
         allstates = [dict(zip(variables, state)) for state in product([False, True], repeat=len(variables))]
-        # Compute the state transition w.r.t. the network.
-        transition = [
-            (state,
-             next_state(state,
-                        {var: self.desc[var].subs(state) if not isinstance(self.desc[var], bool) else self.desc[var]
-                         for var in modality})
-             )
-            for state in allstates for modality in modalities]
-        # remove duplicated transitions.
-        transition = [edge for i, edge in enumerate(transition) if edge not in transition[:i]]
+
+        # transitions is a set of state pairs.
+        if trace:
+            current_transition = 0
+            total_transitions = len(allstates) * len(modalities)
+            transitions = []
+            for state in allstates:
+                for modality in modalities:
+                    current_transition += 1
+                    print("\rBooN model >> Transition [%6d/%6d]      " % (current_transition, total_transitions), end="")
+                    transitions.append(
+                        (state,
+                         next_state(state,
+                                    {var: self.desc[var].subs(state) if not isinstance(self.desc[var], bool) else self.desc[var]
+                                     for var in modality})
+                         ))
+        else:
+            # Compute the state transition w.r.t. the network.
+            transitions = [
+                (state,
+                 next_state(state,
+                            {var: self.desc[var].subs(state) if not isinstance(self.desc[var], bool) else self.desc[var]
+                             for var in modality})
+                 )
+                for state in allstates for modality in modalities]
+
         # remove boon loop if requested.
         if not self_loop:
-            transition = filter(lambda edge: edge[0] != edge[1], transition)
+            if trace: print("\rBooN model >> self loops removal                          ", end="")
+            transitions = filter(lambda edge: edge[0] != edge[1], transitions)
+
+        # Conversion of the states to integral nodes
+        if trace: print("\rBooN model >> state to integer conversion                      ", end="")
+        nodes = set(map(lambda state: state2int(state, variables), allstates))
+        edges = set(map(lambda trans: (state2int(trans[0], variables),state2int(trans[1], variables)),transitions))
+
         # Graph creation with nodes as integers coding the states.
+        if trace: print("\rBooN model >> Graph model design                                ", end="")
         G = nx.DiGraph()
         try:
-            G.add_nodes_from([state2int(state, variables) for state in allstates])
+            G.add_nodes_from(nodes)
         except ValueError:
             pass
-        G.add_edges_from([(state2int(src, variables), state2int(tgt, variables)) for src, tgt in transition])
+        G.add_edges_from(edges)
         return G
 
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
@@ -1013,7 +1040,7 @@ class BooN:
         return necessary
 
     @staticmethod
-    def destify(query, max_solutions: int= sys.maxsize, trace: bool = False, solver=PULP_CBC_CMD):
+    def destify(query, max_solutions: int = sys.maxsize, trace: bool = False, solver=PULP_CBC_CMD):
         """Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
         Destify is a neologism that refers to the deliberate and purposeful act of shaping destiny by
         influencing or directing the course of events or outcomes towards an expected goal.
@@ -1043,7 +1070,7 @@ class BooN:
             errmsg("The query has no controls of prefix", CONTROL, kind="WARNING")
             return frozenset(set())
 
-        allprimes = logic.prime_implicants(query, isnegctrl, max_solutions= max_solutions, trace=trace, solver=solver)
+        allprimes = logic.prime_implicants(query, isnegctrl, max_solutions=max_solutions, trace=trace, solver=solver)
         # The result is of the form ~ _u0X or ~_u1X. We need to get the control variable i.e. _u0X, _u1X
         ctrlprimes = {frozenset({firstsymbol(prime) for prime in primes}) for primes in allprimes}
 
