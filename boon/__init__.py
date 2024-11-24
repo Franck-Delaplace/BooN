@@ -17,6 +17,8 @@ import pickle
 import sys
 from typing import Dict, Any
 from datetime import datetime
+from functools import reduce
+
 import z3
 import math
 from collections.abc import Callable
@@ -929,25 +931,55 @@ class BooN:
                          )
         return None
 
-    def equilibria(self, model: nx.DiGraph | None, mode: Callable = asynchronous) -> list[list]:
+    def equilibria(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, trace:bool = False) -> list[list]:
         """
         Calculate equilibria for the network based on the model of dynamics.
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
-        :param model: Data model from which the equilibria are calculated.
+        :param model: Data model from which the equilibria are calculated (Default: None)
         :param mode: Updating mode function, used if the model is None (Default: asynchronous).
+        :param trace: Define whether the trace of execution is enabled (Default: False (disabled)).
         :type model: Networkx DiGraph
         :type mode: function
+        :type trace: bool
         :return: Equilibria structure as a list of lists where each sublist is an attractor.
         :rtype: List[list]
         """
+        #  Quotient graph. The function is faster than the networkx method. The partitions must be frozenset.
+        def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
+            # Initialize the quotient graph
+            quotient_graph = nx.DiGraph()
+            quotient_graph.add_nodes_from(partition)
+            # Add edges between groups based on connections in the original graph
+            for group1 in partition:
+                all_neighbors = reduce(set.union, map(lambda node: set(graph.neighbors(node)), group1))
+                # check whether group2 is included in the neighbors of group1
+                for group2 in partition:
+                    if group1 != group2 and not group2.isdisjoint(all_neighbors):
+                        quotient_graph.add_edge(group1, group2)
+            return quotient_graph
 
-        themodel = model if model else self.model(mode=mode)
+        # Possibly compute the model of the BooN.
+        themodel = model if model else self.model(mode=mode, trace=trace)
 
-        scc = list(nx.strongly_connected_components(themodel))  # Compute the Strongly Connected Components.
-        quotient_model = nx.quotient_graph(model, scc)  # Deduce the quotient graph of the SCCs.
-        equilibria = [node for node in quotient_model.nodes if quotient_model.out_degree(node) == 0]  # Determine equilibria as the sink in the quotient graph, i.e. terminal SCC.
-        return [[int2state(state, self.variables) for state in attractor] for attractor in equilibria]  # Encode the equilibria.
+        # Compute the Strongly Connected Components.
+        if trace: print("\r BooN equilibria >> SCC                     ", end="")
+        scc = list(map(frozenset, nx.strongly_connected_components(themodel)))
+
+        # Deduce the quotient graph of the SCCs.
+        if trace: print("\r BooN equilibria >> Quotient graph           ", end="")
+        quotient_model = quotient_graph(model, scc)
+
+        # Determine equilibria as the sink in the quotient graph, i.e. terminal SCC.
+        if trace: print("\r BooN equilibria >> Equilibria computation    ", end="")
+        equilibria = filter(lambda node: quotient_model.out_degree(node) == 0, quotient_model.nodes)
+
+        # Encode the equilibria by transforming the integers them into states.
+        if trace: print("\r BooN equilibria >> Encoding                  ", end="")
+        eqs_encoded = [[int2state(state, self.variables) for state in attractor] for attractor in equilibria]  # Encode the equilibria.
+
+        if trace: print("\r BooN equilibria >> Completed                 ", end="")
+        return eqs_encoded
 
     def stability_constraints(self):
         """Define the stability constraints for a BooN."""
