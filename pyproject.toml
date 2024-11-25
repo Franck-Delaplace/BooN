@@ -19,6 +19,7 @@ classifiers = [
 keywords = ["Boolean network", "Gene network modelling", "Controllability", "Abduction", "Dynamical system"]
 
 dependencies = [
+    "functools",
     "matplotlib",
     "netgraph",
     "networkx",

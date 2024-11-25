@@ -350,7 +350,7 @@ class BooN:
             case 'Scale-Free':
                 ig = nx.scale_free_graph(n, alpha=p_link, beta=1 - p_link - 0.05, gamma=0.05, delta_in=0.2)  # Scale-Free
             case 'Small-World':
-                ig0 = nx.newman_watts_strogatz_graph(n, 4, p_link)  # Small World
+                ig0 = nx.newman_watts_strogatz_graph(n, min(n,4), p_link)  # Small World
                 ig = nx.DiGraph()  # direct the graph.
                 for edge in ig0.edges():
                     i = random.choice([0, 1])
