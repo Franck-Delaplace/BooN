@@ -358,7 +358,7 @@ class BooN:
             case _:
                 ig = nx.fast_gnp_random_graph(n, p_link, directed=True)  # Erdös Reny by default
 
-        # Associate to each node that is an integer variable name.
+        # Associate to each node an integer variable name.
         variables = {node: symbols("{prefix}{counter:d}".format(prefix=prefix, counter=node)) for node in ig.nodes}
 
         boon = cls()
@@ -837,7 +837,7 @@ class BooN:
         modalities = mode(variables)
         allstates = [dict(zip(variables, state)) for state in product([False, True], repeat=len(variables))]
 
-        # transitions is a set of state pairs.
+        # transitionz are state pairs.
         if trace:
             current_transition = 0
             total_transitions = len(allstates) * len(modalities)
@@ -945,15 +945,17 @@ class BooN:
         :return: Equilibria structure as a list of lists where each sublist is an attractor.
         :rtype: List[list]
         """
-        #  Quotient graph. The function is faster than the networkx method. The partitions must be frozenset.
+        #  Quotient graph. The function is 10 times faster than the networkx method.
+        #  The partitions must be frozenset.
         def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
             # Initialize the quotient graph
             quotient_graph = nx.DiGraph()
             quotient_graph.add_nodes_from(partition)
             # Add edges between groups based on connections in the original graph
             for group1 in partition:
+                # Collect all neighbors of a group in the original graph.
                 all_neighbors = reduce(set.union, map(lambda node: set(graph.neighbors(node)), group1))
-                # check whether group2 is included in the neighbors of group1
+                # Check whether group2 has members in the neighborhood of group1 to define edges.
                 for group2 in partition:
                     if group1 != group2 and not group2.isdisjoint(all_neighbors):
                         quotient_graph.add_edge(group1, group2)
