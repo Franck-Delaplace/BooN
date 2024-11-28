@@ -350,7 +350,7 @@ class BooN:
             case 'Scale-Free':
                 ig = nx.scale_free_graph(n, alpha=p_link, beta=1 - p_link - 0.05, gamma=0.05, delta_in=0.2)  # Scale-Free
             case 'Small-World':
-                ig0 = nx.newman_watts_strogatz_graph(n, min(n,4), p_link)  # Small World
+                ig0 = nx.newman_watts_strogatz_graph(n, min(n, 4), p_link)  # Small World
                 ig = nx.DiGraph()  # direct the graph.
                 for edge in ig0.edges():
                     i = random.choice([0, 1])
@@ -870,7 +870,7 @@ class BooN:
         # Conversion of the states to integral nodes
         if trace: print("\rBooN model >> state to integer conversion                      ", end="")
         nodes = set(map(lambda state: state2int(state, variables), allstates))
-        edges = set(map(lambda trans: (state2int(trans[0], variables),state2int(trans[1], variables)),transitions))
+        edges = set(map(lambda trans: (state2int(trans[0], variables), state2int(trans[1], variables)), transitions))
 
         # Graph creation with nodes as integers coding the states.
         if trace: print("\rBooN model >> Graph model design                                ", end="")
@@ -931,7 +931,7 @@ class BooN:
                          )
         return None
 
-    def equilibria(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, trace:bool = False) -> list[list]:
+    def equilibria(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, trace: bool = False) -> list[list]:
         """
         Calculate equilibria for the network based on the model of dynamics.
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
@@ -945,6 +945,7 @@ class BooN:
         :return: Equilibria structure as a list of lists where each sublist is an attractor.
         :rtype: List[list]
         """
+
         #  Quotient graph. The function is 10 times faster than the networkx method.
         #  The partitions must be frozenset.
         def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
