@@ -320,12 +320,12 @@ class BooN:
     @classmethod
     def random(cls, n: int, p_link: float, p_pos: float = 0.5, topology: str = 'Erdos-Reny', min_clauses: int = 1, max_clauses: int = 5, prefix: str = VARPREFIX) -> BooN:
         """ Generate a random BooN where the formulas are in DNF.
-        The method is a class method.
+        the method is a class method.
 
-        :param n: The number of variables.
+        :param n: the number of variables.
         :type n: int
         :param p_link: probability related to interaction between variables, the use depends on the topology class.
-        :param p_pos: The probability of defining a variable as a positive term (default 0.5).
+        :param p_pos: the probability of defining a variable as a positive term (default 0.5).
         :type  p_pos: float
         :param topology: the topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
         :type topology: str
@@ -837,7 +837,7 @@ class BooN:
         modalities = mode(variables)
         allstates = [dict(zip(variables, state)) for state in product([False, True], repeat=len(variables))]
 
-        # transitionz are state pairs.
+        # transitions are state pairs.
         if trace:
             current_transition = 0
             total_transitions = len(allstates) * len(modalities)
@@ -948,7 +948,7 @@ class BooN:
 
         #  Quotient graph.
         #  The function is more than 10 times faster than the networkx method.
-        #  The partitions must be frozensets.
+        #  The partitions must be frozenset.
         def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
             # Initialize the quotient graph
             quotient_graph = nx.DiGraph()
@@ -1084,7 +1084,7 @@ class BooN:
         :param query: The query defining the expected destiny or goal as propositional formula.
         :type query: Sympy formula
 
-        :param max_solutions: maximal number of solutions (Default largest integer = sys.maxsize)
+        :param max_solutions: maximal number of solutions (Default the largest integer = sys.maxsize)
         :type max_solutions: int
 
         :param trace: Boolean flag determining whether the trace is activated (Default: False).
