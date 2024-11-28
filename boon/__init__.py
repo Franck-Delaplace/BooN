@@ -946,8 +946,9 @@ class BooN:
         :rtype: List[list]
         """
 
-        #  Quotient graph. The function is 10 times faster than the networkx method.
-        #  The partitions must be frozenset.
+        #  Quotient graph.
+        #  The function is more than 10 times faster than the networkx method.
+        #  The partitions must be frozensets.
         def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
             # Initialize the quotient graph
             quotient_graph = nx.DiGraph()
@@ -966,7 +967,7 @@ class BooN:
         themodel = model if model else self.model(mode=mode, trace=trace)
 
         # Compute the Strongly Connected Components.
-        if trace: print("\r BooN equilibria >> SCC                     ", end="")
+        if trace: print("\r BooN equilibria >> SCC                      ", end="")
         scc = list(map(frozenset, nx.strongly_connected_components(themodel)))
 
         # Deduce the quotient graph of the SCCs.
@@ -977,7 +978,7 @@ class BooN:
         if trace: print("\r BooN equilibria >> Equilibria computation    ", end="")
         equilibria = filter(lambda node: quotient_model.out_degree(node) == 0, quotient_model.nodes)
 
-        # Encode the equilibria by transforming the integers them into states.
+        # Encode the equilibria by transforming the integers into Boolean states.
         if trace: print("\r BooN equilibria >> Encoding                  ", end="")
         eqs_encoded = [[int2state(state, self.variables) for state in attractor] for attractor in equilibria]  # Encode the equilibria.
 
@@ -1017,7 +1018,7 @@ class BooN:
         """Set control on the BooN.
         The controlled variables are divided in two classes:
         the variables frozen to false and the variables frozen to true.
-        A variable can be in both classes.
+        A variable can belong to both classes.
 
         :param frozenfalse: List, set or sequence of variables that should be frozen to false by control.
         :param frozentrue: List, set or sequence of variables that should be frozen to true by control.
@@ -1083,7 +1084,7 @@ class BooN:
         :param query: The query defining the expected destiny or goal as propositional formula.
         :type query: Sympy formula
 
-        :param max_solutions: maximal number of solutions (Default sys.maxsize)
+        :param max_solutions: maximal number of solutions (Default largest integer = sys.maxsize)
         :type max_solutions: int
 
         :param trace: Boolean flag determining whether the trace is activated (Default: False).
@@ -1096,9 +1097,9 @@ class BooN:
         :rtype: frozenset[sympy formula]
         """
 
-        # Predicate determining whether a literal is a negative control (e.g. ~ _u1).
+        # Predicate determining whether a literal is a negative control (e.g. ~ _u1) corresponding to active control.
         def isnegctrl(lit) -> bool:
-            return firstsymbol(lit).name.startswith(CONTROL) and isinstance(lit, Not)
+            return isinstance(lit, Not) and firstsymbol(lit).name.startswith(CONTROL)
 
         # Check if the query contains control variables.
         if not is_controlled(query):
