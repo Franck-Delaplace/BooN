@@ -65,8 +65,8 @@ which is indicated by the absence of its respective marking at stable state, nam
   "</li>
 <li> Execute this query. 3469 Models are produced and nine solutions are found. 
 Note that a large number of models may require significant computational time.</li>
-<li> The solutions describe the mutations required to trigger breast cancer. 
-Please check the validity of these predictions in literature.  Some correspond to a single mutation (Solution 1 to  </li>
+<li> The solutions describe the mutations required to trigger breast cancer. The validity of these predictions 
+can be verified in literature for single mutations. </li>
 </ul>
 
 <h4>Predicting therapeutic actions</h4>
