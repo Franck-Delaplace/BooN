@@ -86,6 +86,16 @@ def is_controlled(formula) -> bool:
         return False
 
 
+def isctrl(lit) -> bool:
+    """
+     Determines if a literal contains a controller.
+     :param lit: The literal to be validated.
+     :type lit: Literal
+     :return: True if the literal is a negative control, False otherwise.
+     :rtype: Bool
+     """
+    return  firstsymbol(lit).name.startswith(CONTROL)
+
 def isnegctrl(lit) -> bool:
     """
      Determines if a given literal is a negative control.
@@ -94,7 +104,7 @@ def isnegctrl(lit) -> bool:
      :return: True if the literal is a negative control, False otherwise.
      :rtype: Bool
      """
-    return isinstance(lit, Not) and firstsymbol(lit).name.startswith(CONTROL)
+    return isinstance(lit, Not) and isctrl(lit)
 
 
 def controls2actions(controls: frozenset) -> list[tuple]:
@@ -1165,6 +1175,9 @@ class BooN:
             :return: True if all stable states satisfy the query; otherwise, False.
             :rtype: Bool
             """
+
+
+
             # Convert prime controls into a list of actions: (variable, value)
             actions = controls2actions(controls)
 
@@ -1181,6 +1194,11 @@ class BooN:
             # Validate the query against all stable states of the controlled network
             all_valid = all(query.subs(state) for state in stable_states)
             return all_valid
+        # Check whether the network is not controlled.
+        if any(map(is_controlled, self.desc.values())):
+            errmsg("The network must not be controlled to correctly functioning", kind="WARNING")
+            return frozenset(set())
+
 
         # Filter the core for prime controls that satisfy the query for all stable states
         if trace:
