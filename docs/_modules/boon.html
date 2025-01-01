@@ -73,10 +73,10 @@
 <span class="c1"># Creation date: January 2024</span>
 
 <span class="c1"># In comments :</span>
-<span class="c1"># DEF means definition which is a code part gathering functions related to a process or an object definition,</span>
-<span class="c1"># STEP means main steps</span>
+<span class="c1"># DEF means definition which is a code part gathering functions related to a process or an object definition.</span>
+<span class="c1"># STEP means main steps.</span>
 <span class="c1"># WARNING is a warning.</span>
-<span class="c1"># These terms can be used to color comments in PyCharm or else.</span>
+<span class="c1"># The first terms can be used to color comments in PyCharm or else.</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
@@ -84,8 +84,11 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+
 <span class="kn">import</span> <span class="nn">z3</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
@@ -95,14 +98,19 @@
 
 <span class="kn">import</span> <span class="nn">netgraph</span> <span class="k">as</span> <span class="nn">ng</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">to_rgb</span>
+
 <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span>
 <span class="kn">from</span> <span class="nn">sympy.core.symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
 <span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">And</span><span class="p">,</span> <span class="n">Or</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">Equivalent</span>
 <span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">to_cnf</span><span class="p">,</span> <span class="n">to_dnf</span><span class="p">,</span> <span class="n">is_dnf</span><span class="p">,</span> <span class="n">simplify_logic</span>
 <span class="kn">from</span> <span class="nn">sympy.parsing.sympy_parser</span> <span class="kn">import</span> <span class="n">parse_expr</span>
+
 <span class="kn">from</span> <span class="nn">boon.logic</span> <span class="kn">import</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="n">SYMPY</span><span class="p">,</span> <span class="n">BOOLNET</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">firstsymbol</span>
 <span class="kn">import</span> <span class="nn">boon.logic</span> <span class="k">as</span> <span class="nn">logic</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">import</span> <span class="nn">libsbml</span>
 
@@ -113,10 +121,17 @@
 <span class="n">EXTXT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>  <span class="c1"># file extension of Python format for an imported file.</span>
 <span class="n">EXTBOOLNET</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.bnet&quot;</span>  <span class="c1"># file extension of BOOLNET format for an imported file.</span>
 <span class="n">EXTSBML</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.sbml&quot;</span>  <span class="c1"># file extension of SBML file for an imported file.</span>
+
 <span class="n">CONTROL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_u&quot;</span>  <span class="c1"># prefix name of the controllers (control parameters).</span>
+<span class="n">CTRLPRFXLEN</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span>  <span class="c1"># length of the control prefix.</span>
+
+<span class="n">BIN2BOOL</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>  <span class="c1"># convert string 0-1 value to Boolean.</span>
+<span class="n">BOOL2BIN</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>  <span class="c1"># convert Boolean to string.</span>
+
 <span class="n">BOONSEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># separator between the equations of a BooN.</span>
 <span class="n">VARPREFIX</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>  <span class="c1"># Prefix of the generated variables (random)</span>
-<span class="c1"># color list for graph drawing</span>
+
+<span class="c1"># palette of colors for graph drawing</span>
 <span class="n">COLOR</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tomato&#39;</span><span class="p">,</span> <span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="s1">&#39;yellowgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;plum&#39;</span><span class="p">,</span> <span class="s1">&#39;mediumaquamarine&#39;</span><span class="p">,</span> <span class="s1">&#39;darkorange&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;darkkhaki&#39;</span><span class="p">,</span> <span class="s1">&#39;forestgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;salmon&#39;</span><span class="p">,</span> <span class="s1">&#39;lightcoral&#39;</span><span class="p">,</span> <span class="s1">&#39;cornflowerblue&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;paleviolet&#39;</span><span class="p">,</span> <span class="s1">&#39;coral&#39;</span><span class="p">,</span> <span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="s1">&#39;yellowgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="s1">&#39;blueviolet&#39;</span><span class="p">,</span> <span class="s1">&#39;crimson&#39;</span><span class="p">]</span>
@@ -144,6 +159,48 @@
 
 
 
+<div class="viewcode-block" id="isctrl">
+<a class="viewcode-back" href="../index.html#boon.isctrl">[docs]</a>
+<span class="k">def</span> <span class="nf">isctrl</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Determines if a literal contains a controller.</span>
+<span class="sd">     :param lit: The literal to be validated.</span>
+<span class="sd">     :type lit: Literal</span>
+<span class="sd">     :return: True if the literal is a negative control, False otherwise.</span>
+<span class="sd">     :rtype: Bool</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">firstsymbol</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="isnegctrl">
+<a class="viewcode-back" href="../index.html#boon.isnegctrl">[docs]</a>
+<span class="k">def</span> <span class="nf">isnegctrl</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Determines if a given literal is a negative control.</span>
+<span class="sd">     :param lit: The literal to be validated.</span>
+<span class="sd">     :type lit: Literal</span>
+<span class="sd">     :return: True if the literal is a negative control, False otherwise.</span>
+<span class="sd">     :rtype: Bool</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lit</span><span class="p">,</span> <span class="n">Not</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isctrl</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="controls2actions">
+<a class="viewcode-back" href="../index.html#boon.controls2actions">[docs]</a>
+<span class="k">def</span> <span class="nf">controls2actions</span><span class="p">(</span><span class="n">controls</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a set of controls into a list of actions where an action is a pair (symbol, boolean value).</span>
+<span class="sd">    :param controls: The set of control parameters.</span>
+<span class="sd">    :type controls: frozenset[Sympy symbols]</span>
+<span class="sd">    :return: A list of actions.</span>
+<span class="sd">    :rtype: list[tuple[Sympy symbol, bool]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)[</span><span class="n">CTRLPRFXLEN</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]),</span> <span class="n">BIN2BOOL</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)[</span><span class="n">CTRLPRFXLEN</span><span class="p">]])</span> <span class="k">for</span> <span class="n">ctrl</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">]</span></div>
+
+
+
 <div class="viewcode-block" id="core2actions">
 <a class="viewcode-back" href="../index.html#boon.core2actions">[docs]</a>
 <span class="k">def</span> <span class="nf">core2actions</span><span class="p">(</span><span class="n">core</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -151,17 +208,14 @@
 <span class="sd">    The actions are sorted by length, meaning that the more parsimonious actions are at first.</span>
 
 <span class="sd">    :param core: The core.</span>
-<span class="sd">    :type core: Frozenset of literals.</span>
+<span class="sd">    :type core: Frozenset[Frozenset[Sympy symbol]].</span>
 <span class="sd">    :return: A list of combined actions where an action is defined as:[(variable, bool) ...]</span>
 <span class="sd">    :rtype: List[list[tuple]]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">ACTION</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-    <span class="n">lctrl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span>
-    <span class="n">actions</span> <span class="o">=</span> <span class="p">[[(</span><span class="n">symbols</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)[</span><span class="n">lctrl</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]),</span> <span class="n">ACTION</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)[</span><span class="n">lctrl</span><span class="p">]])</span> <span class="k">for</span> <span class="n">ctrl</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">]</span> <span class="k">for</span> <span class="n">primes</span> <span class="ow">in</span> <span class="n">core</span><span class="p">]</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">controls2actions</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span> <span class="k">for</span> <span class="n">primes</span> <span class="ow">in</span> <span class="n">core</span><span class="p">]</span>
     <span class="c1"># Sort the actions by length.</span>
-    <span class="n">actions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">actions</span></div>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 
@@ -206,7 +260,6 @@
 <span class="sd">    :rtype: Int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">BOOL2BIN</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">variables</span><span class="p">:</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">variables</span>
         <span class="n">bin_profile</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">BOOL2BIN</span><span class="p">[</span><span class="n">state</span><span class="p">[</span><span class="n">var</span><span class="p">]]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">order</span><span class="p">])</span>
@@ -234,7 +287,6 @@
 <span class="sd">    :return: a dictionary representing the state {variable: boolean state…}.</span>
 <span class="sd">    :rtype: Dict</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">BIN2BOOL</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
     <span class="n">bin_state</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">int_state</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">))</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="p">[</span><span class="n">BIN2BOOL</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">bin_state</span><span class="p">]))</span></div>
 
@@ -424,18 +476,18 @@
 <span class="sd">        The method is a class method.</span>
 
 <span class="sd">        :param n: The number of variables.</span>
-<span class="sd">        :type n: int</span>
+<span class="sd">        :type n: Int</span>
 <span class="sd">        :param p_link: probability related to interaction between variables, the use depends on the topology class.</span>
 <span class="sd">        :param p_pos: The probability of defining a variable as a positive term (default 0.5).</span>
-<span class="sd">        :type  p_pos: float</span>
+<span class="sd">        :type  p_pos: Float</span>
 <span class="sd">        :param topology: the topology class of the interaction graph: &#39;Erdos-Reny&#39;, &#39;Scale-Free&#39;, &#39;Small-World&#39; (default &#39;Erdos-Reny&#39;)</span>
 <span class="sd">        :type topology: str</span>
 <span class="sd">        :param min_clauses: the minimum number of clauses required to define a formula (default 1).</span>
-<span class="sd">        :type  min_clauses: int</span>
+<span class="sd">        :type  min_clauses: Int</span>
 <span class="sd">        :param max_clauses: the minimum number of clauses required to define a formula (default 5).</span>
-<span class="sd">        :type  max_clauses: int</span>
-<span class="sd">        :param prefix: the prefix of the variable name, the variables are of the form &lt;prefix&gt;&lt;int&gt; (default &#39;x&#39;).</span>
-<span class="sd">        :type prefix: str</span>
+<span class="sd">        :type  max_clauses: Int</span>
+<span class="sd">        :param prefix: the prefix of the variable name, the variables are of the form &lt;prefix&gt; &lt;int&gt; (default &#39;x&#39;).</span>
+<span class="sd">        :type prefix: Str</span>
 <span class="sd">        :return: a random BooN</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -447,23 +499,23 @@
         <span class="c1"># Generate a Digraph corresponding to the interaction graph w.r.t a topology class.</span>
         <span class="k">match</span> <span class="n">topology</span><span class="p">:</span>
             <span class="k">case</span> <span class="s1">&#39;Erdos-Reny&#39;</span><span class="p">:</span>
-                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">fast_gnp_random_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_link</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">fast_gnp_random_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_link</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Erdös-Reny</span>
             <span class="k">case</span> <span class="s1">&#39;Scale-Free&#39;</span><span class="p">:</span>
                 <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">scale_free_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">p_link</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_link</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">delta_in</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>  <span class="c1"># Scale-Free</span>
             <span class="k">case</span> <span class="s1">&#39;Small-World&#39;</span><span class="p">:</span>
-                <span class="n">ig0</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">newman_watts_strogatz_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">p_link</span><span class="p">)</span>
-                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+                <span class="n">ig0</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">newman_watts_strogatz_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">p_link</span><span class="p">)</span>  <span class="c1"># Small World</span>
+                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>  <span class="c1"># direct the graph.</span>
                 <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">ig0</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
                     <span class="n">ig</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">gnp_random_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_link</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Erdös Reny by default</span>
+                <span class="n">ig</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">fast_gnp_random_graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_link</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Erdös Reny by default</span>
 
-        <span class="c1"># Associate to each node that an integer a variable name.</span>
+        <span class="c1"># Associate to each node an integer variable name.</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{prefix}{counter:d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">node</span><span class="p">))</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ig</span><span class="o">.</span><span class="n">nodes</span><span class="p">}</span>
 
         <span class="n">boon</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-        <span class="c1"># Generate a formula for each node w.r.t. it predecessor.</span>
+        <span class="c1"># Generate a formula for each node w.r.t. its predecessors.</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ig</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
             <span class="c1"># Get the predecessors of a node.</span>
             <span class="n">pred</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ig</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
@@ -489,7 +541,7 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.save">[docs]</a>
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;BooN&quot;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%b-%y-%H&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">EXTBOON</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the Boolean Network to file.</span>
-<span class="sd">        If the extension is missing, then .boon is added.</span>
+<span class="sd">        If the extension is freestates, then .boon is added.</span>
 
 <span class="sd">        :param filename:  The name of the file to save the network (Default: BooN+date+hour.boon)</span>
 <span class="sd">        :type  filename: str</span>
@@ -508,7 +560,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the Boolean Network from a file.</span>
-<span class="sd">        If the extension is missing, then .boon is added.</span>
+<span class="sd">        If the extension is freestates, then .boon is added.</span>
 <span class="sd">        The method is a class method</span>
 
 <span class="sd">        :param filename: The name of the file to load the network.</span>
@@ -533,7 +585,7 @@
     <span class="k">def</span> <span class="nf">to_textfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOONSEP</span><span class="p">,</span> <span class="n">assign</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BOOLNET</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">BOOLNETHEADER</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BooN</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export the Boolean network in a text file.</span>
-<span class="sd">        If the file extension is missing, then .txt is added.</span>
+<span class="sd">        If the file extension is freestates, then .txt is added.</span>
 <span class="sd">        The default format is BOOLNET.</span>
 
 <span class="sd">        :param filename: The file name to export the Boolean network.</span>
@@ -541,7 +593,7 @@
 <span class="sd">        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is &#39;=&#39; (Default: &#39;,&#39; Boolnet Format).</span>
 <span class="sd">        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).</span>
 <span class="sd">        :param header: Header text inserted at the beginning of the saved file.</span>
-<span class="sd">        :type  filename: str</span>
+<span class="sd">        :type  filename: Str</span>
 <span class="sd">        :type sep: str</span>
 <span class="sd">        :type assign: str</span>
 <span class="sd">        :type ops: dict</span>
@@ -571,7 +623,7 @@
 <span class="sd">        The default format is the Bool Net format (see ops and assign defaults).</span>
 <span class="sd">        The method is a class method.</span>
 
-<span class="sd">        :param filename: The file name to import the Boolean network. If the file extension is missing, then .bnet is added.</span>
+<span class="sd">        :param filename: The file name to import the Boolean network. If the file extension is freestates, then .bnet is added.</span>
 <span class="sd">        :param sep: The separator between definitions (default BOONSEP constant)</span>
 <span class="sd">        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is &#39;=&#39; (Default: &#39;,&#39;).</span>
 <span class="sd">        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).</span>
@@ -603,7 +655,7 @@
                         <span class="k">try</span><span class="p">:</span>  <span class="c1"># Find the position of the assignment.</span>
                             <span class="n">assign_pos</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">assign</span><span class="p">)</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                            <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Syntax error, the assignment (sign:</span><span class="si">{</span><span class="n">assign</span><span class="si">}</span><span class="s2">) is missing, line </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in file&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;READ ERROR&quot;</span><span class="p">)</span>
+                            <span class="n">errmsg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Syntax error, the assignment (sign:</span><span class="si">{</span><span class="n">assign</span><span class="si">}</span><span class="s2">) is freestates, line </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> in file&quot;</span><span class="p">,</span> <span class="n">fullfilename</span><span class="p">,</span> <span class="s2">&quot;READ ERROR&quot;</span><span class="p">)</span>
                             <span class="k">return</span> <span class="n">boon</span>
                         <span class="k">try</span><span class="p">:</span>  <span class="c1"># Set the variable to Symbol.</span>
                             <span class="n">var</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="n">line</span><span class="p">[:</span><span class="n">assign_pos</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
@@ -653,8 +705,8 @@
 <span class="sd">        Import the Boolean network from a sbml file.</span>
 <span class="sd">        The method is a class method.</span>
 
-<span class="sd">        :param filename: the name of the file, if the extension is missing then .sbml is added.</span>
-<span class="sd">        :type filename: str</span>
+<span class="sd">        :param filename: The name of the file, if the extension is freestates, then .sbml is added.</span>
+<span class="sd">        :type filename: Str</span>
 <span class="sd">        :return: BooN</span>
 <span class="sd">        :rtype: BooN</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -944,14 +996,15 @@
     <span class="c1"># DEF: DYNAMICS</span>
 <div class="viewcode-block" id="BooN.model">
 <a class="viewcode-back" href="../index.html#boon.BooN.model">[docs]</a>
-    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">,</span> <span class="n">self_loop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the dynamical model of the BooN with respect to a mode.</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">,</span> <span class="n">self_loop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Compute the dynamical model of the BooN with respect to a mode.</span>
 
-<span class="sd">        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).</span>
 <span class="sd">        :param  mode: Determines the mode policy applied to the model (Default: asynchronous).</span>
+<span class="sd">        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).</span>
+<span class="sd">        :param trace: Define whether the trace of the execution is enabled (Default: False (disabled)).</span>
 <span class="sd">        :type self_loop: Bool</span>
 <span class="sd">        :type mode:  function</span>
+<span class="sd">        :type trace: bool</span>
 <span class="sd">        :return: a Digraph representing the complete state-based dynamics.</span>
 <span class="sd">        :rtype: Networkx Digraph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -961,29 +1014,55 @@
             <span class="n">target</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">change</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">target</span>
 
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">BooN model &gt;&gt; Generate all states        &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
         <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span>
         <span class="n">modalities</span> <span class="o">=</span> <span class="n">mode</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
         <span class="n">allstates</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">product</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">))]</span>
-        <span class="c1"># Compute the state transition w.r.t. the network.</span>
-        <span class="n">transition</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">state</span><span class="p">,</span>
-             <span class="n">next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
-                        <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-                         <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">modality</span><span class="p">})</span>
-             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">allstates</span> <span class="k">for</span> <span class="n">modality</span> <span class="ow">in</span> <span class="n">modalities</span><span class="p">]</span>
-        <span class="c1"># remove duplicated transitions.</span>
-        <span class="n">transition</span> <span class="o">=</span> <span class="p">[</span><span class="n">edge</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transition</span><span class="p">)</span> <span class="k">if</span> <span class="n">edge</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">transition</span><span class="p">[:</span><span class="n">i</span><span class="p">]]</span>
+
+        <span class="c1"># transitions are state pairs.</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span>
+            <span class="n">current_transition</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">total_transitions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">allstates</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">modalities</span><span class="p">)</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">allstates</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">modality</span> <span class="ow">in</span> <span class="n">modalities</span><span class="p">:</span>
+                    <span class="n">current_transition</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">BooN model &gt;&gt; Transition [</span><span class="si">%6d</span><span class="s2">/</span><span class="si">%6d</span><span class="s2">]      &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">current_transition</span><span class="p">,</span> <span class="n">total_transitions</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">transitions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">state</span><span class="p">,</span>
+                         <span class="n">next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
+                                    <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+                                     <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">modality</span><span class="p">})</span>
+                         <span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Compute the state transition w.r.t. the network.</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">state</span><span class="p">,</span>
+                 <span class="n">next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
+                            <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+                             <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">modality</span><span class="p">})</span>
+                 <span class="p">)</span>
+                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">allstates</span> <span class="k">for</span> <span class="n">modality</span> <span class="ow">in</span> <span class="n">modalities</span><span class="p">]</span>
+
         <span class="c1"># remove boon loop if requested.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">self_loop</span><span class="p">:</span>
-            <span class="n">transition</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edge</span><span class="p">:</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">transition</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">BooN model &gt;&gt; self loops removal                          &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edge</span><span class="p">:</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">transitions</span><span class="p">)</span>
+
+        <span class="c1"># Conversion of the states to integral nodes</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">BooN model &gt;&gt; state to integer conversion                      &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">state</span><span class="p">:</span> <span class="n">state2int</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">variables</span><span class="p">),</span> <span class="n">allstates</span><span class="p">))</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">trans</span><span class="p">:</span> <span class="p">(</span><span class="n">state2int</span><span class="p">(</span><span class="n">trans</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">variables</span><span class="p">),</span> <span class="n">state2int</span><span class="p">(</span><span class="n">trans</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">variables</span><span class="p">)),</span> <span class="n">transitions</span><span class="p">))</span>
+
         <span class="c1"># Graph creation with nodes as integers coding the states.</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">BooN model &gt;&gt; Graph model design                                &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">G</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="n">state2int</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">allstates</span><span class="p">])</span>
+            <span class="n">G</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">pass</span>
-        <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">state2int</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">variables</span><span class="p">),</span> <span class="n">state2int</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">variables</span><span class="p">))</span> <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="n">transition</span><span class="p">])</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">G</span></div>
 
 
@@ -1041,25 +1120,59 @@
 
 <div class="viewcode-block" id="BooN.equilibria">
 <a class="viewcode-back" href="../index.html#boon.BooN.equilibria">[docs]</a>
-    <span class="k">def</span> <span class="nf">equilibria</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">equilibria</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">asynchronous</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate equilibria for the network based on model of dynamics.</span>
+<span class="sd">        Calculate equilibria for the network based on the model of dynamics.</span>
 <span class="sd">        The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).</span>
 
-<span class="sd">        :param model: Data model from which the equilibria are calculated.</span>
+<span class="sd">        :param model: Data model from which the equilibria are calculated (Default: None)</span>
 <span class="sd">        :param mode: Updating mode function, used if the model is None (Default: asynchronous).</span>
+<span class="sd">        :param trace: Define whether the trace of execution is enabled (Default: False (disabled)).</span>
 <span class="sd">        :type model: Networkx DiGraph</span>
 <span class="sd">        :type mode: function</span>
+<span class="sd">        :type trace: bool</span>
 <span class="sd">        :return: Equilibria structure as a list of lists where each sublist is an attractor.</span>
 <span class="sd">        :rtype: List[list]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">themodel</span> <span class="o">=</span> <span class="n">model</span> <span class="k">if</span> <span class="n">model</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="c1">#  Quotient graph.</span>
+        <span class="c1">#  The function is more than 10 times faster than the networkx method.</span>
+        <span class="c1">#  The partitions must be frozenset.</span>
+        <span class="k">def</span> <span class="nf">quotient_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span> <span class="n">partition</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+            <span class="c1"># Initialize the quotient graph</span>
+            <span class="n">quotient_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+            <span class="n">quotient_graph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">partition</span><span class="p">)</span>
+            <span class="c1"># Add edges between groups based on connections in the original graph</span>
+            <span class="k">for</span> <span class="n">group1</span> <span class="ow">in</span> <span class="n">partition</span><span class="p">:</span>
+                <span class="c1"># Collect all neighbors of a group in the original graph.</span>
+                <span class="n">all_neighbors</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">,</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span> <span class="n">group1</span><span class="p">))</span>
+                <span class="c1"># Check whether group2 has members in the neighborhood of group1 to define edges.</span>
+                <span class="k">for</span> <span class="n">group2</span> <span class="ow">in</span> <span class="n">partition</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">group1</span> <span class="o">!=</span> <span class="n">group2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">group2</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">all_neighbors</span><span class="p">):</span>
+                        <span class="n">quotient_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">group1</span><span class="p">,</span> <span class="n">group2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">quotient_graph</span>
 
-        <span class="n">scc</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">strongly_connected_components</span><span class="p">(</span><span class="n">themodel</span><span class="p">))</span>  <span class="c1"># Compute the Strongly Connected Components.</span>
-        <span class="n">quotient_model</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">quotient_graph</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">scc</span><span class="p">)</span>  <span class="c1"># Deduce the quotient graph of the SCCs.</span>
-        <span class="n">equilibria</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">quotient_model</span><span class="o">.</span><span class="n">nodes</span> <span class="k">if</span> <span class="n">quotient_model</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Determine equilibria as the sink in the quotient graph, i.e. terminal SCC.</span>
-        <span class="k">return</span> <span class="p">[[</span><span class="n">int2state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">attractor</span><span class="p">]</span> <span class="k">for</span> <span class="n">attractor</span> <span class="ow">in</span> <span class="n">equilibria</span><span class="p">]</span>  <span class="c1"># Encode the equilibria.</span></div>
+        <span class="c1"># Possibly compute the model of the BooN.</span>
+        <span class="n">themodel</span> <span class="o">=</span> <span class="n">model</span> <span class="k">if</span> <span class="n">model</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">)</span>
+
+        <span class="c1"># Compute the Strongly Connected Components.</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2"> BooN equilibria &gt;&gt; SCC                      &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">scc</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">strongly_connected_components</span><span class="p">(</span><span class="n">themodel</span><span class="p">)))</span>
+
+        <span class="c1"># Deduce the quotient graph of the SCCs.</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2"> BooN equilibria &gt;&gt; Quotient graph           &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">quotient_model</span> <span class="o">=</span> <span class="n">quotient_graph</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">scc</span><span class="p">)</span>
+
+        <span class="c1"># Determine equilibria as the sink in the quotient graph, i.e. terminal SCC.</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2"> BooN equilibria &gt;&gt; Equilibria computation    &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">equilibria</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">quotient_model</span><span class="o">.</span><span class="n">out_degree</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">quotient_model</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+        <span class="c1"># Encode the equilibria by transforming the integers into Boolean states.</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2"> BooN equilibria &gt;&gt; Encoding                  &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">eqs_encoded</span> <span class="o">=</span> <span class="p">[[</span><span class="n">int2state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">attractor</span><span class="p">]</span> <span class="k">for</span> <span class="n">attractor</span> <span class="ow">in</span> <span class="n">equilibria</span><span class="p">]</span>  <span class="c1"># Encode the equilibria.</span>
+
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2"> BooN equilibria &gt;&gt; Completed                 &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">eqs_encoded</span></div>
 
 
 <div class="viewcode-block" id="BooN.stability_constraints">
@@ -1100,7 +1213,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set control on the BooN.</span>
 <span class="sd">        The controlled variables are divided in two classes:</span>
 <span class="sd">        the variables frozen to false and the variables frozen to true.</span>
-<span class="sd">        A variable can be in both classes.</span>
+<span class="sd">        A variable can belong to both classes.</span>
 
 <span class="sd">        :param frozenfalse: List, set or sequence of variables that should be frozen to false by control.</span>
 <span class="sd">        :param frozentrue: List, set or sequence of variables that should be frozen to true by control.</span>
@@ -1143,6 +1256,7 @@
 <a class="viewcode-back" href="../index.html#boon.BooN.necessary">[docs]</a>
     <span class="k">def</span> <span class="nf">necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the necessary constraints.</span>
+<span class="sd">        The computation may take time because the query is converted to CNF that may contain a lot of terms.</span>
 
 <span class="sd">        :param query: A formula characterizing the query, objective or goal.</span>
 <span class="sd">        :param trace: Boolean flag determining whether the trace is activated (Default value = False).</span>
@@ -1166,39 +1280,109 @@
 
 <div class="viewcode-block" id="BooN.destify">
 <a class="viewcode-back" href="../index.html#boon.BooN.destify">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">destify</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">PULP_CBC_CMD</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">destify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">max_solutions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">PULP_CBC_CMD</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.</span>
 <span class="sd">        Destify is a neologism that refers to the deliberate and purposeful act of shaping destiny by</span>
 <span class="sd">        influencing or directing the course of events or outcomes towards an expected goal.</span>
 
 <span class="sd">        :param query: The query defining the expected destiny or goal as propositional formula.</span>
-<span class="sd">        :param trace: Boolean flag determining whether the trace is activated (Default: False).</span>
-<span class="sd">        :param solver: The PulpSolver used for solving the problem (Default: PULP_CBC_CMD).</span>
 <span class="sd">        :type query: Sympy formula</span>
-<span class="sd">        :type trace: bool</span>
-<span class="sd">        :type solver: type</span>
-<span class="sd">        :return: the core of control</span>
-<span class="sd">        :rtype: frozenset[sympy formula]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># predicate determining whether a literal is a negative control (e.g. ~ _u1).</span>
-        <span class="k">def</span> <span class="nf">isnegctrl</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">firstsymbol</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">CONTROL</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lit</span><span class="p">,</span> <span class="n">Not</span><span class="p">)</span>
+<span class="sd">        :param max_solutions: Maximal number of solutions (Default the largest integer = sys.maxsize)</span>
+<span class="sd">        :type max_solutions: int</span>
+
+<span class="sd">        :param trace: Boolean flag determining whether the trace is activated (Default: False).</span>
+<span class="sd">        :type trace: Bool</span>
+
+<span class="sd">        :param solver: The PulpSolver used for solving the problem (Default: PULP_CBC_CMD).</span>
+<span class="sd">        :type solver: Pulp function</span>
+
+<span class="sd">        :return: The core of control</span>
+<span class="sd">        :rtype: frozenset[Sympy symbol]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Check if the query contains control variables.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_controlled</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
             <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;The query has no controls of prefix&quot;</span><span class="p">,</span> <span class="n">CONTROL</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="nb">set</span><span class="p">())</span>
 
-        <span class="n">allprimes</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">prime_implicants</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">isnegctrl</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
-        <span class="c1"># The result is of the form ~ _u0X or ~_u1X. We need to get the control variable i.e. _u0X, _u1X</span>
+        <span class="c1"># Compute the prime implicants filtered by the negative controls.</span>
+        <span class="n">allprimes</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">prime_implicants</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">isnegctrl</span><span class="p">,</span> <span class="n">max_solutions</span><span class="o">=</span><span class="n">max_solutions</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
+
+        <span class="c1"># The result is of the form ~ _u0X or ~_u1X. We thus need to get the control variable i.e. _u0X, _u1X</span>
         <span class="n">ctrlprimes</span> <span class="o">=</span> <span class="p">{</span><span class="nb">frozenset</span><span class="p">({</span><span class="n">firstsymbol</span><span class="p">(</span><span class="n">prime</span><span class="p">)</span> <span class="k">for</span> <span class="n">prime</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">})</span> <span class="k">for</span> <span class="n">primes</span> <span class="ow">in</span> <span class="n">allprimes</span><span class="p">}</span>
 
         <span class="c1"># Define the core composed of prime implicant sets that are minimal under the inclusion.</span>
         <span class="n">core</span> <span class="o">=</span> <span class="p">{</span><span class="n">primeset</span> <span class="k">for</span> <span class="n">primeset</span> <span class="ow">in</span> <span class="n">ctrlprimes</span> <span class="k">if</span>
-                <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">otherprimeset</span><span class="p">:</span> <span class="ow">not</span> <span class="p">(</span><span class="n">otherprimeset</span> <span class="o">&lt;</span> <span class="n">primeset</span><span class="p">),</span> <span class="n">allprimes</span><span class="p">))}</span>
+                <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">otherprimeset</span><span class="p">:</span> <span class="ow">not</span> <span class="p">(</span><span class="n">otherprimeset</span> <span class="o">&lt;</span> <span class="n">primeset</span><span class="p">),</span> <span class="n">ctrlprimes</span><span class="p">))}</span>
         <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">core</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BooN.filter_necessary">
+<a class="viewcode-back" href="../index.html#boon.BooN.filter_necessary">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">core</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filter necessary controls in the network such that the query is satisfied for all stable states.</span>
+<span class="sd">        This method must be applied to a non-controlled network to correctly functioning.</span>
+
+<span class="sd">        This function filters controls from the given core based on the condition</span>
+<span class="sd">        that they satisfy the query for all stable states of the controlled network.</span>
+
+<span class="sd">        :param query: The Boolean query to be satisfied across all stable states of the controlled network.</span>
+<span class="sd">        :type query: Sympy expression</span>
+<span class="sd">        :param core: A set of prime implicants (controls) that will be filtered.</span>
+<span class="sd">        :param trace: Determines whether to display progress information during filtering (Defaults: False).</span>
+<span class="sd">        :type trace: bool</span>
+<span class="sd">        :return: A subset of the given `core` containing only the necessary controls.</span>
+<span class="sd">        :rtype: frozenset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">all_stable_states_valid</span><span class="p">(</span><span class="n">controls</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Check whether the application of the control to the network leads to the satisfaction of the query for all stable states.</span>
+
+<span class="sd">            :param controls: Prime implicants control</span>
+<span class="sd">            :type controls: frozenset[Sympy symbol]</span>
+
+<span class="sd">            :return: True if all stable states satisfy the query; otherwise, False.</span>
+<span class="sd">            :rtype: Bool</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="c1"># Convert prime controls into a list of actions: (variable, value)</span>
+            <span class="n">actions</span> <span class="o">=</span> <span class="n">controls2actions</span><span class="p">(</span><span class="n">controls</span><span class="p">)</span>
+
+            <span class="c1"># Create a modified BooN descriptor with given variable assignments</span>
+            <span class="n">controlled_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">bool_value</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+                <span class="n">controlled_desc</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">bool_value</span>
+
+            <span class="c1"># Instantiate a controlled Boolean Network (BooN)</span>
+            <span class="n">controlled_boon</span> <span class="o">=</span> <span class="n">BooN</span><span class="p">(</span><span class="n">controlled_desc</span><span class="p">)</span>
+
+            <span class="n">stable_states</span> <span class="o">=</span> <span class="n">controlled_boon</span><span class="o">.</span><span class="n">stable_states</span>
+
+            <span class="c1"># Validate the query against all stable states of the controlled network</span>
+            <span class="n">all_valid</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">stable_states</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">all_valid</span>
+
+        <span class="c1"># Check whether the network is not controlled.</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_controlled</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+            <span class="n">errmsg</span><span class="p">(</span><span class="s2">&quot;The network must not be controlled to correctly functioning&quot;</span><span class="p">,</span> <span class="s2">&quot;empty set is returned.&quot;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="nb">set</span><span class="p">())</span>
+
+        <span class="c1"># Filter the core for prime controls that satisfy the query for all stable states</span>
+        <span class="k">if</span> <span class="n">trace</span><span class="p">:</span>
+            <span class="n">filtered_core</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">ctrlprime</span> <span class="k">for</span> <span class="n">ctrlprime</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">core</span><span class="p">,</span>
+                                                                      <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+                                                                      <span class="n">ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                                      <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;BooN &gt;&gt; DSTFY NECESSARY &#39;</span><span class="p">,</span>
+                                                                      <span class="n">ncols</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+                                                                      <span class="n">bar_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{desc}</span><span class="s1">: </span><span class="si">{percentage:3.0f}</span><span class="s1">% |</span><span class="si">{bar}</span><span class="s1">[</span><span class="si">{n_fmt:5s}</span><span class="s1"> - </span><span class="si">{elapsed}</span><span class="s1"> - </span><span class="si">{rate_fmt}</span><span class="s1">]&#39;</span><span class="p">)</span>
+                                      <span class="k">if</span> <span class="n">all_stable_states_valid</span><span class="p">(</span><span class="n">ctrlprime</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filtered_core</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">all_stable_states_valid</span><span class="p">,</span> <span class="n">core</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">filtered_core</span></div>
 </div>
 
 </pre></div>
