@@ -3,10 +3,10 @@
 # Creation date: January 2024
 
 # In comments :
-# DEF means definition which is a code part gathering functions related to a process or an object definition,
-# STEP means main steps
+# DEF means definition which is a code part gathering functions related to a process or an object definition.
+# STEP means main steps.
 # WARNING is a warning.
-# These terms can be used to color comments in PyCharm or else.
+# The first terms can be used to color comments in PyCharm or else.
 
 from __future__ import annotations
 
@@ -40,6 +40,8 @@ from sympy.parsing.sympy_parser import parse_expr
 from boon.logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 import boon.logic as logic
 
+from tqdm import tqdm
+
 import libsbml
 
 # CONSTANTS
@@ -49,10 +51,17 @@ EXTBOON: str = ".boon"  # file extension for BooN format.
 EXTXT: str = ".txt"  # file extension of Python format for an imported file.
 EXTBOOLNET: str = ".bnet"  # file extension of BOOLNET format for an imported file.
 EXTSBML: str = ".sbml"  # file extension of SBML file for an imported file.
+
 CONTROL: str = "_u"  # prefix name of the controllers (control parameters).
+CTRLPRFXLEN: int = len(CONTROL)  # length of the control prefix.
+
+BIN2BOOL: dict = {'0': False, '1': True}  # convert string 0-1 value to Boolean.
+BOOL2BIN: dict = {False: '0', True: '1', 0: '0', 1: '1'}  # convert Boolean to string.
+
 BOONSEP: str = "\n"  # separator between the equations of a BooN.
 VARPREFIX: str = "x"  # Prefix of the generated variables (random)
-# color list for graph drawing
+
+# palette of colors for graph drawing
 COLOR: list[str] = ['tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine', 'darkorange',
                     'darkkhaki', 'forestgreen', 'salmon', 'lightcoral', 'cornflowerblue', 'orange',
                     'paleviolet', 'coral', 'dodgerblue', 'yellowgreen', 'orangered', 'pink', 'blueviolet', 'crimson']
@@ -77,22 +86,40 @@ def is_controlled(formula) -> bool:
         return False
 
 
+def isnegctrl(lit) -> bool:
+    """
+     Determines if a given literal is a negative control.
+     :param lit: The literal to be validated.
+     :type lit: Literal
+     :return: True if the literal is a negative control, False otherwise.
+     :rtype: Bool
+     """
+    return isinstance(lit, Not) and firstsymbol(lit).name.startswith(CONTROL)
+
+
+def controls2actions(controls: frozenset) -> list[tuple]:
+    """Convert a set of controls into a list of actions where an action is a pair (symbol, boolean value).
+    :param controls: The set of control parameters.
+    :type controls: frozenset[Sympy symbols]
+    :return: A list of actions.
+    :rtype: list[tuple[Sympy symbol, bool]]
+    """
+    return [(symbols(str(ctrl)[CTRLPRFXLEN + 1:]), BIN2BOOL[str(ctrl)[CTRLPRFXLEN]]) for ctrl in controls]
+
+
 def core2actions(core: frozenset) -> list:
     """Convert the core to a list of actions where an action is a list of (variable, Boolean).
     The actions are sorted by length, meaning that the more parsimonious actions are at first.
 
     :param core: The core.
-    :type core: Frozenset of literals.
+    :type core: Frozenset[Frozenset[Sympy symbol]].
     :return: A list of combined actions where an action is defined as:[(variable, bool) ...]
     :rtype: List[list[tuple]]
     """
 
-    ACTION: dict = {"0": False, "1": True}
-    lctrl = len(CONTROL)
-    actions = [[(symbols(str(ctrl)[lctrl + 1:]), ACTION[str(ctrl)[lctrl]]) for ctrl in primes] for primes in core]
+    actions = [controls2actions(primes) for primes in core]
     # Sort the actions by length.
-    actions = sorted(actions, key=len, reverse=False)
-    return actions
+    return sorted(actions, key=len, reverse=False)
 
 
 def asynchronous(variables: list | set) -> frozenset:
@@ -128,7 +155,6 @@ def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
     :rtype: Int
     """
 
-    BOOL2BIN: dict = {False: '0', True: '1', 0: '0', 1: '1'}
     if variables:
         order = variables
         bin_profile = "".join([BOOL2BIN[state[var]] for var in order])
@@ -153,7 +179,6 @@ def int2state(int_state: int, variables: list | set) -> dict:
     :return: a dictionary representing the state {variable: boolean state…}.
     :rtype: Dict
     """
-    BIN2BOOL: dict = {'0': False, '1': True}
     bin_state = format(int_state, 'b').zfill(len(variables))
     return dict(zip(variables, [BIN2BOOL[state] for state in bin_state]))
 
@@ -320,21 +345,21 @@ class BooN:
     @classmethod
     def random(cls, n: int, p_link: float, p_pos: float = 0.5, topology: str = 'Erdos-Reny', min_clauses: int = 1, max_clauses: int = 5, prefix: str = VARPREFIX) -> BooN:
         """ Generate a random BooN where the formulas are in DNF.
-        the method is a class method.
+        The method is a class method.
 
-        :param n: the number of variables.
-        :type n: int
+        :param n: The number of variables.
+        :type n: Int
         :param p_link: probability related to interaction between variables, the use depends on the topology class.
-        :param p_pos: the probability of defining a variable as a positive term (default 0.5).
-        :type  p_pos: float
+        :param p_pos: The probability of defining a variable as a positive term (default 0.5).
+        :type  p_pos: Float
         :param topology: the topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
         :type topology: str
         :param min_clauses: the minimum number of clauses required to define a formula (default 1).
-        :type  min_clauses: int
+        :type  min_clauses: Int
         :param max_clauses: the minimum number of clauses required to define a formula (default 5).
-        :type  max_clauses: int
-        :param prefix: the prefix of the variable name, the variables are of the form <prefix><int> (default 'x').
-        :type prefix: str
+        :type  max_clauses: Int
+        :param prefix: the prefix of the variable name, the variables are of the form <prefix> <int> (default 'x').
+        :type prefix: Str
         :return: a random BooN
         :rtype: BooN
         """
@@ -362,7 +387,7 @@ class BooN:
         variables = {node: symbols("{prefix}{counter:d}".format(prefix=prefix, counter=node)) for node in ig.nodes}
 
         boon = cls()
-        # Generate a formula for each node w.r.t. it predecessor.
+        # Generate a formula for each node w.r.t. its predecessors.
         for node in ig.nodes:
             # Get the predecessors of a node.
             pred = list(ig.predecessors(node))
@@ -431,7 +456,7 @@ class BooN:
         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
         :param header: Header text inserted at the beginning of the saved file.
-        :type  filename: str
+        :type  filename: Str
         :type sep: str
         :type assign: str
         :type ops: dict
@@ -537,8 +562,8 @@ class BooN:
         Import the Boolean network from a sbml file.
         The method is a class method.
 
-        :param filename: the name of the file, if the extension is freestates, then .sbml is added.
-        :type filename: str
+        :param filename: The name of the file, if the extension is freestates, then .sbml is added.
+        :type filename: Str
         :return: BooN
         :rtype: BooN
         """
@@ -818,7 +843,7 @@ class BooN:
 
         :param  mode: Determines the mode policy applied to the model (Default: asynchronous).
         :param  self_loop: Determines whether the boon loops are included in the model (Default: False).
-        :param trace: define whether the trace of the execution is enabled (Default: False (disabled)).
+        :param trace: Define whether the trace of the execution is enabled (Default: False (disabled)).
         :type self_loop: Bool
         :type mode:  function
         :type trace: bool
@@ -1055,6 +1080,7 @@ class BooN:
 
     def necessary(self, query, trace: bool = False):
         """Compute the necessary constraints.
+        The computation may take time because the query is converted to CNF that may contain a lot of terms.
 
         :param query: A formula characterizing the query, objective or goal.
         :param trace: Boolean flag determining whether the trace is activated (Default value = False).
@@ -1075,8 +1101,7 @@ class BooN:
                              logic.cnf2clauses(necessity)))  # Keep the control variables only.
         return necessary
 
-    @staticmethod
-    def destify(query, max_solutions: int = sys.maxsize, trace: bool = False, solver=PULP_CBC_CMD):
+    def destify(self, query, max_solutions: int = sys.maxsize, trace: bool = False, solver=PULP_CBC_CMD):
         """Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
         Destify is a neologism that refers to the deliberate and purposeful act of shaping destiny by
         influencing or directing the course of events or outcomes towards an expected goal.
@@ -1084,33 +1109,89 @@ class BooN:
         :param query: The query defining the expected destiny or goal as propositional formula.
         :type query: Sympy formula
 
-        :param max_solutions: maximal number of solutions (Default the largest integer = sys.maxsize)
+        :param max_solutions: Maximal number of solutions (Default the largest integer = sys.maxsize)
         :type max_solutions: int
 
         :param trace: Boolean flag determining whether the trace is activated (Default: False).
-        :type trace: bool
+        :type trace: Bool
 
         :param solver: The PulpSolver used for solving the problem (Default: PULP_CBC_CMD).
         :type solver: Pulp function
 
-        :return: the core of control
-        :rtype: frozenset[sympy formula]
+        :return: The core of control
+        :rtype: frozenset[Sympy symbol]
         """
-
-        # Predicate determining whether a literal is a negative control (e.g. ~ _u1) corresponding to active control.
-        def isnegctrl(lit) -> bool:
-            return isinstance(lit, Not) and firstsymbol(lit).name.startswith(CONTROL)
 
         # Check if the query contains control variables.
         if not is_controlled(query):
             errmsg("The query has no controls of prefix", CONTROL, kind="WARNING")
             return frozenset(set())
 
+        # Compute the prime implicants filtered by the negative controls.
         allprimes = logic.prime_implicants(query, isnegctrl, max_solutions=max_solutions, trace=trace, solver=solver)
-        # The result is of the form ~ _u0X or ~_u1X. We need to get the control variable i.e. _u0X, _u1X
+
+        # The result is of the form ~ _u0X or ~_u1X. We thus need to get the control variable i.e. _u0X, _u1X
         ctrlprimes = {frozenset({firstsymbol(prime) for prime in primes}) for primes in allprimes}
 
         # Define the core composed of prime implicant sets that are minimal under the inclusion.
         core = {primeset for primeset in ctrlprimes if
-                all(map(lambda otherprimeset: not (otherprimeset < primeset), allprimes))}
+                all(map(lambda otherprimeset: not (otherprimeset < primeset), ctrlprimes))}
         return frozenset(core)
+
+    def filter_necessary(self, query, core: frozenset, trace: bool = False) -> frozenset:
+        """
+        Filter necessary controls in the network such that the query is satisfied for all stable states.
+        This method must be applied to a non-controlled network to correctly functioning.
+
+        This function filters controls from the given core based on the condition
+        that they satisfy the query for all stable states of the controlled network.
+
+        :param query: The Boolean query to be satisfied across all stable states of the controlled network.
+        :type query: Sympy expression
+        :param core: A set of prime implicants (controls) that will be filtered.
+        :param trace: Determines whether to display progress information during filtering, (Defaults: False).
+        :type trace: bool
+        :return: A subset of the given `core` containing only the necessary controls.
+        :rtype: frozenset
+        """
+
+        def all_stable_states_valid(controls: frozenset) -> bool:
+            """
+            Check whether the application of the control to the network leads to the satisfaction of the query for all stable states.
+
+            :param controls: Prime implicants control
+            :type controls: frozenset[Sympy symbol]
+
+            :return: True if all stable states satisfy the query; otherwise, False.
+            :rtype: Bool
+            """
+            # Convert prime controls into a list of actions: (variable, value)
+            actions = controls2actions(controls)
+
+            # Create a modified BooN descriptor with given variable assignments
+            controlled_desc = self.desc.copy()
+            for var, bool_value in actions:
+                controlled_desc[var] = bool_value
+
+            # Instantiate a controlled Boolean Network (BooN)
+            controlled_boon = BooN(controlled_desc)
+
+            stable_states = controlled_boon.stable_states
+
+            # Validate the query against all stable states of the controlled network
+            all_valid = all(query.subs(state) for state in stable_states)
+            return all_valid
+
+        # Filter the core for prime controls that satisfy the query for all stable states
+        if trace:
+            filtered_core = frozenset(ctrlprime for ctrlprime in tqdm(core,
+                                                                          file=sys.stdout,
+                                                                          ascii=False,
+                                                                          desc='BooN >> DSTFY NECESSARY ',
+                                                                          ncols=80,
+                                                                          bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')
+                                      if all_stable_states_valid(ctrlprime))
+        else:
+            filtered_core = frozenset(filter(all_stable_states_valid, core))
+
+        return filtered_core

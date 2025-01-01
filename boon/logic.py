@@ -326,7 +326,7 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
 
     cnf = formula if is_cnf(formula) else tseitin_cnf(formula)  # Convert the dnf into CNF by the Tseitin method if needed.
 
-    #  Gather all literals from CNF
+    #  Gather all literals from CNF.
     literals = {lit for clause in cnf2clauses(cnf) for lit in clause2literals(clause)}
 
     # Find the critical variables where a literal and its negation both occur in the CNF formula.
@@ -351,13 +351,13 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
     # Get the sequence of clauses of the CNF.
     clauses = cnf2clauses(cnf)
 
-    # Define the clauses as constraints x |~y | z  --> x + ~y + z >= 1
+    # Define the clauses as constraints x |~y | z  --> x + ~y + z >= 1.
     for i, clause in enumerate(clauses):  # Extract the literals of the current clause.
         literals_clause = clause2literals(clause)
         # Transform the current clause into constraints
         primes += pulp.lpSum([vlit[literal] for literal in literals_clause]) >= 1, "CLAUSE_" + str(i)
 
-    # Define the exclusive choice constraint between a variable and its negation for critical variables, i.e., x + ~x <= 1
+    # Define the exclusive choice constraint between a variable and its negation for critical variables, i.e., x + ~x <= 1.
     for var in criticalvars:
         primes += vlit[var] + vlit[Not(var)] <= 1, "EXCLUSION_" + var.name.strip()
 
