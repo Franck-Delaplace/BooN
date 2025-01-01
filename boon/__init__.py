@@ -1196,7 +1196,7 @@ class BooN:
             return all_valid
         # Check whether the network is not controlled.
         if any(map(is_controlled, self.desc.values())):
-            errmsg("The network must not be controlled to correctly functioning", kind="WARNING")
+            errmsg("The network must not be controlled to correctly functioning","enpty set is returned.", kind="WARNING")
             return frozenset(set())
 
 
