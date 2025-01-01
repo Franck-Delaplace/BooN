@@ -94,7 +94,9 @@ def isctrl(lit) -> bool:
      :return: True if the literal is a negative control, False otherwise.
      :rtype: Bool
      """
-    return  firstsymbol(lit).name.startswith(CONTROL)
+
+    return firstsymbol(lit).name.startswith(CONTROL)
+
 
 def isnegctrl(lit) -> bool:
     """
@@ -1176,8 +1178,6 @@ class BooN:
             :rtype: Bool
             """
 
-
-
             # Convert prime controls into a list of actions: (variable, value)
             actions = controls2actions(controls)
 
@@ -1194,20 +1194,20 @@ class BooN:
             # Validate the query against all stable states of the controlled network
             all_valid = all(query.subs(state) for state in stable_states)
             return all_valid
+
         # Check whether the network is not controlled.
         if any(map(is_controlled, self.desc.values())):
-            errmsg("The network must not be controlled to correctly functioning","enpty set is returned.", kind="WARNING")
+            errmsg("The network must not be controlled to correctly functioning", "empty set is returned.", kind="WARNING")
             return frozenset(set())
-
 
         # Filter the core for prime controls that satisfy the query for all stable states
         if trace:
             filtered_core = frozenset(ctrlprime for ctrlprime in tqdm(core,
-                                                                          file=sys.stdout,
-                                                                          ascii=False,
-                                                                          desc='BooN >> DSTFY NECESSARY ',
-                                                                          ncols=80,
-                                                                          bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')
+                                                                      file=sys.stdout,
+                                                                      ascii=False,
+                                                                      desc='BooN >> DSTFY NECESSARY ',
+                                                                      ncols=80,
+                                                                      bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')
                                       if all_stable_states_valid(ctrlprime))
         else:
             filtered_core = frozenset(filter(all_stable_states_valid, core))
