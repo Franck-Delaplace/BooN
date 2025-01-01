@@ -1161,7 +1161,7 @@ class BooN:
         :param query: The Boolean query to be satisfied across all stable states of the controlled network.
         :type query: Sympy expression
         :param core: A set of prime implicants (controls) that will be filtered.
-        :param trace: Determines whether to display progress information during filtering, (Defaults: False).
+        :param trace: Determines whether to display progress information during filtering (Defaults: False).
         :type trace: bool
         :return: A subset of the given `core` containing only the necessary controls.
         :rtype: frozenset
