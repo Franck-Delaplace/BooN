@@ -117,7 +117,7 @@ class Boonify(QMainWindow):
         manager = fig.canvas.manager
         self.canvas = FigureCanvas(fig)
         self.canvas.axes = self.canvas.figure.add_subplot(111)
-        self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # Adjust the window s.t. the network fully fills it.
+        self.canvas.figure.subplots_adjust(left=0, bottom=0, right=1, top=1)  # Adjust the window s.t. The network fully fills it.
         self.canvas.figure.canvas.manager = manager  # Assign the manager in the canvas to be accessible by EditGraph.
 
         # STEP: Enable key_press_event events for using EditGraph:
@@ -549,7 +549,7 @@ class View(QDialog):
         # STEP: Resize columns of the table to content.
         self.BooNContent.setColumnWidth(1, 500)
 
-        # STEP: Fix size of the  formula columns.
+        # STEP: Fix size of the formula columns.
         header = self.BooNContent.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
@@ -852,7 +852,7 @@ class Controllability(QMainWindow):
         header.setStretchLastSection(True)
 
     def destiny_to_observers(self, label: str):
-        """Modify the observer w.r.t. the destiny change."""
+        """Modify the observer w.r.t. The destiny change."""
         row = self.Destiny.currentRow()
         item = self.Observers.item(row, 0)
 
@@ -921,7 +921,7 @@ class Controllability(QMainWindow):
         destiny = And(possibility, necessity)
 
         # STEP: Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
-        core = BooN.destify(destiny, trace=self.Trace, solver = LPSOLVER)
+        core = self.destify(destiny, trace=self.Trace, solver=LPSOLVER)
         self.actions = boon.core2actions(core)
 
         # STEP: Define the tree model to show the resulting actions.
