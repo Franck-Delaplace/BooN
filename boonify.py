@@ -921,7 +921,7 @@ class Controllability(QMainWindow):
         destiny = And(possibility, necessity)
 
         # STEP: Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)
-        core = self.destify(destiny, trace=self.Trace, solver=LPSOLVER)
+        core = boonctrl.destify(destiny, trace=self.Trace, solver=LPSOLVER)
         self.actions = boon.core2actions(core)
 
         # STEP: Define the tree model to show the resulting actions.
