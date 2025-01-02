@@ -34,7 +34,8 @@ the controllability analysis. For exploring BooN interactively run <code>boonify
 <code>example.py</code> illustrates the different functionalities of BooN.
 
 <h3> Real case study </h3>
-A real case study on breast cancer is available <a href="https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer"> here </a>
+A real case study on breast cancer is available <a href="https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer"> here </a>. 
+This case study is a step-by-step description of the process with the help of the graphical user interface.
 
 <H3>BooN installation</H3>
 Go in the directory of BooN and type: 
