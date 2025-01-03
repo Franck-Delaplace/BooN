@@ -30,8 +30,8 @@ computation of a dynamical model for synchronous and asynchronous mode, the comp
 the controllability analysis. For exploring BooN interactively run <code>boonify.py</code></li>
 </ul>
 
-<p style="text-align:justify">
-<code>example.py</code> illustrates the different functionalities of BooN.
+<h3> Introductory example </h3>
+<code>example.py</code> illustrates the major functionalities of BooN. It does not include the controllability which is detailed in the real case study. 
 
 <h3> Real case study </h3>
 A real case study on breast cancer is available in the Wiki  <a href="https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer"> Breast cancer case study </a>. 
