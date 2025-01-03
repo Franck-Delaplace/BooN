@@ -46,7 +46,7 @@ import libsbml
 
 # CONSTANTS
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
-COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}
+COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}  # association of the color to sign.
 EXTBOON: str = ".boon"  # file extension for BooN format.
 EXTXT: str = ".txt"  # file extension of Python format for an imported file.
 EXTBOOLNET: str = ".bnet"  # file extension of BOOLNET format for an imported file.
@@ -68,22 +68,8 @@ COLOR: list[str] = ['tomato', 'gold', 'yellowgreen', 'plum', 'mediumaquamarine',
 
 BOOLNETSKIP: str = r'(targets\s*,\s*factors)|(#.*)'  # regexp describing the line to skip in a boolnet format.
 PYTHONSKIP: str = r'#.*'  # regexp describing python comment to skip.
-PYTHONHEADER: str = '# BooN saved on ' + datetime.now().strftime("%d-%m-%Y")  # header for basic save (.txt)
+PYTHONHEADER: str = '# BooN saved on ' + datetime.now().strftime("%d-%m-%Y")  # header for basic save (.txt .boolnet)
 BOOLNETHEADER: str = PYTHONHEADER + '\ntargets, factors'  # header for boolnet format
-
-
-def is_controlled(formula) -> bool:
-    """Check whether a formula is controlled.
-
-    :param formula: The input formula.
-    :type formula: Sympy formula.
-    :return: True if the formula is controlled otherwise False
-    :rtype: bool
-    """
-    try:
-        return any(map(lambda var: var.name.startswith(CONTROL), formula.free_symbols))
-    except AttributeError:  # Boolean True, False not controlled.
-        return False
 
 
 def isctrl(lit) -> bool:
@@ -96,6 +82,20 @@ def isctrl(lit) -> bool:
      """
 
     return firstsymbol(lit).name.startswith(CONTROL)
+
+
+def is_controlled(formula) -> bool:
+    """Check whether a formula is controlled.
+
+    :param formula: The input formula.
+    :type formula: Sympy formula.
+    :return: True if the formula is controlled otherwise False
+    :rtype: bool
+    """
+    try:
+        return any(map(isctrl, formula.free_symbols))
+    except AttributeError:  # Boolean True, False not controlled.
+        return False
 
 
 def isnegctrl(lit) -> bool:
@@ -1205,7 +1205,7 @@ class BooN:
             filtered_core = frozenset(ctrlprime for ctrlprime in tqdm(core,
                                                                       file=sys.stdout,
                                                                       ascii=False,
-                                                                      desc='BooN >> DSTFY NECESSARY ',
+                                                                      desc='BooN >> DSTFY NCSRY ',
                                                                       ncols=80,
                                                                       bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')
                                       if all_stable_states_valid(ctrlprime))
