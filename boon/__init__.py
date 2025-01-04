@@ -46,6 +46,7 @@ import libsbml
 
 # CONSTANTS
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
+COLORSIGN: dict = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}  # association of the color to sign.
 EXTBOON: str = ".boon"  # file extension for BooN format.
 EXTXT: str = ".txt"  # file extension of Python format for an imported file.
 EXTBOOLNET: str = ".bnet"  # file extension of BOOLNET format for an imported file.
