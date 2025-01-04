@@ -1020,7 +1020,22 @@ class Model(QMainWindow):
 
 
 class Controllability(QMainWindow):
-    """Controllability class"""
+    """
+    Controllability class for managing user interactions with the controllability
+    widget of the GUI application.
+
+    This class is responsible for initializing the controllability user interface,
+    handling the interactions between destiny and observers tables, computing
+    control actions based on user selections, and managing the graphical
+    representation of these actions.
+
+    :ivar parent: Parent window instance for the controllability widget.
+    :type parent: QWidget
+    :ivar actions: Stores the calculated control actions, if any.
+    :type actions: list or None
+    :ivar row: Index of the currently selected solution in control actions, if applicable.
+    :type row: int or None
+    """
 
     def __init__(self, parent=None):
         super(Controllability, self).__init__(parent)
@@ -1033,7 +1048,14 @@ class Controllability(QMainWindow):
         self.initialize_controllability()
 
     def initialize_controllability(self):
-        """Initialize the controllability widget."""
+        """
+        Initialize the controllability setup for the application.
+
+        :param self: The class instance on which this method is invoked.
+        :type self: Any
+
+        :return: None
+        """
         theboon = self.parent.boon
         variables = theboon.variables
         nbrow = len(theboon.desc)
@@ -1242,6 +1264,19 @@ class Threader(QObject):
     finished = pyqtSignal()
 
     def __init__(self, app=lambda: None):
+        """
+        Represents a custom asynchronous functionality encapsulated in a QThread.
+        This class initializes with a callable app function, assigns it to an internal
+        property, and starts a new thread for its execution.
+
+        Attributes:
+            app (Callable[[], Any]): A callable function assigned to the class instance.
+            thread (QThread): The thread in which the object operates.
+
+        :param app: A callable function that serves as the application's main function.
+            Defaults to a no-op lambda function.
+        :type app: Callable[[], Any]
+        """
         super().__init__()
         self.app = app
 
@@ -1251,16 +1286,33 @@ class Threader(QObject):
         self.thread.start()
 
     def run(self):
-        """run the application"""
+        """
+        Defines the run function to execute the primary application logic and signal
+        completion. The function encompasses two main operations: invoking the
+        application logic and signaling the end of the process.
+        """
         self.app()  # run the application
         self.finished.emit()  # Emit the end signal
 
     def apply(self, app):
-        """Fix the application running in the thread."""
+        """
+        Handles the application of a given app instance to a particular object by
+        assigning the provided app to the instance attribute.
+
+        :param app: The application instance to be applied.
+
+        :return: None
+        """
         self.app = app
 
     def quit(self):
-        """terminate the thread"""
+        """
+        Attempts to terminate the thread execution in an orderly manner. This method
+        leverages the `quit` function of the thread instance to signal and ensure
+        termination of its event loop.
+
+        :return: None
+        """
         self.thread.quit()
 
 
