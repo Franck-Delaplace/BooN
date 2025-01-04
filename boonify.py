@@ -169,7 +169,15 @@ class Boonify(QMainWindow):
 
     # DEF: NETWORK DESIGN
     def setup_design(self):
-        """Set up of the editable graph."""
+        """
+        Sets up the design of the interaction graph and its visual representation. The method configures
+        node and edge properties, styles, positions, and visual elements on the canvas. It integrates
+        information from an existing interaction graph and generates an editable representation of the
+        network for visualization.
+
+        Attributes that affect the design are updated during this process, and the design callback is
+        temporarily disabled to avoid interference.
+        """
         self.disablecallback = True  # Disable the design callback during the set-up.
 
         # STEP: Creation of the pattern-network used for edge styling.
