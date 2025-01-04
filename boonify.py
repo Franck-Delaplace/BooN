@@ -180,7 +180,17 @@ class Boonify(QMainWindow):
         self.disablecallback = False  # Enable the design callback.
 
     def design(self):
-        """interaction graph design callback."""
+        """
+        Designs the BooN based on the events captured from the EditableGraph.
+        This function establishes consistency in the nodes and edges of the graph, processes symbolic
+        representation, determines signs and modularity of edges, and converts the interaction
+        graph (IG) to a BooN object for further utilization.
+        Requires labeled nodes and valid
+        interactions to derive the BooN structure.
+
+        :raises ValueError: Rose during the conversion of IG to BooN if the edge labeling
+            is transiently incorrect, though this error is internally handled in the function.
+        """
         # The function captures the events of the EditableGraph and completes the BooN.
         if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
 
@@ -267,7 +277,19 @@ class Boonify(QMainWindow):
             self.refresh()
 
     def resizeEvent(self, event, **kwargs):
-        """Modify graph parameters so that node and edge widths are invariant to window resizing."""
+
+        """
+        Adjusts the current graphical interface parameters and components based on a resize event. It retrieves the
+        existing graphical configurations, calculates appropriate scaling values, and reconfigures the graphical
+        elements accordingly to maintain visual and functional consistency.
+
+        :param event: Resize event triggering the adjustment process.
+        :type event: QResizeEvent
+        :param kwargs: Additional keyword arguments that might be required for expansion or specific functionality.
+        :type kwargs: dict
+        :return: None
+        :rtype: None
+        """
         # STEP: Fix the size related to the network design
         width = self.frameGeometry().width()
         height = self.frameGeometry().height()
@@ -305,7 +327,18 @@ class Boonify(QMainWindow):
 
     # DEF: FILE MANAGEMENT
     def open(self):
-        """Open the file dialog."""
+        """
+        Open a file using a file dialog, load its contents, and update the application state.
+
+        This method presents a file dialog to the user to choose a file with the specific extension.
+        After successfully selecting a file, the method loads its content using the BooN library,
+        refreshes the application view, initializes the design setup, and clears the history.
+
+        :raises QFileDialog: Triggered to open a system file selection dialog.
+        :raises BooN: Utilized to load the file content into the application.
+
+        :return: None
+        """
         filename = QFileDialog.getOpenFileName(self, "Open file", "", "Boon Files (*.boon);; All Files (*);;")
         if filename:
             self.filename = filename[0]
@@ -315,7 +348,15 @@ class Boonify(QMainWindow):
             self.history_raz()  # clear history
 
     def save(self):
-        """Save file dialog."""
+        """
+        Saves the current state to a file.
+
+        This method attempts to save the current state to a file using the
+        filename attribute. If a filename is already provided, the current
+        state is saved to this file, and the saved status flag is updated.
+        If no filename is specified, the method triggers a save-as operation
+        to determine the filename.
+        """
         if self.filename:
             self.boon.save(self.filename)
             self.display_saved_flag()  # update the saved flag
@@ -323,7 +364,11 @@ class Boonify(QMainWindow):
             self.saveas()
 
     def saveas(self):
-        """Save as the file as dialog."""
+        """
+        Saves the current content to a file. The method opens a "Save As" dialog
+        to specify a filename and filepath, saves the content to the chosen file,
+        and updates relevant components accordingly.
+        """
         filename = QFileDialog.getSaveFileName(self, "Save", "", "Boon Files (*.boon);; All Files (*);;")
         if filename:
             self.filename = filename[0]
@@ -331,7 +376,19 @@ class Boonify(QMainWindow):
             self.display_saved_flag()  # update the saved flag
 
     def importation(self):
-        """Import file dialog."""
+        """
+        Handles the importation of a file and initializes the respective properties
+        based on the detected file format. This function utilizes specific handlers
+        to import files in supported formats such as BoolNet (.bnet), Python (.txt),
+        and SBML (.sbml or .xml). It ensures that the application state is updated
+        after the import, refreshing the GUI, setting up the design, and clearing
+        the history if the file is successfully imported.
+
+        If an unsupported file extension is provided, it displays a critical error
+        message to inform the user about acceptable formats.
+
+        :return: None
+        """
         filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text or SBML Files (*.bnet *.txt *.xml *.sbml);; All Files (*);;")
         if filename:
             self.filename = None  # no file name since the BooN is not saved in the internal format.
@@ -354,7 +411,18 @@ class Boonify(QMainWindow):
             self.history_raz()  # clear history
 
     def exportation(self):
-        """Export file dialog."""
+        """
+        Exports data to a specified file format (BoolNet or Txt).
+
+        The method allows exporting data to a file in the BoolNet or Txt format based
+        on the provided file name and its extension.
+        The BoolNet format is supported with a `.bnet` extension, and the Python-compatible
+        format is supported with a `.txt` extension.
+
+        :raises ValueError: If the filename extension is unsupported or invalid.
+
+        :return: None
+        """
         filename = QFileDialog.getSaveFileName(self, "Export to BoolNet or Python format.", "", "Text Files (*.bnet *.txt);;")
         if filename:
             _, extension = os.path.splitext(filename[0])
@@ -365,7 +433,14 @@ class Boonify(QMainWindow):
                     self.boon.to_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, header=PYTHONHEADER)
 
     def quit(self):
-        """Quit application."""
+        """
+        Terminates the application based on user confirmation and save status.
+
+        This method checks if the current work or state (referred to as "BooN") has been saved. If it is not saved,
+        it prompts the user with a dialog to choose whether to save, cancel, or quit without saving.
+
+        :return: None
+        """
         # check if the BooN is saved
 
         if self.saved:
@@ -392,13 +467,27 @@ class Boonify(QMainWindow):
 
     # noinspection PyMethodOverriding
     def closeEvent(self, event):
-        """Close window"""
+        """
+        Handles the close event for the application window.
+
+        This method ensures that when the application's close event is triggered, it invokes the quit method
+        to handle quitting properly. The `event.ignore()` ensures that the close event is ignored unless
+        the application is closed successfully prior to that, in which case `event.ignore()` will not execute.
+
+        :param event: The close event being processed, which carries information about the window-closing action.
+        :type event: QCloseEvent
+        :return: None
+        """
         self.quit()
         event.ignore()  # WARNING: If the application is closed when quit() is triggered, this line will not be executed.
 
     # DEF: HISTORY MANAGEMENT
     def history_raz(self):
-        """Clear the history."""
+        """
+        Resets the computational history of the object to its initial state.
+
+        :return: None
+        """
         self.history = [None] * HSIZE  # History cleaning
         self.hindex = 0  # Index of the last BooN added in the history
         self.add_history()  # Initialize the history with the current BooN
@@ -406,7 +495,20 @@ class Boonify(QMainWindow):
         self.display_saved_flag()  # The BooN is saved.
 
     def undo(self):
-        """Undo operation."""
+        """
+        Restores the previous state from the history while preventing disruptive updates.
+
+        This method decrements the history index and restores the previous state of the
+        `boon` attribute using the corresponding entry in the `history`. It ensures
+        that no unwanted side effects occur during the update process. After restoring
+        the state, it refreshes the current state and reinitializes necessary design
+        parameters.
+
+        :raises IndexError: Raised if the history operation fails due to an invalid
+            index or empty history.
+
+        :return: None
+        """
         hindex = (self.hindex - 1) % HSIZE
         if self.history[hindex]:
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
@@ -416,7 +518,11 @@ class Boonify(QMainWindow):
             self.setup_design()
 
     def redo(self):
-        """Redo operation."""
+        """
+        Redo the last undone operation by navigating through the history list and updating
+        the current state. This method ensures that callback functions are temporarily
+        disabled during the operation to avoid disruptive updates.
+        """
         hindex = (self.hindex + 1) % HSIZE
         if self.history[hindex]:
             self.disablecallback = True  # Prevent disruptive updates by disabling callback.
@@ -426,7 +532,20 @@ class Boonify(QMainWindow):
             self.setup_design()
 
     def add_history(self):
-        """Add current BooN to the history."""
+        """
+        Adds the current BooN to the history if it differs from the last saved state. This method ensures
+        that changes to the BooN descriptor are tracked and recorded appropriately in the history buffer.
+        It also manages internal state flags to enable or disable disruptive behaviors such as callbacks
+        when updating history. The history index is circularly updated to maintain a fixed-size
+        history buffer.
+
+        attribute self.hindex: Index of the current position in the history.
+        attribute self.boon.desc: Descriptor of the current BooN.
+        attribute self.disablecallback: Boolean that disables callback updates when `True`.
+        attribute self.hupdate: Boolean that indicates whether the history has been updated.
+
+        :return: None
+        """
         hindex = self.hindex
         if self.boon != self.history[hindex]:  # WARNING: The BooN comparison operates on descriptors only, not on positions or style.
 
@@ -449,7 +568,12 @@ class Boonify(QMainWindow):
         # self.show_history()
 
     def show_history(self):
-        """Display the history. Used to debug the history management."""
+        """
+        Displays the entire history of changes, showing each entry formatted according
+        to its identifier and rendering logic using a tabulated structure. The current
+        history index is highlighted, and associated data details are presented using
+        a plain tabular format. If a history entry lacks data, it displays a placeholder.
+        """
         view = [([i] if i == self.hindex else i,
                  tabulate([(var, logic.prettyform(eq, theboon.style)) for var, eq in theboon.desc.items()], tablefmt='plain')
                  if theboon else '-') for i, theboon in enumerate(self.history)]
@@ -458,7 +582,14 @@ class Boonify(QMainWindow):
         print(tabulate(view, tablefmt='grid'))
 
     def refresh(self):
-        """Refresh the opened widgets."""
+        """
+        Refreshes all visible components, such as BooN View, Stable States View,
+        Model View, and Controllability View. Each visible component is reinitialized
+        or updated via its relevant function. This ensures that all active components
+        reflect the most current state.
+
+        :return: None
+        """
         if self.QView and self.QView.isVisible():  # Refresh the BooN View if opened.
             self.QView.initialize_view()
         if self.QStableStates and self.QStableStates.isVisible():  # Refresh the stable states View if opened.
@@ -470,22 +601,36 @@ class Boonify(QMainWindow):
 
     # DEF: WIDGETS OPENING
     def help(self):
-        """Help View"""
+        """
+        Provides functionality to call and display help using an external Help object.
+        """
         thehelp = Help(self)
         thehelp.show()
 
     def view(self):
-        """BooN View"""
+        """
+        Represents a function to initialize and display the view.
+
+        :return: None
+        """
         self.QView = View(self)
         self.QView.show()
 
     def stablestates(self):
-        """Stable States View"""
+        """
+        Displays stable states.
+
+        :return: None
+        """
         self.QStableStates = StableStates(self)
         self.QStableStates.show()
 
     def model(self):
-        """Model View"""
+        """
+        Display the dynamical model if the number of variables does not exceed the defined model boundary
+
+        :return: None
+        """
         if len(self.boon.variables) > MODELBOUND:
             QMessageBox.critical(self, "No Model", f"The number of variables exceeds {MODELBOUND}.\nThe model cannot be drawn.")
             return
@@ -494,11 +639,32 @@ class Boonify(QMainWindow):
         self.QModel.show()
 
     def controllability(self):
-        """Controllability View"""
+        """
+        Defines a function that initializes and displays the controllability object
+        related to the current self-instance.
+
+        attributes QControllability : Controllability
+            And instance of the `Controllability` class associated with the current object.
+            It encapsulates functionality to assess or manage controllability features.
+
+        :return: None
+        """
         self.QControllability = Controllability(self)
         self.QControllability.show()
 
     def display_saved_flag(self, val: bool = True):
+        """
+        Displays a flag in the status bar indicating whether the data has been saved.
+
+        This method updates the status bar message based on the save state. If the
+        data is saved, a large empty circle is displayed. If the data is not saved,
+        a large black circle is displayed.
+
+        :param val: They save a status flag. If True, the data is saved, and the large
+                    empty circle is shown. If False, the data is not saved, and the
+                    large black circle is displayed.
+        :type val: bool
+        """
         NOTSAVED: str = '\u2B24'  # Large black circle
         SAVED: str = '\u25CB'  # Large empty circle
         self.saved = val
@@ -526,7 +692,9 @@ class Help(QMainWindow):
 
 
 class View(QDialog):
-    """View Class used for showing the BooN formula in a table."""
+    """
+    Represents a graphical dialog for displaying and editing the BooN formulas within a user interface.
+    """
 
     def __init__(self, parent=None):
         super(View, self).__init__(parent)
@@ -560,7 +728,11 @@ class View(QDialog):
         self.initialize_view()
 
     def initialize_view(self):
-        """Fill the table."""
+        """
+        Initializes and populates the view with formula fields and their respective descriptions and
+        attributes. This method configures a table to display rows of formulas, sets the required
+        text and style for each formula, and identifies and specifies the type of logical formulation.
+        """
         theboon = self.parent.boon
 
         # STEP: Initialize the formula fields.
@@ -593,7 +765,13 @@ class View(QDialog):
             self.BooNContent.setItem(row, 0, item)
 
     def change_formula(self):
-        """Update the BooN from a formula change."""
+        """
+        Updates the formula in the selected row of the BooN content and validates
+        its syntax and variable usage. If the formula contains syntax errors or
+         references to undefined variables, an appropriate error message is shown,
+        and the update is aborted. Otherwise, the formula is applied.
+        :return: None
+        """
         row = self.BooNContent.currentRow()  # get the current modified row
         text = self.formulas[row].text()  # get the text of the line edit formula
 
@@ -972,7 +1150,20 @@ class Controllability(QMainWindow):
 
 
 class Threader(QObject):
-    """Class executing a thread to run an application."""
+    """
+    Threader class for managing application execution within a separate thread.
+
+    This class is designed to separate the execution of a provided application
+    function into its own thread using PyQt's threading mechanism. The class
+    provides functionality to start, switch, and terminate the application
+    running within the thread effectively.
+
+    :ivar finished: Signal emitted when the thread's application completes execution.
+    :ivar app: The callable application to be executed within the thread.
+    :type app: Callable
+    :ivar thread: The QThread instance used to run the application in a separate thread.
+    :type thread: QThread
+    """
     finished = pyqtSignal()
 
     def __init__(self, app=lambda: None):
