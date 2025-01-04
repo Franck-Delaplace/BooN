@@ -233,8 +233,6 @@ class Boonify(QMainWindow):
         Requires labeled nodes and valid
         interactions to derive the BooN structure.
 
-        :raises ValueError: Rose during the conversion of IG to BooN if the edge labeling
-            is transiently incorrect, though this error is internally handled in the function.
         """
         # The function captures the events of the EditableGraph and completes the BooN.
         if self.disablecallback: return  # Check whether the callback is enabled otherwise return.
@@ -322,7 +320,6 @@ class Boonify(QMainWindow):
             self.refresh()
 
     def resizeEvent(self, event, **kwargs):
-
         """
         Adjusts the current graphical interface parameters and components based on a resize event. It retrieves the
         existing graphical configurations, calculates appropriate scaling values, and reconfigures the graphical
@@ -333,7 +330,6 @@ class Boonify(QMainWindow):
         :param kwargs: Additional keyword arguments that might be required for expansion or specific functionality.
         :type kwargs: dict
         :return: None
-        :rtype: None
         """
         # STEP: Fix the size related to the network design
         width = self.frameGeometry().width()
@@ -376,11 +372,8 @@ class Boonify(QMainWindow):
         Open a file using a file dialog, load its contents, and update the application state.
 
         This method presents a file dialog to the user to choose a file with the specific extension.
-        After successfully selecting a file, the method loads its content using the BooN library,
+        After successfully selecting a file, the method loads its content,
         refreshes the application view, initializes the design setup, and clears the history.
-
-        :raises QFileDialog: Triggered to open a system file selection dialog.
-        :raises BooN: Utilized to load the file content into the application.
 
         :return: None
         """
@@ -401,6 +394,8 @@ class Boonify(QMainWindow):
         state is saved to this file, and the saved status flag is updated.
         If no filename is specified, the method triggers a save-as operation
         to determine the filename.
+
+        :return: None
         """
         if self.filename:
             self.boon.save(self.filename)
@@ -481,7 +476,7 @@ class Boonify(QMainWindow):
         """
         Terminates the application based on user confirmation and save status.
 
-        This method checks if the current work or state (referred to as "BooN") has been saved. If it is not saved,
+        This method checks if the BooN has been saved. If it is not saved,
         it prompts the user with a dialog to choose whether to save, cancel, or quit without saving.
 
         :return: None
@@ -529,9 +524,16 @@ class Boonify(QMainWindow):
     # DEF: HISTORY MANAGEMENT
     def history_raz(self):
         """
-        Resets the computational history of the object to its initial state.
+        Resets the history and initializes it with the current state of BooN. It clears
+        the history, sets the history index to the starting position, and ensures that
+        the history update flag is reset.
 
-        :return: None
+        :ivar history: A list to record the history of BooN states. Initially cleared
+            and reinitialized to a default size, HSIZE.
+        :ivar hindex: An integer representing the index position of the last BooN state
+            added to the history. Reset to 0 after cleaning history.
+        :ivar hupdate: A boolean flag indicating whether the history is updated. Set to
+            False after resetting the history.
         """
         self.history = [None] * HSIZE  # History cleaning
         self.hindex = 0  # Index of the last BooN added in the history
@@ -874,18 +876,41 @@ class View(QDialog):
         self.parent.setup_design()
 
     def cb_styling(self):
-        """Style from combo box selection"""
+        """
+        Updates the current styling for the component based on the selected style and refreshes the view.
+
+        :return: None
+        """
         self.style = STYLE[self.Style.currentText()]
         self.initialize_view()  # Refresh the view.
 
     def convertdnf(self):
-        """Convert the BooN into DNF."""
+        """
+        Converts the current BooNn into Disjunctive Normal Form (DNF)
+        and refreshes the view accordingly.
+
+        :return: None
+        """
         self.parent.boon.dnf()
         self.initialize_view()  # Refresh the view.
 
 
 class StableStates(QDialog):
-    """Class to handle stable states computation."""
+    """
+    A dialog for displaying and managing stable states in a computational model.
+
+    This class represents a graphical interface for visualizing stable states
+    of a Boolean network model. It allows users to switch between different
+    display styles, such as icons or textual representation, for better
+    interpretation of the stable states.
+
+    :ivar parent: Reference to the parent widget or application component.
+    :type parent: QWidget
+    :ivar style: The display style for representing stable states (e.g., 'Icon Boolean').
+    :type style: str
+    :ivar datamodel: The data model used for organizing and displaying stable states.
+    :type datamodel: QStandardItemModel
+    """
 
     def __init__(self, parent=None):
         super(StableStates, self).__init__(parent)
@@ -905,12 +930,26 @@ class StableStates(QDialog):
         self.stablestates()
 
     def cb_styling(self):
-        """Select style from combo box selection"""
+        """
+        Updates the current style setting from the user interface and refreshes the stable states view.
+
+        :return: None.
+        """
         self.style = self.Style.currentText()
         self.stablestates()  # Refresh the stable states view.
 
     def stablestates(self):
-        """Compute stable states and arrange the view."""
+        """
+        Generates and sets up a data model to visualize stable states of a system.
+
+        This method processes the stable states of a parent object's model and organizes
+        them into a table-like structure using a Qt `QStandardItemModel`. Each row
+        represents a variable, and each column corresponds to a stable state. The
+        presentation style of the data (e.g., icons, boolean values, or integers) is
+        determined by the specified `style` attribute of the object.
+
+        :return: None
+        """
         theboon = self.parent.boon
         variables = theboon.variables
         stablestates = theboon.stable_states
@@ -950,7 +989,18 @@ class StableStates(QDialog):
 
 
 class Model(QMainWindow):
-    """Class to handle model of dynamics."""
+    """
+    A Model class for managing and visualizing network dynamics using a GUI interface.
+
+    :ivar parent: Reference to the parent window or application.
+    :type parent: Any
+    :ivar mode: Represents the selected mode of dynamics (asynchronous or synchronous).
+    :type mode: Enum or equivalent
+    :ivar layout: Defines the network layout function to be used for visualization.
+    :type layout: Callable
+    :ivar canvas: Matplotlib widget for rendering the network visualization.
+    :type canvas: matplotlib.backends.backend_qt5agg.FigureCanvas
+    """
 
     def __init__(self, parent=None):
         super(Model, self).__init__(parent)
@@ -978,7 +1028,13 @@ class Model(QMainWindow):
         self.modeling()
 
     def rb_mode(self):
-        """Mode selection from radio button box."""
+        """
+        Determine and set the mode of operation based on user selection from the interface. This function checks the state
+        of radio buttons to assign either an asynchronous or synchronous mode. The established mode is then used for
+        further modeling via a subsequent call to the `modeling` method.
+
+        :return: None
+        """
         if self.AsynchronousButton.isChecked():
             self.mode = boon.asynchronous
         elif self.SynchronousButton.isChecked():
@@ -988,7 +1044,15 @@ class Model(QMainWindow):
         self.modeling()
 
     def cb_network_layout(self):
-        """Determine the layout of the network model from the combo box."""
+        """
+        Adjusts the network layout based on the selected option and applies the corresponding
+        layout algorithm to the network. The method retrieves the currently selected network
+        layout from a user interface component, maps it to an appropriate algorithm, and
+        configures the network's visualization layout accordingly. It also invokes an
+        update via the `modeling` method to apply and reflect the changes.
+
+        :rtype: None
+        """
         layout = self.NetworkLayout.currentText()
         match layout:
             case "Hypercube":
@@ -1006,7 +1070,9 @@ class Model(QMainWindow):
         self.modeling()
 
     def modeling(self):
-        """Compute the model of dynamics."""
+        """Compute the model of dynamics.
+
+        return: None"""
         self.canvas.axes.clear()
         self.canvas.axes.axis('off')
 
@@ -1127,7 +1193,15 @@ class Controllability(QMainWindow):
         header.setStretchLastSection(True)
 
     def destiny_to_observers(self, label: str):
-        """Modify the observer w.r.t. The destiny change."""
+        """
+        Updates the check state of an item in the `Observers` table based on the
+        provided label and the currently selected row in the `Destiny` table.
+
+        :param label: A string indicating the check state condition. If the label
+                      is `"None"`, the item is unchecked; otherwise, it is checked.
+        :type label: str
+        :return: None
+        """
         row = self.Destiny.currentRow()
         item = self.Observers.item(row, 0)
 
@@ -1137,14 +1211,25 @@ class Controllability(QMainWindow):
             item.setCheckState(Qt.Checked)
 
     def observers_to_destiny(self, chkitem):
-        """Modify the destiny w.r.t. the observer change"""
+        """Modify the destiny w.r.t. the observer change
+
+        return: None"""
         row = chkitem.row()
         if chkitem.checkState() == Qt.Unchecked:
             combobox = self.Destiny.cellWidget(row, 1)
             combobox.setCurrentText("None")
 
     def controllability(self):
-        """Compute the control actions based on the destiny and the observers."""
+        """
+        The metho calculates control actions required to achieve or
+        avoid a defined goal (or state) in a system represented by the BooN model. The method determines
+        the applicable control actions by analyzing a user-specified query defining the desired
+        or undesired state, along with the possible variables that can be controlled. This process
+        involves interpreting various parameters such as observer states, query types, and logical
+        modalities.
+
+        :return: None
+        """
         self.row = None
         theboon = self.parent.boon
         variables = list(theboon.variables)
@@ -1231,11 +1316,16 @@ class Controllability(QMainWindow):
         self.ControlActions.expandAll()
 
     def select_action(self, arg):
-        """Keep the selection solution"""
+        """Keep the selection solution
+
+        return: None
+        """
         self.row = arg.parent().row() if arg.parent().row() > -1 else arg.row()
 
     def actupon(self):
-        """Apply the selection actions on the BooN."""
+        """Apply the selection actions on the BooN.
+
+        return: None"""
         if self.row is not None and self.actions:
             for action in self.actions[self.row]:
                 (variable, value) = action
