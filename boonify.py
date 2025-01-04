@@ -648,6 +648,8 @@ class Boonify(QMainWindow):
     def help(self):
         """
         Provides functionality to call and display help using an external Help object.
+
+        :return: None
         """
         thehelp = Help(self)
         thehelp.show()
@@ -722,7 +724,21 @@ class Boonify(QMainWindow):
 # DEF:  WIDGET CLASSES
 
 class Help(QMainWindow):
-    """Help Class used for showing help."""
+    """
+    Defines the Help class, a window in the application providing a user interface for
+    displaying help documentation.
+
+    This class inherits from QMainWindow and is used to load and display an HTML-based
+    help file using QWebEngineView. It provides a 'Close' button to dismiss the window.
+    The layout and UI components are loaded from a .ui file.
+
+    :ivar CloseButton: The button widget used to close the help window.
+    :type CloseButton: QPushButton
+    :ivar web: A web engine view widget used to render and display the help HTML content.
+    :type web: QWebEngineView
+    :ivar WebContainer: The container widget to hold the QWebEngineView displaying the help content.
+    :type WebContainer: QWidget
+    """
 
     def __init__(self, parent=None):
         super(Help, self).__init__(parent)
@@ -738,7 +754,21 @@ class Help(QMainWindow):
 
 class View(QDialog):
     """
-    Represents a graphical dialog for displaying and editing the BooN formulas within a user interface.
+    Represents a dialog interface for managing and displaying Boolean formulas
+    in a tabular format. The interface supports operations like editing, validating,
+    and converting Boolean formulas, and dynamically updates the view accordingly.
+
+    This class is designed to be a standalone dialog that integrates with a parent
+    component, utilizing its logical formulas and variables for display and interaction.
+
+    :ivar style: Style of the formulas displayed in the view.
+    :type style: str
+    :ivar parent: Reference to the parent entity using this view, typically the Boonify
+        class, which contains the necessary logical formulas and variables.
+    :type parent: object
+    :ivar formulas: List of formula input fields linked to variables.
+        Each field corresponds to a row in the table, allowing live editing of formulas.
+    :type formulas: list[QLineEdit]
     """
 
     def __init__(self, parent=None):
