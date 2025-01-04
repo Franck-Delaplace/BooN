@@ -905,7 +905,7 @@
 <span class="sd">    and converting Boolean formulas, and dynamically updates the view accordingly.</span>
 
 <span class="sd">    This class is designed to be a standalone dialog that integrates with a parent</span>
-<span class="sd">    component, utilizing its logical formulas and variables for display and interaction.</span>
+<span class="sd">    component, using its logical formulas and variables for display and interaction.</span>
 
 <span class="sd">    :ivar style: Style of the formulas displayed in the view.</span>
 <span class="sd">    :type style: str</span>
@@ -992,7 +992,7 @@
 <a class="viewcode-back" href="../index.html#boonify.View.change_formula">[docs]</a>
     <span class="k">def</span> <span class="nf">change_formula</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the BooN formula based on user input and refresh related components.</span>
+<span class="sd">        Update the BooN formula based on user input and refresh-related components.</span>
 
 <span class="sd">        This method processes the formula input provided through the GUI, verifies its syntax and</span>
 <span class="sd">        the validity of the variables involved, and updates the associated BooN data structure if</span>
@@ -1204,7 +1204,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Determine and set the mode of operation based on user selection from the interface. This function checks the state</span>
 <span class="sd">        of radio buttons to assign either an asynchronous or synchronous mode. The established mode is then used for</span>
-<span class="sd">        further modeling via a subsequent call to the `modeling` method.</span>
+<span class="sd">        further modeling via a further call to the `modeling` method.</span>
 
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1415,7 +1415,7 @@
 <a class="viewcode-back" href="../index.html#boonify.Controllability.controllability">[docs]</a>
     <span class="k">def</span> <span class="nf">controllability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The metho calculates control actions required to achieve or</span>
+<span class="sd">        The method calculates control actions required to achieve or</span>
 <span class="sd">        avoid a defined goal (or state) in a system represented by the BooN model. The method determines</span>
 <span class="sd">        the applicable control actions by analyzing a user-specified query defining the desired</span>
 <span class="sd">        or undesired state, along with the possible variables that can be controlled. This process</span>

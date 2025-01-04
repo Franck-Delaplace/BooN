@@ -761,7 +761,7 @@ class View(QDialog):
     and converting Boolean formulas, and dynamically updates the view accordingly.
 
     This class is designed to be a standalone dialog that integrates with a parent
-    component, utilizing its logical formulas and variables for display and interaction.
+    component, using its logical formulas and variables for display and interaction.
 
     :ivar style: Style of the formulas displayed in the view.
     :type style: str
@@ -843,7 +843,7 @@ class View(QDialog):
 
     def change_formula(self):
         """
-        Update the BooN formula based on user input and refresh related components.
+        Update the BooN formula based on user input and refresh-related components.
 
         This method processes the formula input provided through the GUI, verifies its syntax and
         the validity of the variables involved, and updates the associated BooN data structure if
@@ -1034,7 +1034,7 @@ class Model(QMainWindow):
         """
         Determine and set the mode of operation based on user selection from the interface. This function checks the state
         of radio buttons to assign either an asynchronous or synchronous mode. The established mode is then used for
-        further modeling via a subsequent call to the `modeling` method.
+        further modeling via a further call to the `modeling` method.
 
         :return: None
         """
@@ -1224,7 +1224,7 @@ class Controllability(QMainWindow):
 
     def controllability(self):
         """
-        The metho calculates control actions required to achieve or
+        The method calculates control actions required to achieve or
         avoid a defined goal (or state) in a system represented by the BooN model. The method determines
         the applicable control actions by analyzing a user-specified query defining the desired
         or undesired state, along with the possible variables that can be controlled. This process

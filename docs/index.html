@@ -1466,7 +1466,7 @@ representation of these actions.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="boonify.Controllability.controllability">
 <span class="sig-name descname"><span class="pre">controllability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Controllability.controllability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Controllability.controllability" title="Link to this definition"></a></dt>
-<dd><p>The metho calculates control actions required to achieve or
+<dd><p>The method calculates control actions required to achieve or
 avoid a defined goal (or state) in a system represented by the BooN model. The method determines
 the applicable control actions by analyzing a user-specified query defining the desired
 or undesired state, along with the possible variables that can be controlled. This process
@@ -1585,7 +1585,7 @@ update via the <cite>modeling</cite> method to apply and reflect the changes.</p
 <span class="sig-name descname"><span class="pre">rb_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#Model.rb_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.Model.rb_mode" title="Link to this definition"></a></dt>
 <dd><p>Determine and set the mode of operation based on user selection from the interface. This function checks the state
 of radio buttons to assign either an asynchronous or synchronous mode. The established mode is then used for
-further modeling via a subsequent call to the <cite>modeling</cite> method.</p>
+further modeling via a further call to the <cite>modeling</cite> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
@@ -1703,7 +1703,7 @@ application logic and signaling the end of the process.</p>
 in a tabular format. The interface supports operations like editing, validating,
 and converting Boolean formulas, and dynamically updates the view accordingly.</p>
 <p>This class is designed to be a standalone dialog that integrates with a parent
-component, utilizing its logical formulas and variables for display and interaction.</p>
+component, using its logical formulas and variables for display and interaction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1729,7 +1729,7 @@ Each field corresponds to a row in the table, allowing live editing of formulas.
 <dl class="py method">
 <dt class="sig sig-object py" id="boonify.View.change_formula">
 <span class="sig-name descname"><span class="pre">change_formula</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/boonify.html#View.change_formula"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#boonify.View.change_formula" title="Link to this definition"></a></dt>
-<dd><p>Update the BooN formula based on user input and refresh related components.</p>
+<dd><p>Update the BooN formula based on user input and refresh-related components.</p>
 <p>This method processes the formula input provided through the GUI, verifies its syntax and
 the validity of the variables involved, and updates the associated BooN data structure if
 the formula passes all checks. It also refreshes related components to reflect the changes.
