@@ -63,7 +63,44 @@ INTPAT: str = r"\s*-?[0-9]+\s*"
 
 
 class Boonify(QMainWindow):
-    """Main Class of the GUI"""
+    """
+    Represents the main application window for managing and designing BooNs (Boolean Networks).
+
+    Provides a GUI with a comprehensive set of  functionalities. This class is primarily responsible for initializing
+    and connecting GUI widgets, setting up callbacks, and constructing an editable graph
+    for network interaction design.
+
+    :ivar boon: The current Boolean Network object being managed or displayed.
+    :type boon: BooN
+    :ivar filename: The name of the file associated with the current BooN (empty if no file is loaded or saved).
+    :type filename: str
+    :ivar history: Maintains a history list of BooN objects for undo/redo functionalities.
+    :type history: list
+    :ivar hindex: The index of the last BooN added to the history.
+    :type hindex: int
+    :ivar hupdate: Flag indicating whether the history should be updated.
+    :type hupdate: bool
+    :ivar saved: Flag indicating if the current BooN has been saved.
+    :type saved: bool
+    :ivar QView: Widget for displaying BooN visualization.
+    :type QView: QWidget | None
+    :ivar QStableStates: Widget for displaying stable states of BooNs.
+    :type QStableStates: QWidget | None
+    :ivar QModel: Widget for displaying the dynamic model of the BooN.
+    :type QModel: QWidget | None
+    :ivar QControllability: Widget for displaying BooN controllability analysis.
+    :type QControllability: QWidget | None
+    :ivar editgraph: Editable graphical representation of the BooN's interaction graph.
+    :type editgraph: EditableGraph | None
+    :ivar disablecallback: Flag indicating whether design callbacks are disabled.
+    :type disablecallback: bool
+    :ivar designsize: Scaling factor related to graphics elements in the EditableGraph.
+    :type designsize: float
+    :ivar worker: Background thread for processing long-running BooN operations.
+    :type worker: Threader
+    :ivar canvas: Matplotlib canvas for rendering the network design figure in the GUI.
+    :type canvas: FigureCanvas
+    """
 
     def __init__(self):
         super(Boonify, self).__init__()
