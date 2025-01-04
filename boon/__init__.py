@@ -46,7 +46,6 @@ import libsbml
 
 # CONSTANTS
 SIGNCOLOR: dict = {-1: 'crimson', 0: 'steelblue', 1: 'forestgreen'}  # colors of edges in the interaction graph w.r.t. to signs.
-COLORSIGN = {to_rgb(color): sign for sign, color in SIGNCOLOR.items()}  # association of the color to sign.
 EXTBOON: str = ".boon"  # file extension for BooN format.
 EXTXT: str = ".txt"  # file extension of Python format for an imported file.
 EXTBOOLNET: str = ".bnet"  # file extension of BOOLNET format for an imported file.
@@ -985,8 +984,24 @@ class BooN:
 
         #  Quotient graph.
         #  The function is more than 10 times faster than the networkx method.
-        #  The partitions must be frozenset.
         def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
+            """
+            Generates and returns the quotient graph from the provided directed graph and partition.
+
+            The function computes the quotient graph based on a given partition of nodes in the input
+            directed graph. The nodes in the quotient graph correspond to the groups from the partition,
+            and edges are added between groups if any node in one group connects to any node in another
+            group in the original graph.
+
+            :param graph: The original directed graph.
+            :type graph: nx.DiGraph
+            :param partition: A list of frozensets, where each frozenset represents a group of nodes
+                in the partition of the graph.
+            :type partition: list[frozenset]
+            :return: A directed quotient graph based on the provided partition of the input directed
+                graph.
+            :rtype: nx.DiGraph
+            """
             # Initialize the quotient graph
             quotient_graph = nx.DiGraph()
             quotient_graph.add_nodes_from(partition)
@@ -1197,7 +1212,7 @@ class BooN:
 
         # Check whether the network is not controlled.
         if any(map(is_controlled, self.desc.values())):
-            errmsg("The network must not be controlled to correctly functioning", "empty set is returned.", kind="WARNING")
+            errmsg("The network must not be controlled for correctly functioning", "empty set is returned.", kind="WARNING")
             return frozenset(set())
 
         # Filter the core for prime controls that satisfy the query for all stable states
