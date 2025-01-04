@@ -66,7 +66,7 @@ class Boonify(QMainWindow):
     """
     Represents the main application window for managing and designing BooNs (Boolean Networks).
 
-    Provides a GUI with a comprehensive set of  functionalities. This class is primarily responsible for initializing
+    Provides a GUI with a comprehensive set of functionalities. This class is primarily responsible for initializing
     and connecting GUI widgets, setting up callbacks, and constructing an editable graph
     for network interaction design.
 
