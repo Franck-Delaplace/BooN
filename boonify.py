@@ -658,7 +658,7 @@ class Boonify(QMainWindow):
 
     def view(self):
         """
-        Represents a function to initialize and display the view.
+        Initializes and displays the View object for the class instance.
 
         :return: None
         """
@@ -843,10 +843,13 @@ class View(QDialog):
 
     def change_formula(self):
         """
-        Updates the formula in the selected row of the BooN content and validates
-        its syntax and variable usage. If the formula contains syntax errors or
-         references to undefined variables, an appropriate error message is shown,
-        and the update is aborted. Otherwise, the formula is applied.
+        Update the BooN formula based on user input and refresh related components.
+
+        This method processes the formula input provided through the GUI, verifies its syntax and
+        the validity of the variables involved, and updates the associated BooN data structure if
+        the formula passes all checks. It also refreshes related components to reflect the changes.
+        In case of errors, appropriate error messages are displayed to the user.
+
         :return: None
         """
         row = self.BooNContent.currentRow()  # get the current modified row

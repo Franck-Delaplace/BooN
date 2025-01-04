@@ -112,6 +112,8 @@
 <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvasQTAgg</span> <span class="k">as</span> <span class="n">FigureCanvas</span>
 <span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
 
+<span class="kn">from</span> <span class="nn">pulp</span> <span class="kn">import</span> <span class="n">PULP_CBC_CMD</span>
+
 <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Qt5Agg&quot;</span><span class="p">)</span>
 
 <span class="c1"># Parameters</span>
@@ -119,6 +121,7 @@
 <span class="n">STYLE</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Logical&quot;</span><span class="p">:</span> <span class="n">LOGICAL</span><span class="p">,</span> <span class="s2">&quot;Java&quot;</span><span class="p">:</span> <span class="n">JAVA</span><span class="p">,</span> <span class="s2">&quot;Python&quot;</span><span class="p">:</span> <span class="n">SYMPY</span><span class="p">,</span> <span class="s2">&quot;Mathematica&quot;</span><span class="p">:</span> <span class="n">MATHEMATICA</span><span class="p">,</span> <span class="s2">&quot;BoolNet&quot;</span><span class="p">:</span> <span class="n">BOOLNET</span><span class="p">}</span>
 <span class="n">ICON01</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;:/icon/resources/none.svg&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;:/icon/resources/true.svg&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;:/icon/resources/false.svg&quot;</span><span class="p">}</span>  <span class="c1"># True/False icons</span>
 <span class="n">MODELBOUND</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># Size bound of the dynamics model in terms of variables.</span>
+<span class="n">LPSOLVER</span> <span class="o">=</span> <span class="n">PULP_CBC_CMD</span>  <span class="c1"># LP-Solver related to the controllability resolution. (destify)</span>
 
 <span class="c1"># Node names for the pattern network</span>
 <span class="n">REG</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u03b1</span><span class="s1">&#39;</span>  <span class="c1"># lambda</span>
@@ -132,7 +135,44 @@
 <div class="viewcode-block" id="Boonify">
 <a class="viewcode-back" href="../index.html#boonify.Boonify">[docs]</a>
 <span class="k">class</span> <span class="nc">Boonify</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main Class of the GUI&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the main application window for managing and designing BooNs (Boolean Networks).</span>
+
+<span class="sd">    Provides a GUI with a comprehensive set of functionalities. This class is primarily responsible for initializing</span>
+<span class="sd">    and connecting GUI widgets, setting up callbacks, and constructing an editable graph</span>
+<span class="sd">    for network interaction design.</span>
+
+<span class="sd">    :ivar boon: The current Boolean Network object being managed or displayed.</span>
+<span class="sd">    :type boon: BooN</span>
+<span class="sd">    :ivar filename: The name of the file associated with the current BooN (empty if no file is loaded or saved).</span>
+<span class="sd">    :type filename: str</span>
+<span class="sd">    :ivar history: Maintains a history list of BooN objects for undo/redo functionalities.</span>
+<span class="sd">    :type history: list</span>
+<span class="sd">    :ivar hindex: The index of the last BooN added to the history.</span>
+<span class="sd">    :type hindex: int</span>
+<span class="sd">    :ivar hupdate: Flag indicating whether the history should be updated.</span>
+<span class="sd">    :type hupdate: bool</span>
+<span class="sd">    :ivar saved: Flag indicating if the current BooN has been saved.</span>
+<span class="sd">    :type saved: bool</span>
+<span class="sd">    :ivar QView: Widget for displaying BooN visualization.</span>
+<span class="sd">    :type QView: QWidget | None</span>
+<span class="sd">    :ivar QStableStates: Widget for displaying stable states of BooNs.</span>
+<span class="sd">    :type QStableStates: QWidget | None</span>
+<span class="sd">    :ivar QModel: Widget for displaying the dynamic model of the BooN.</span>
+<span class="sd">    :type QModel: QWidget | None</span>
+<span class="sd">    :ivar QControllability: Widget for displaying BooN controllability analysis.</span>
+<span class="sd">    :type QControllability: QWidget | None</span>
+<span class="sd">    :ivar editgraph: Editable graphical representation of the BooN&#39;s interaction graph.</span>
+<span class="sd">    :type editgraph: EditableGraph | None</span>
+<span class="sd">    :ivar disablecallback: Flag indicating whether design callbacks are disabled.</span>
+<span class="sd">    :type disablecallback: bool</span>
+<span class="sd">    :ivar designsize: Scaling factor related to graphics elements in the EditableGraph.</span>
+<span class="sd">    :type designsize: float</span>
+<span class="sd">    :ivar worker: Background thread for processing long-running BooN operations.</span>
+<span class="sd">    :type worker: Threader</span>
+<span class="sd">    :ivar canvas: Matplotlib canvas for rendering the network design figure in the GUI.</span>
+<span class="sd">    :type canvas: FigureCanvas</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Boonify</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -186,7 +226,7 @@
         <span class="n">manager</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">manager</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">FigureCanvas</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Adjust the window s.t. the network fully fills it.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Adjust the window s.t. The network fully fills it.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>  <span class="c1"># Assign the manager in the canvas to be accessible by EditGraph.</span>
 
         <span class="c1"># STEP: Enable key_press_event events for using EditGraph:</span>
@@ -203,7 +243,15 @@
 <div class="viewcode-block" id="Boonify.setup_design">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.setup_design">[docs]</a>
     <span class="k">def</span> <span class="nf">setup_design</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up of the editable graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up the design of the interaction graph and its visual representation. The method configures</span>
+<span class="sd">        node and edge properties, styles, positions, and visual elements on the canvas. It integrates</span>
+<span class="sd">        information from an existing interaction graph and generates an editable representation of the</span>
+<span class="sd">        network for visualization.</span>
+
+<span class="sd">        Attributes that affect the design are updated during this process, and the design callback is</span>
+<span class="sd">        temporarily disabled to avoid interference.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Disable the design callback during the set-up.</span>
 
         <span class="c1"># STEP: Creation of the pattern-network used for edge styling.</span>
@@ -254,7 +302,15 @@
 <div class="viewcode-block" id="Boonify.design">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.design">[docs]</a>
     <span class="k">def</span> <span class="nf">design</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;interaction graph design callback.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Designs the BooN based on the events captured from the EditableGraph.</span>
+<span class="sd">        This function establishes consistency in the nodes and edges of the graph, processes symbolic</span>
+<span class="sd">        representation, determines signs and modularity of edges, and converts the interaction</span>
+<span class="sd">        graph (IG) to a BooN object for further utilization.</span>
+<span class="sd">        Requires labeled nodes and valid</span>
+<span class="sd">        interactions to derive the BooN structure.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># The function captures the events of the EditableGraph and completes the BooN.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span><span class="p">:</span> <span class="k">return</span>  <span class="c1"># Check whether the callback is enabled otherwise return.</span>
 
@@ -344,7 +400,17 @@
 <div class="viewcode-block" id="Boonify.resizeEvent">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.resizeEvent">[docs]</a>
     <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify graph parameters so that node and edge widths are invariant to window resizing.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adjusts the current graphical interface parameters and components based on a resize event. It retrieves the</span>
+<span class="sd">        existing graphical configurations, calculates appropriate scaling values, and reconfigures the graphical</span>
+<span class="sd">        elements accordingly to maintain visual and functional consistency.</span>
+
+<span class="sd">        :param event: Resize event triggering the adjustment process.</span>
+<span class="sd">        :type event: QResizeEvent</span>
+<span class="sd">        :param kwargs: Additional keyword arguments that might be required for expansion or specific functionality.</span>
+<span class="sd">        :type kwargs: dict</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># STEP: Fix the size related to the network design</span>
         <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameGeometry</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
         <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameGeometry</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
@@ -385,7 +451,15 @@
 <div class="viewcode-block" id="Boonify.open">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open the file dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a file using a file dialog, load its contents, and update the application state.</span>
+
+<span class="sd">        This method presents a file dialog to the user to choose a file with the specific extension.</span>
+<span class="sd">        After successfully selecting a file, the method loads its content,</span>
+<span class="sd">        refreshes the application view, initializes the design setup, and clears the history.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Open file&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Boon Files (*.boon);; All Files (*);;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -398,7 +472,17 @@
 <div class="viewcode-block" id="Boonify.save">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.save">[docs]</a>
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save file dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the current state to a file.</span>
+
+<span class="sd">        This method attempts to save the current state to a file using the</span>
+<span class="sd">        filename attribute. If a filename is already provided, the current</span>
+<span class="sd">        state is saved to this file, and the saved status flag is updated.</span>
+<span class="sd">        If no filename is specified, the method triggers a save-as operation</span>
+<span class="sd">        to determine the filename.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">display_saved_flag</span><span class="p">()</span>  <span class="c1"># update the saved flag</span>
@@ -409,7 +493,11 @@
 <div class="viewcode-block" id="Boonify.saveas">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.saveas">[docs]</a>
     <span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save as the file as dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the current content to a file. The method opens a &quot;Save As&quot; dialog</span>
+<span class="sd">        to specify a filename and filepath, saves the content to the chosen file,</span>
+<span class="sd">        and updates relevant components accordingly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Save&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Boon Files (*.boon);; All Files (*);;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -420,7 +508,19 @@
 <div class="viewcode-block" id="Boonify.importation">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.importation">[docs]</a>
     <span class="k">def</span> <span class="nf">importation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import file dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the importation of a file and initializes the respective properties</span>
+<span class="sd">        based on the detected file format. This function utilizes specific handlers</span>
+<span class="sd">        to import files in supported formats such as BoolNet (.bnet), Python (.txt),</span>
+<span class="sd">        and SBML (.sbml or .xml). It ensures that the application state is updated</span>
+<span class="sd">        after the import, refreshing the GUI, setting up the design, and clearing</span>
+<span class="sd">        the history if the file is successfully imported.</span>
+
+<span class="sd">        If an unsupported file extension is provided, it displays a critical error</span>
+<span class="sd">        message to inform the user about acceptable formats.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Import from files&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Text or SBML Files (*.bnet *.txt *.xml *.sbml);; All Files (*);;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># no file name since the BooN is not saved in the internal format.</span>
@@ -446,7 +546,18 @@
 <div class="viewcode-block" id="Boonify.exportation">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.exportation">[docs]</a>
     <span class="k">def</span> <span class="nf">exportation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export file dialog.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exports data to a specified file format (BoolNet or Txt).</span>
+
+<span class="sd">        The method allows exporting data to a file in the BoolNet or Txt format based</span>
+<span class="sd">        on the provided file name and its extension.</span>
+<span class="sd">        The BoolNet format is supported with a `.bnet` extension, and the Python-compatible</span>
+<span class="sd">        format is supported with a `.txt` extension.</span>
+
+<span class="sd">        :raises ValueError: If the filename extension is unsupported or invalid.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Export to BoolNet or Python format.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Text Files (*.bnet *.txt);;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -460,7 +571,14 @@
 <div class="viewcode-block" id="Boonify.quit">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.quit">[docs]</a>
     <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Quit application.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Terminates the application based on user confirmation and save status.</span>
+
+<span class="sd">        This method checks if the BooN has been saved. If it is not saved,</span>
+<span class="sd">        it prompts the user with a dialog to choose whether to save, cancel, or quit without saving.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># check if the BooN is saved</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved</span><span class="p">:</span>
@@ -490,7 +608,17 @@
 <div class="viewcode-block" id="Boonify.closeEvent">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.closeEvent">[docs]</a>
     <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close window&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the close event for the application window.</span>
+
+<span class="sd">        This method ensures that when the application&#39;s close event is triggered, it invokes the quit method</span>
+<span class="sd">        to handle quitting properly. The `event.ignore()` ensures that the close event is ignored unless</span>
+<span class="sd">        the application is closed successfully prior to that, in which case `event.ignore()` will not execute.</span>
+
+<span class="sd">        :param event: The close event being processed, which carries information about the window-closing action.</span>
+<span class="sd">        :type event: QCloseEvent</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
         <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>  <span class="c1"># WARNING: If the application is closed when quit() is triggered, this line will not be executed.</span></div>
 
@@ -499,7 +627,18 @@
 <div class="viewcode-block" id="Boonify.history_raz">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.history_raz">[docs]</a>
     <span class="k">def</span> <span class="nf">history_raz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the history.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the history and initializes it with the current state of BooN. It clears</span>
+<span class="sd">        the history, sets the history index to the starting position, and ensures that</span>
+<span class="sd">        the history update flag is reset.</span>
+
+<span class="sd">        :ivar history: A list to record the history of BooN states. Initially cleared</span>
+<span class="sd">            and reinitialized to a default size, HSIZE.</span>
+<span class="sd">        :ivar hindex: An integer representing the index position of the last BooN state</span>
+<span class="sd">            added to the history. Reset to 0 after cleaning history.</span>
+<span class="sd">        :ivar hupdate: A boolean flag indicating whether the history is updated. Set to</span>
+<span class="sd">            False after resetting the history.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">HSIZE</span>  <span class="c1"># History cleaning</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Index of the last BooN added in the history</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_history</span><span class="p">()</span>  <span class="c1"># Initialize the history with the current BooN</span>
@@ -510,7 +649,20 @@
 <div class="viewcode-block" id="Boonify.undo">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.undo">[docs]</a>
     <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Undo operation.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restores the previous state from the history while preventing disruptive updates.</span>
+
+<span class="sd">        This method decrements the history index and restores the previous state of the</span>
+<span class="sd">        `boon` attribute using the corresponding entry in the `history`. It ensures</span>
+<span class="sd">        that no unwanted side effects occur during the update process. After restoring</span>
+<span class="sd">        the state, it refreshes the current state and reinitializes necessary design</span>
+<span class="sd">        parameters.</span>
+
+<span class="sd">        :raises IndexError: Raised if the history operation fails due to an invalid</span>
+<span class="sd">            index or empty history.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">hindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">HSIZE</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Prevent disruptive updates by disabling callback.</span>
@@ -523,7 +675,11 @@
 <div class="viewcode-block" id="Boonify.redo">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.redo">[docs]</a>
     <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Redo operation.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Redo the last undone operation by navigating through the history list and updating</span>
+<span class="sd">        the current state. This method ensures that callback functions are temporarily</span>
+<span class="sd">        disabled during the operation to avoid disruptive updates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">hindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">HSIZE</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Prevent disruptive updates by disabling callback.</span>
@@ -536,9 +692,22 @@
 <div class="viewcode-block" id="Boonify.add_history">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.add_history">[docs]</a>
     <span class="k">def</span> <span class="nf">add_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add current BooN to the history.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the current BooN to the history if it differs from the last saved state. This method ensures</span>
+<span class="sd">        that changes to the BooN descriptor are tracked and recorded appropriately in the history buffer.</span>
+<span class="sd">        It also manages internal state flags to enable or disable disruptive behaviors such as callbacks</span>
+<span class="sd">        when updating history. The history index is circularly updated to maintain a fixed-size</span>
+<span class="sd">        history buffer.</span>
+
+<span class="sd">        attribute self.hindex: Index of the current position in the history.</span>
+<span class="sd">        attribute self.boon.desc: Descriptor of the current BooN.</span>
+<span class="sd">        attribute self.disablecallback: Boolean that disables callback updates when `True`.</span>
+<span class="sd">        attribute self.hupdate: Boolean that indicates whether the history has been updated.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">hindex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]:</span>  <span class="c1"># WARNING: The BooN comparison operates on descriptors only, not on positions.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boon</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">hindex</span><span class="p">]:</span>  <span class="c1"># WARNING: The BooN comparison operates on descriptors only, not on positions or style.</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">disablecallback</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Prevent disruptive updates by disabling callback.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hupdate</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Descriptor is changed.</span>
@@ -562,7 +731,12 @@
 <div class="viewcode-block" id="Boonify.show_history">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.show_history">[docs]</a>
     <span class="k">def</span> <span class="nf">show_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the history. Used to debug the history management.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays the entire history of changes, showing each entry formatted according</span>
+<span class="sd">        to its identifier and rendering logic using a tabulated structure. The current</span>
+<span class="sd">        history index is highlighted, and associated data details are presented using</span>
+<span class="sd">        a plain tabular format. If a history entry lacks data, it displays a placeholder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">view</span> <span class="o">=</span> <span class="p">[([</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hindex</span> <span class="k">else</span> <span class="n">i</span><span class="p">,</span>
                  <span class="n">tabulate</span><span class="p">([(</span><span class="n">var</span><span class="p">,</span> <span class="n">logic</span><span class="o">.</span><span class="n">prettyform</span><span class="p">(</span><span class="n">eq</span><span class="p">,</span> <span class="n">theboon</span><span class="o">.</span><span class="n">style</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">theboon</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">)</span>
                  <span class="k">if</span> <span class="n">theboon</span> <span class="k">else</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">theboon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">)]</span>
@@ -574,7 +748,14 @@
 <div class="viewcode-block" id="Boonify.refresh">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.refresh">[docs]</a>
     <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh the opened widgets.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refreshes all visible components, such as BooN View, Stable States View,</span>
+<span class="sd">        Model View, and Controllability View. Each visible component is reinitialized</span>
+<span class="sd">        or updated via its relevant function. This ensures that all active components</span>
+<span class="sd">        reflect the most current state.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">QView</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">QView</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>  <span class="c1"># Refresh the BooN View if opened.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">QView</span><span class="o">.</span><span class="n">initialize_view</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">QStableStates</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">QStableStates</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>  <span class="c1"># Refresh the stable states View if opened.</span>
@@ -589,7 +770,11 @@
 <div class="viewcode-block" id="Boonify.help">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.help">[docs]</a>
     <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help View&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides functionality to call and display help using an external Help object.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">thehelp</span> <span class="o">=</span> <span class="n">Help</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">thehelp</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
@@ -597,7 +782,11 @@
 <div class="viewcode-block" id="Boonify.view">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.view">[docs]</a>
     <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;BooN View&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes and displays the View object for the class instance.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QView</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QView</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
@@ -605,7 +794,11 @@
 <div class="viewcode-block" id="Boonify.stablestates">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.stablestates">[docs]</a>
     <span class="k">def</span> <span class="nf">stablestates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stable States View&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays stable states.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QStableStates</span> <span class="o">=</span> <span class="n">StableStates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QStableStates</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
@@ -613,7 +806,11 @@
 <div class="viewcode-block" id="Boonify.model">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.model">[docs]</a>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model View&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display the dynamical model if the number of variables does not exceed the defined model boundary</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MODELBOUND</span><span class="p">:</span>
             <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;No Model&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;The number of variables exceeds </span><span class="si">{</span><span class="n">MODELBOUND</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">The model cannot be drawn.&quot;</span><span class="p">)</span>
             <span class="k">return</span>
@@ -625,12 +822,35 @@
 <div class="viewcode-block" id="Boonify.controllability">
 <a class="viewcode-back" href="../index.html#boonify.Boonify.controllability">[docs]</a>
     <span class="k">def</span> <span class="nf">controllability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Controllability View&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines a function that initializes and displays the controllability object</span>
+<span class="sd">        related to the current self-instance.</span>
+
+<span class="sd">        attributes QControllability : Controllability</span>
+<span class="sd">            And instance of the `Controllability` class associated with the current object.</span>
+<span class="sd">            It encapsulates functionality to assess or manage controllability features.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QControllability</span> <span class="o">=</span> <span class="n">Controllability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">QControllability</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="Boonify.display_saved_flag">
+<a class="viewcode-back" href="../index.html#boonify.Boonify.display_saved_flag">[docs]</a>
     <span class="k">def</span> <span class="nf">display_saved_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays a flag in the status bar indicating whether the data has been saved.</span>
+
+<span class="sd">        This method updates the status bar message based on the save state. If the</span>
+<span class="sd">        data is saved, a large empty circle is displayed. If the data is not saved,</span>
+<span class="sd">        a large black circle is displayed.</span>
+
+<span class="sd">        :param val: They save a status flag. If True, the data is saved, and the large</span>
+<span class="sd">                    empty circle is shown. If False, the data is not saved, and the</span>
+<span class="sd">                    large black circle is displayed.</span>
+<span class="sd">        :type val: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">NOTSAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2B24</span><span class="s1">&#39;</span>  <span class="c1"># Large black circle</span>
         <span class="n">SAVED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u25CB</span><span class="s1">&#39;</span>  <span class="c1"># Large empty circle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saved</span> <span class="o">=</span> <span class="n">val</span>
@@ -638,6 +858,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="n">SAVED</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="n">NOTSAVED</span><span class="p">)</span></div>
+</div>
 
 
 
@@ -646,7 +867,21 @@
 <div class="viewcode-block" id="Help">
 <a class="viewcode-back" href="../index.html#boonify.Help">[docs]</a>
 <span class="k">class</span> <span class="nc">Help</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Help Class used for showing help.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines the Help class, a window in the application providing a user interface for</span>
+<span class="sd">    displaying help documentation.</span>
+
+<span class="sd">    This class inherits from QMainWindow and is used to load and display an HTML-based</span>
+<span class="sd">    help file using QWebEngineView. It provides a &#39;Close&#39; button to dismiss the window.</span>
+<span class="sd">    The layout and UI components are loaded from a .ui file.</span>
+
+<span class="sd">    :ivar CloseButton: The button widget used to close the help window.</span>
+<span class="sd">    :type CloseButton: QPushButton</span>
+<span class="sd">    :ivar web: A web engine view widget used to render and display the help HTML content.</span>
+<span class="sd">    :type web: QWebEngineView</span>
+<span class="sd">    :ivar WebContainer: The container widget to hold the QWebEngineView displaying the help content.</span>
+<span class="sd">    :type WebContainer: QWidget</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Help</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -664,7 +899,23 @@
 <div class="viewcode-block" id="View">
 <a class="viewcode-back" href="../index.html#boonify.View">[docs]</a>
 <span class="k">class</span> <span class="nc">View</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;View Class used for showing the BooN formula in a table.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a dialog interface for managing and displaying Boolean formulas</span>
+<span class="sd">    in a tabular format. The interface supports operations like editing, validating,</span>
+<span class="sd">    and converting Boolean formulas, and dynamically updates the view accordingly.</span>
+
+<span class="sd">    This class is designed to be a standalone dialog that integrates with a parent</span>
+<span class="sd">    component, utilizing its logical formulas and variables for display and interaction.</span>
+
+<span class="sd">    :ivar style: Style of the formulas displayed in the view.</span>
+<span class="sd">    :type style: str</span>
+<span class="sd">    :ivar parent: Reference to the parent entity using this view, typically the Boonify</span>
+<span class="sd">        class, which contains the necessary logical formulas and variables.</span>
+<span class="sd">    :type parent: object</span>
+<span class="sd">    :ivar formulas: List of formula input fields linked to variables.</span>
+<span class="sd">        Each field corresponds to a row in the table, allowing live editing of formulas.</span>
+<span class="sd">    :type formulas: list[QLineEdit]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">View</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -687,7 +938,7 @@
         <span class="c1"># STEP: Resize columns of the table to content.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">BooNContent</span><span class="o">.</span><span class="n">setColumnWidth</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
 
-        <span class="c1"># STEP: Fix size of the  formula columns.</span>
+        <span class="c1"># STEP: Fix size of the formula columns.</span>
         <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BooNContent</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span>
         <span class="n">header</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Stretch</span><span class="p">)</span>
         <span class="n">header</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">QHeaderView</span><span class="o">.</span><span class="n">ResizeToContents</span><span class="p">)</span>
@@ -700,7 +951,11 @@
 <div class="viewcode-block" id="View.initialize_view">
 <a class="viewcode-back" href="../index.html#boonify.View.initialize_view">[docs]</a>
     <span class="k">def</span> <span class="nf">initialize_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill the table.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes and populates the view with formula fields and their respective descriptions and</span>
+<span class="sd">        attributes. This method configures a table to display rows of formulas, sets the required</span>
+<span class="sd">        text and style for each formula, and identifies and specifies the type of logical formulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">theboon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">boon</span>
 
         <span class="c1"># STEP: Initialize the formula fields.</span>
@@ -736,14 +991,23 @@
 <div class="viewcode-block" id="View.change_formula">
 <a class="viewcode-back" href="../index.html#boonify.View.change_formula">[docs]</a>
     <span class="k">def</span> <span class="nf">change_formula</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the BooN from a formula change.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the BooN formula based on user input and refresh related components.</span>
+
+<span class="sd">        This method processes the formula input provided through the GUI, verifies its syntax and</span>
+<span class="sd">        the validity of the variables involved, and updates the associated BooN data structure if</span>
+<span class="sd">        the formula passes all checks. It also refreshes related components to reflect the changes.</span>
+<span class="sd">        In case of errors, appropriate error messages are displayed to the user.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BooNContent</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span>  <span class="c1"># get the current modified row</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>  <span class="c1"># get the text of the lineedit formula</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>  <span class="c1"># get the text of the line edit formula</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">formula</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>  <span class="c1"># parse the input</span>
         <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
-            <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;SYNTAX ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;Syntax Error.</span><span class="se">\n</span><span class="s2">The formula is not changed.&quot;</span><span class="p">)</span>
+            <span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;SYNTAX ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;Syntax Error.</span><span class="se">\n</span><span class="s2">The formula is not changed.</span><span class="se">\n</span><span class="s2">TIP: please select the Python output form. &quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>  <span class="c1"># Determine whether a new variable is used.</span>
@@ -767,7 +1031,11 @@
 <div class="viewcode-block" id="View.cb_styling">
 <a class="viewcode-back" href="../index.html#boonify.View.cb_styling">[docs]</a>
     <span class="k">def</span> <span class="nf">cb_styling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Style from combo box selection&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the current styling for the component based on the selected style and refreshes the view.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">STYLE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Style</span><span class="o">.</span><span class="n">currentText</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialize_view</span><span class="p">()</span>  <span class="c1"># Refresh the view.</span></div>
 
@@ -775,7 +1043,12 @@
 <div class="viewcode-block" id="View.convertdnf">
 <a class="viewcode-back" href="../index.html#boonify.View.convertdnf">[docs]</a>
     <span class="k">def</span> <span class="nf">convertdnf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the BooN into DNF.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the current BooNn into Disjunctive Normal Form (DNF)</span>
+<span class="sd">        and refreshes the view accordingly.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">boon</span><span class="o">.</span><span class="n">dnf</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialize_view</span><span class="p">()</span>  <span class="c1"># Refresh the view.</span></div>
 </div>
@@ -785,7 +1058,21 @@
 <div class="viewcode-block" id="StableStates">
 <a class="viewcode-back" href="../index.html#boonify.StableStates">[docs]</a>
 <span class="k">class</span> <span class="nc">StableStates</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle stable states computation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dialog for displaying and managing stable states in a computational model.</span>
+
+<span class="sd">    This class represents a graphical interface for visualizing stable states</span>
+<span class="sd">    of a Boolean network model. It allows users to switch between different</span>
+<span class="sd">    display styles, such as icons or textual representation, for better</span>
+<span class="sd">    interpretation of the stable states.</span>
+
+<span class="sd">    :ivar parent: Reference to the parent widget or application component.</span>
+<span class="sd">    :type parent: QWidget</span>
+<span class="sd">    :ivar style: The display style for representing stable states (e.g., &#39;Icon Boolean&#39;).</span>
+<span class="sd">    :type style: str</span>
+<span class="sd">    :ivar datamodel: The data model used for organizing and displaying stable states.</span>
+<span class="sd">    :type datamodel: QStandardItemModel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">StableStates</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -807,7 +1094,11 @@
 <div class="viewcode-block" id="StableStates.cb_styling">
 <a class="viewcode-back" href="../index.html#boonify.StableStates.cb_styling">[docs]</a>
     <span class="k">def</span> <span class="nf">cb_styling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select style from combo box selection&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the current style setting from the user interface and refreshes the stable states view.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Style</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stablestates</span><span class="p">()</span>  <span class="c1"># Refresh the stable states view.</span></div>
 
@@ -815,7 +1106,17 @@
 <div class="viewcode-block" id="StableStates.stablestates">
 <a class="viewcode-back" href="../index.html#boonify.StableStates.stablestates">[docs]</a>
     <span class="k">def</span> <span class="nf">stablestates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute stable states and arrange the view.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates and sets up a data model to visualize stable states of a system.</span>
+
+<span class="sd">        This method processes the stable states of a parent object&#39;s model and organizes</span>
+<span class="sd">        them into a table-like structure using a Qt `QStandardItemModel`. Each row</span>
+<span class="sd">        represents a variable, and each column corresponds to a stable state. The</span>
+<span class="sd">        presentation style of the data (e.g., icons, boolean values, or integers) is</span>
+<span class="sd">        determined by the specified `style` attribute of the object.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">theboon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">boon</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="n">theboon</span><span class="o">.</span><span class="n">variables</span>
         <span class="n">stablestates</span> <span class="o">=</span> <span class="n">theboon</span><span class="o">.</span><span class="n">stable_states</span>
@@ -859,7 +1160,18 @@
 <div class="viewcode-block" id="Model">
 <a class="viewcode-back" href="../index.html#boonify.Model">[docs]</a>
 <span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle model of dynamics.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Model class for managing and visualizing network dynamics using a GUI interface.</span>
+
+<span class="sd">    :ivar parent: Reference to the parent window or application.</span>
+<span class="sd">    :type parent: Any</span>
+<span class="sd">    :ivar mode: Represents the selected mode of dynamics (asynchronous or synchronous).</span>
+<span class="sd">    :type mode: Enum or equivalent</span>
+<span class="sd">    :ivar layout: Defines the network layout function to be used for visualization.</span>
+<span class="sd">    :type layout: Callable</span>
+<span class="sd">    :ivar canvas: Matplotlib widget for rendering the network visualization.</span>
+<span class="sd">    :type canvas: matplotlib.backends.backend_qt5agg.FigureCanvas</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -889,7 +1201,13 @@
 <div class="viewcode-block" id="Model.rb_mode">
 <a class="viewcode-back" href="../index.html#boonify.Model.rb_mode">[docs]</a>
     <span class="k">def</span> <span class="nf">rb_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mode selection from radio button box.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine and set the mode of operation based on user selection from the interface. This function checks the state</span>
+<span class="sd">        of radio buttons to assign either an asynchronous or synchronous mode. The established mode is then used for</span>
+<span class="sd">        further modeling via a subsequent call to the `modeling` method.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">AsynchronousButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">boon</span><span class="o">.</span><span class="n">asynchronous</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">SynchronousButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
@@ -902,7 +1220,15 @@
 <div class="viewcode-block" id="Model.cb_network_layout">
 <a class="viewcode-back" href="../index.html#boonify.Model.cb_network_layout">[docs]</a>
     <span class="k">def</span> <span class="nf">cb_network_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the layout of the network model from the combo box.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adjusts the network layout based on the selected option and applies the corresponding</span>
+<span class="sd">        layout algorithm to the network. The method retrieves the currently selected network</span>
+<span class="sd">        layout from a user interface component, maps it to an appropriate algorithm, and</span>
+<span class="sd">        configures the network&#39;s visualization layout accordingly. It also invokes an</span>
+<span class="sd">        update via the `modeling` method to apply and reflect the changes.</span>
+
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NetworkLayout</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="k">match</span> <span class="n">layout</span><span class="p">:</span>
             <span class="k">case</span> <span class="s2">&quot;Hypercube&quot;</span><span class="p">:</span>
@@ -923,7 +1249,9 @@
 <div class="viewcode-block" id="Model.modeling">
 <a class="viewcode-back" href="../index.html#boonify.Model.modeling">[docs]</a>
     <span class="k">def</span> <span class="nf">modeling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the model of dynamics.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the model of dynamics.</span>
+
+<span class="sd">        return: None&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 
@@ -941,7 +1269,22 @@
 <div class="viewcode-block" id="Controllability">
 <a class="viewcode-back" href="../index.html#boonify.Controllability">[docs]</a>
 <span class="k">class</span> <span class="nc">Controllability</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Controllability class&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Controllability class for managing user interactions with the controllability</span>
+<span class="sd">    widget of the GUI application.</span>
+
+<span class="sd">    This class is responsible for initializing the controllability user interface,</span>
+<span class="sd">    handling the interactions between destiny and observers tables, computing</span>
+<span class="sd">    control actions based on user selections, and managing the graphical</span>
+<span class="sd">    representation of these actions.</span>
+
+<span class="sd">    :ivar parent: Parent window instance for the controllability widget.</span>
+<span class="sd">    :type parent: QWidget</span>
+<span class="sd">    :ivar actions: Stores the calculated control actions, if any.</span>
+<span class="sd">    :type actions: list or None</span>
+<span class="sd">    :ivar row: Index of the currently selected solution in control actions, if applicable.</span>
+<span class="sd">    :type row: int or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Controllability</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -956,7 +1299,14 @@
 <div class="viewcode-block" id="Controllability.initialize_controllability">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.initialize_controllability">[docs]</a>
     <span class="k">def</span> <span class="nf">initialize_controllability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the controllability widget.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the controllability setup for the application.</span>
+
+<span class="sd">        :param self: The class instance on which this method is invoked.</span>
+<span class="sd">        :type self: Any</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">theboon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">boon</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="n">theboon</span><span class="o">.</span><span class="n">variables</span>
         <span class="n">nbrow</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">theboon</span><span class="o">.</span><span class="n">desc</span><span class="p">)</span>
@@ -1031,7 +1381,15 @@
 <div class="viewcode-block" id="Controllability.destiny_to_observers">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.destiny_to_observers">[docs]</a>
     <span class="k">def</span> <span class="nf">destiny_to_observers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify the observer w.r.t. the destiny change.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the check state of an item in the `Observers` table based on the</span>
+<span class="sd">        provided label and the currently selected row in the `Destiny` table.</span>
+
+<span class="sd">        :param label: A string indicating the check state condition. If the label</span>
+<span class="sd">                      is `&quot;None&quot;`, the item is unchecked; otherwise, it is checked.</span>
+<span class="sd">        :type label: str</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Destiny</span><span class="o">.</span><span class="n">currentRow</span><span class="p">()</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Observers</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -1044,7 +1402,9 @@
 <div class="viewcode-block" id="Controllability.observers_to_destiny">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.observers_to_destiny">[docs]</a>
     <span class="k">def</span> <span class="nf">observers_to_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chkitem</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify the destiny w.r.t. the observer change&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modify the destiny w.r.t. the observer change</span>
+
+<span class="sd">        return: None&quot;&quot;&quot;</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">chkitem</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">chkitem</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">:</span>
             <span class="n">combobox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Destiny</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -1054,7 +1414,16 @@
 <div class="viewcode-block" id="Controllability.controllability">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.controllability">[docs]</a>
     <span class="k">def</span> <span class="nf">controllability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the control actions based on the destiny and the observers.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The metho calculates control actions required to achieve or</span>
+<span class="sd">        avoid a defined goal (or state) in a system represented by the BooN model. The method determines</span>
+<span class="sd">        the applicable control actions by analyzing a user-specified query defining the desired</span>
+<span class="sd">        or undesired state, along with the possible variables that can be controlled. This process</span>
+<span class="sd">        involves interpreting various parameters such as observer states, query types, and logical</span>
+<span class="sd">        modalities.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">theboon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">boon</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">theboon</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
@@ -1106,7 +1475,7 @@
         <span class="n">destiny</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="n">possibility</span><span class="p">,</span> <span class="n">necessity</span><span class="p">)</span>
 
         <span class="c1"># STEP: Destify the controlled BooN and transform the solutions into control actions (var, Boolean Value)</span>
-        <span class="n">core</span> <span class="o">=</span> <span class="n">BooN</span><span class="o">.</span><span class="n">destify</span><span class="p">(</span><span class="n">destiny</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Trace</span><span class="p">)</span>
+        <span class="n">core</span> <span class="o">=</span> <span class="n">boonctrl</span><span class="o">.</span><span class="n">destify</span><span class="p">(</span><span class="n">destiny</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Trace</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">LPSOLVER</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">boon</span><span class="o">.</span><span class="n">core2actions</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
 
         <span class="c1"># STEP: Define the tree model to show the resulting actions.</span>
@@ -1144,14 +1513,19 @@
 <div class="viewcode-block" id="Controllability.select_action">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.select_action">[docs]</a>
     <span class="k">def</span> <span class="nf">select_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keep the selection solution&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keep the selection solution</span>
+
+<span class="sd">        return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">arg</span><span class="o">.</span><span class="n">row</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Controllability.actupon">
 <a class="viewcode-back" href="../index.html#boonify.Controllability.actupon">[docs]</a>
     <span class="k">def</span> <span class="nf">actupon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the selection actions on the BooN.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the selection actions on the BooN.</span>
+
+<span class="sd">        return: None&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">]:</span>
                 <span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">=</span> <span class="n">action</span>
@@ -1167,10 +1541,36 @@
 <div class="viewcode-block" id="Threader">
 <a class="viewcode-back" href="../index.html#boonify.Threader">[docs]</a>
 <span class="k">class</span> <span class="nc">Threader</span><span class="p">(</span><span class="n">QObject</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class executing a thread to run an application.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Threader class for managing application execution within a separate thread.</span>
+
+<span class="sd">    This class is designed to separate the execution of a provided application</span>
+<span class="sd">    function into its own thread using PyQt&#39;s threading mechanism. The class</span>
+<span class="sd">    provides functionality to start, switch, and terminate the application</span>
+<span class="sd">    running within the thread effectively.</span>
+
+<span class="sd">    :ivar finished: Signal emitted when the thread&#39;s application completes execution.</span>
+<span class="sd">    :ivar app: The callable application to be executed within the thread.</span>
+<span class="sd">    :type app: Callable</span>
+<span class="sd">    :ivar thread: The QThread instance used to run the application in a separate thread.</span>
+<span class="sd">    :type thread: QThread</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">finished</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Represents a custom asynchronous functionality encapsulated in a QThread.</span>
+<span class="sd">        This class initializes with a callable app function, assigns it to an internal</span>
+<span class="sd">        property, and starts a new thread for its execution.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            app (Callable[[], Any]): A callable function assigned to the class instance.</span>
+<span class="sd">            thread (QThread): The thread in which the object operates.</span>
+
+<span class="sd">        :param app: A callable function that serves as the application&#39;s main function.</span>
+<span class="sd">            Defaults to a no-op lambda function.</span>
+<span class="sd">        :type app: Callable[[], Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
 
@@ -1182,7 +1582,11 @@
 <div class="viewcode-block" id="Threader.run">
 <a class="viewcode-back" href="../index.html#boonify.Threader.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;run the application&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the run function to execute the primary application logic and signal</span>
+<span class="sd">        completion. The function encompasses two main operations: invoking the</span>
+<span class="sd">        application logic and signaling the end of the process.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">()</span>  <span class="c1"># run the application</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>  <span class="c1"># Emit the end signal</span></div>
 
@@ -1190,14 +1594,27 @@
 <div class="viewcode-block" id="Threader.apply">
 <a class="viewcode-back" href="../index.html#boonify.Threader.apply">[docs]</a>
     <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fix the application running in the thread.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles the application of a given app instance to a particular object by</span>
+<span class="sd">        assigning the provided app to the instance attribute.</span>
+
+<span class="sd">        :param app: The application instance to be applied.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span></div>
 
 
 <div class="viewcode-block" id="Threader.quit">
 <a class="viewcode-back" href="../index.html#boonify.Threader.quit">[docs]</a>
     <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;terminate the thread&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attempts to terminate the thread execution in an orderly manner. This method</span>
+<span class="sd">        leverages the `quit` function of the thread instance to signal and ensure</span>
+<span class="sd">        termination of its event loop.</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
 </div>
 
