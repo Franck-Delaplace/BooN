@@ -34,8 +34,8 @@ the controllability analysis. For exploring BooN interactively run <code>boonify
 <code>example.ipynb</code> is a Jupyter code illustrating the major functionalities of BooN. It does not include the controllability which is detailed in the real case study. 
 
 <h3> Real case study </h3>
-A real case study on breast cancer is available in the Wiki at  section
-Breast cancer case study [LINK](https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer-cause-&-drug-target-inference)
+A real case study on breast cancer is available in the Wiki at  Section
+Breast cancer case study (https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer-cause-&-drug-target-inference).
 This case study is a step-by-step description of the process for investigating the cause of cancer and the drug target discovery using the graphical user interface.
 
 <H3>BooN installation</H3>
