@@ -18,7 +18,7 @@ The project includes:</p>
   to reach the expected goal at stable states based on the possibility and necessity query;</li>
  <li>also, different basic functionalities are included as: update formula and importing/exporting to a text file the Boolean network. </li>
  </ul>
-<h3> BooN functionalities </h3>
+<h3> BooN structure </h3>
 <p>The BooN project comprises 3 modules:</p>
 <ul>
 <li> <code>boon</code> module is related to the manipulation of Boolean network named BooN, which is an object.</li>
@@ -31,10 +31,11 @@ the controllability analysis. For exploring BooN interactively run <code>boonify
 </ul>
 
 <h3> Introductory example </h3>
-<code>example.py</code> illustrates the major functionalities of BooN. It does not include the controllability which is detailed in the real case study. 
+<code>example.ipynb</code> is a Jupyter code illustrating the major functionalities of BooN. It does not include the controllability which is detailed in the real case study. 
 
 <h3> Real case study </h3>
-A real case study on breast cancer is available in the Wiki  <a href="https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer"> Breast cancer case study </a>. 
+A real case study on breast cancer is available in the Wiki at  Section
+Breast cancer case study (https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer-cause-&-drug-target-inference).
 This case study is a step-by-step description of the process for investigating the cause of cancer and the drug target discovery using the graphical user interface.
 
 <H3>BooN installation</H3>
