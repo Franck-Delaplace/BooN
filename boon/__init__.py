@@ -1125,7 +1125,7 @@ class BooN:
         stability = self.stability_constraints()  # stable stables specification
         necessity = logic.supercnf(Implies(stability, query), trace)  # Necessary conversion into CNF of the query.
         necessary = And(*map(lambda clause:
-                             Or(*[lit for lit in logic.clause2literals(clause) if firstsymbol(lit).name.startswith(CONTROL)]),
+                             Or(*[lit for lit in logic.clause2literals(clause) if isctrl(lit)]),
                              logic.cnf2clauses(necessity)))  # Keep the control variables only.
         return necessary
 
