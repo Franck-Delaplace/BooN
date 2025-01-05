@@ -36,7 +36,7 @@ the controllability analysis. For exploring BooN interactively run <code>boonify
 <h3> Real case study </h3>
 A real case study on breast cancer is available in the Wiki at  Section
 Breast cancer case study (https://github.com/Franck-Delaplace/BooN/wiki/Case-Study-:-Breast-Cancer-cause-&-drug-target-inference).
-This case study is a step-by-step description of the process for investigating the cause of cancer and the drug target discovery using the graphical user interface.
+This case study describes step-by-step the process for elucidating the cause of cancer and discovering drug targets  using the graphical user interface.
 
 <H3>BooN installation</H3>
 Go in the directory of BooN and type: 
