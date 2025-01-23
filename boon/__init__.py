@@ -1031,9 +1031,12 @@ class BooN:
         if trace: print("\r BooN equilibria >> Equilibria computation    ", end="")
         equilibria = filter(lambda node: quotient_model.out_degree(node) == 0, quotient_model.nodes)
 
+        # sort the equilibria to have the same order on two closed networks.
+        equilibria=sorted(list(equilibria),key=lambda attractor: (len(attractor), max(attractor)))
+
         # Encode the equilibria by transforming the integers into Boolean states.
         if trace: print("\r BooN equilibria >> Encoding                  ", end="")
-        eqs_encoded = [[int2state(state, self.variables) for state in attractor] for attractor in equilibria]  # Encode the equilibria.
+        eqs_encoded = [[int2state(state, self.variables) for state in attractor] for attractor in equilibria] # Encode the equilibria.
 
         if trace: print("\r BooN equilibria >> Completed                 ", end="")
         return eqs_encoded
