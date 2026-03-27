@@ -51,7 +51,7 @@ If you wish to cite this work, please use the following citation:<br>
 <br/>
 <i>Franck Delaplace</i>
 <br>
-Bioinformatics Advances, Volume 5, Issue 1, 2025, vbaf082,
+Bioinformatics Advances, Volume 5, Issue 1, 2025
 Published: 24 June 2025
 <br>
 DOI:  <a href ="https://doi.org/10.1093/bioadv/vbaf082">0.1093/bioadv/vbaf082</a>, 
