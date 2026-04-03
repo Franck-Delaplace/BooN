@@ -47,12 +47,12 @@ Go in the directory of BooN and type:
 
 <H3> To cite this work</H3>
 If you wish to cite this work, please use the following citation:<br>
-<a href="https://pubmed.ncbi.nlm.nih.gov/30582550/"> Causal Reasoning on Boolean Control Networks Based on Abduction: Theory and Application to Cancer Drug Discovery</a>
+<a href="https://academic.oup.com/bioinformaticsadvances/article/5/1/vbaf082/8172514">BooN: Boolean network analysis software</a>
 <br/>
-<i> Celia Biane, Franck Delaplace</i>
+<i>Franck Delaplace</i>
 <br>
-IEEE/ACM Trans Computer Biology & Bioinformatics
-. 2019 Sep-Oct;16(5):1574-1585. 
+Bioinformatics Advances, Volume 5, Issue 1, 2025
+Published: 24 June 2025
 <br>
-PMID: 30582550 - DOI: 10.1109/TCBB.2018.2889102
+DOI:  <a href ="https://doi.org/10.1093/bioadv/vbaf082">0.1093/bioadv/vbaf082</a>, 
 
