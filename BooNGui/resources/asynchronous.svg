@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+        fill="#000000"
+        height="1000"
+        width="1000"
+        version="1.1"
+        viewBox="0 0 282.69125 282.69125"
+        enable-background="new 0 0 226.153 226.153"
+        id="svg1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg">
+    <defs
+            id="defs1"/>
+    <g
+            id="g10">
+        <path
+                style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:42.4037;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                d="m 68.722447,75.723385 49.857843,53.782005 v 0"
+                id="path9"/>
+        <path
+                style="fill:#010101;fill-opacity:1;stroke:#000000;stroke-width:0.282691;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                id="path10"
+                d="M 46.616635,23.931536 24.81714,47.4861 15.318036,16.829902 Z"
+                transform="matrix(4.0100442,0.11703652,-0.10638941,3.4326568,-57.616549,-40.125594)"/>
+    </g>
+    <ellipse
+            style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+            id="path13"
+            cx="187.46368"
+            cy="187.96227"
+            rx="92.236122"
+            ry="90.241829"/>
+    <path
+            d="M 227.51087,249.08321 H 136.4092 l 1.76682,-7.9507 q 3.42321,-0.22085 10.82177,-1.10426 7.39856,-0.88341 10.26965,-1.76682 3.20236,-0.99383 5.85259,-3.75449 2.76066,-2.76066 3.75449,-7.28814 l 16.45352,-70.89366 h -27.93785 l 2.31895,-10.04879 h 3.09194 q 9.71751,0 17.6682,-2.0981 7.95069,-2.0981 13.80328,-5.07961 5.96302,-2.98151 10.38007,-6.40472 4.41706,-3.53364 6.51515,-5.85259 h 19.43503 q -2.31895,8.28197 -4.63791,17.00564 -2.31895,8.72368 -4.19619,17.00565 l -14.6867,63.16382 q -0.33128,1.32512 -0.66256,3.09194 -0.22085,1.76682 -0.22085,2.87108 0,2.65023 1.10426,4.41705 1.21469,1.76682 3.31279,2.98151 2.42938,1.32512 8.8341,2.42938 6.40473,1.10426 9.82794,1.32511 z"
+            id="text13"
+            style="font-style:italic;font-weight:bold;font-size:226.153px;font-family:Georgia;-inkscape-font-specification:'Georgia, Bold Italic';fill:#ffcc00;stroke:#000000;stroke-width:0;stroke-linecap:square;stroke-opacity:0"
+            aria-label="1"/>
+</svg>

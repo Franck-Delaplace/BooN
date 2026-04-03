@@ -1,0 +1,93 @@
+\begin{thebibliography}{}
+
+\bibitem[Bene{\v s} et~al., 2022]{Benes2022}
+Bene{\v s}, N., Brim, L., Huvar, O., Pastva, S., {\v S}afr{\'a}nek, D., and {\v
+  S}mij{\'a}kov{\'a}, E. (2022).
+\newblock {{AEON}}.py: {{Python}} library for attractor analysis in
+  asynchronous {{Boolean}} networks.
+\newblock {\em Bioinformatics}, 38(21):4978--4980.
+
+\bibitem[Biane and Delaplace, 2019]{biane2019}
+Biane, C. and Delaplace, F. (2019).
+\newblock Causal {{Reasoning}} on {{Boolean Control Networks Based}} on
+  {{Abduction}}: {{Theory}} and {{Application}} to {{Cancer Drug Discovery}}.
+\newblock {\em IEEE/ACM Transactions on Computational Biology and
+  Bioinformatics}, 16(5):1574--1585.
+
+\bibitem[Chevalier et~al., 2024]{chevalier2024}
+Chevalier, S., Boyenval, D., Maga{\~{n}}a-L{\'o}pez, G., Roncalli, T., Vaginay,
+  A., and Paulev{\'e}, L. (2024).
+\newblock Bonesis: a python-based declarative environment
+  for the verification, reprogramming, and synthesis of most permissive
+  boolean networks.
+\newblock In Gori, R., Milazzo, P., and Tribastone, M., editors, {\em
+  Computational Methods in Systems Biology}, pages 71--79, Cham. Springer
+  Nature Switzerland.
+
+\bibitem[Glass and Kauffman, 1973]{glass1973}
+Glass, L. and Kauffman, S.~A. (1973).
+\newblock The logical analysis of continuous, non-linear biochemical control
+  networks.
+\newblock {\em Journal of Theoretical Biology}, 39(1):103--129.
+
+\bibitem[Kauffman, 1969]{kauffman1969}
+Kauffman, S. (1969).
+\newblock Homeostasis and differentiation in random genetic control networks.
+\newblock {\em Nature}, 224:177--178.
+
+\bibitem[Klarner et~al., 2017]{klarner2017}
+Klarner, H., Streck, A., and Siebert, H. (2017).
+\newblock {{PyBoolNet}}: A python package for the generation, analysis and
+  visualization of boolean networks.
+\newblock {\em Bioinformatics}, 33(5):770--772.
+
+\bibitem[M{\"u}ssel et~al., 2010]{mussel2010}
+M{\"u}ssel, C., Hopfensitz, M., and Kestler, H.~A. (2010).
+\newblock {{BoolNet}}---an {{R}} package for generation, reconstruction and
+  analysis of {{Boolean}} networks.
+\newblock {\em Bioinformatics}, 26(10):1378--1380.
+
+\bibitem[Naldi et~al., 2009]{naldi2009}
+Naldi, A., Berenguier, D., Faur{\'e}, A., Lopez, F., Thieffry, D., and
+  Chaouiya, C. (2009).
+\newblock Logical modelling of regulatory networks with {{GINsim}} 2.3.
+\newblock {\em Bio Systems}, 97(2):134--139.
+
+\bibitem[Naldi et~al., 2018]{naldi2018}
+Naldi, A., Hernandez, C., Levy, N., Stoll, G., Monteiro, P.~T., Chaouiya, C.,
+  Helikar, T., Zinovyev, A., Calzone, L., {Cohen-Boulakia}, S., Thieffry, D.,
+  and Paulev{\'e}, L. (2018).
+\newblock The {{CoLoMoTo Interactive Notebook}}: {{Accessible}} and
+  {{Reproducible Computational Analyses}} for {{Qualitative Biological
+  Networks}}.
+\newblock {\em Frontiers in Physiology}, 9.
+
+\bibitem[Oles and Kukushkin, 2020]{oles2020}
+Oles, V. and Kukushkin, A. (2020).
+\newblock {{BoolSi}}: {{A Tool}} for {{Distributed Simulations}} and
+  {{Analysis}} of {{Boolean Networks}}.
+\newblock {\em Journal of Open Research Software}, 8(1).
+
+\bibitem[Pardo et~al., 2021]{pardo2021}
+Pardo, J., Ivanov, S., and Delaplace, F. (2021).
+\newblock Sequential reprogramming of biological network fate.
+\newblock {\em Theoretical Computer Science}, 872:97--116.
+
+\bibitem[Pizzuti, 1996]{pizzuti1996}
+Pizzuti, C. (1996).
+\newblock Computing prime implicants by integer programming.
+\newblock In {\em Proceedings of the 8th International Conference on Tools with
+  Artificial Intelligence}, ICTAI '96, page 332, USA. IEEE Computer Society.
+
+\bibitem[Su and Pang, 2021]{su2021}
+Su, C. and Pang, J. (2021).
+\newblock {{CABEAN}}: A software for the control of asynchronous {{Boolean}}
+  networks.
+\newblock {\em Bioinformatics}, 37(6):879--881.
+
+\bibitem[Thomas, 1973]{thomas1973}
+Thomas, R. (1973).
+\newblock Boolean formalization of genetic control circuits.
+\newblock {\em Journal of Theoretical Biology}, 42(3):563--585.
+
+\end{thebibliography}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+        class="svg-icon"
+        style="overflow:hidden;fill:currentColor"
+        viewBox="0 0 128 128"
+        version="1.1"
+        id="svg1"
+        xml:space="preserve"
+        width="128"
+        height="128"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1" />
+    <circle
+            style="overflow:hidden;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.173078;stroke-opacity:0"
+            id="path3"
+            cx="-64"
+            cy="64"
+            r="61.035942"
+            transform="scale(-1,1)"/>
+    <path
+            d="m 29.403084,96.578595 a 4.2091407,3.8316447 0 0 0 4.209142,-2.912051 37.503442,34.139953 0 0 1 32.831297,-25.633702 v 4.291442 a 7.4922703,6.8203274 0 0 0 4.587962,6.283897 8.4182812,7.6632892 0 0 0 9.049654,-1.18781 L 101.37939,60.522819 a 7.4080875,6.7436944 0 0 0 0,-10.268807 L 80.081139,33.318143 a 8.4182812,7.6632892 0 0 0 -9.175928,-1.149493 7.4922703,6.8203274 0 0 0 -4.587962,6.283896 v 4.483024 a 45.837541,41.72661 0 0 0 -42.301878,41.190179 43.312056,39.427623 0 0 0 1.30484,9.540795 4.2091407,3.8316447 0 0 0 4.209137,2.912051 z"
+            id="path1"
+            style="overflow:hidden;fill:#ffffff;fill-opacity:1;stroke-width:0.094124"/></svg>

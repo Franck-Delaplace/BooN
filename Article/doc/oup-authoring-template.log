@@ -1,0 +1,1296 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.4.4)  12 SEP 2024 14:20
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./oup-authoring-template.tex
+(oup-authoring-template.tex
+LaTeX2e <2022-11-01> patch level 1
+L3 programming layer <2022-12-17> (oup-authoring-template.cls
+Document Class: oup-authoring-template 2022/03/18 1.1
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/crop\crop.st
+y
+Package: crop 2017/11/19 1.10 crop marks (mf)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iflu
+atex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifte
+x.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+))
+\CROP@index=\count185
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\col
+or.sty
+Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg
+\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 149.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def
+\pdftex.def
+File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mat
+hcolor.ltx))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\gra
+phics.sty
+Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\tri
+g.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg
+\graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 107.
+)
+\CROP@offset=\count186
+Package crop Info: Local config file crop.cfg used on input line 622.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/xelatex/xetexconfi
+g\crop.cfg))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\gra
+phicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\key
+val.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+\Gin@req@height=\dimen140
+\Gin@req@width=\dimen141
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/caption\capt
+ion.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/caption\capt
+ion3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen142
+\captionmargin=\dimen143
+\caption@leftmargin=\dimen144
+\caption@rightmargin=\dimen145
+\caption@width=\dimen146
+\caption@indent=\dimen147
+\caption@parindent=\dimen148
+\caption@hangindent=\dimen149
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+Package caption Info: Document class w/o caption stuff detected.
+)
+\c@caption@flags=\count187
+\c@continuedfloat=\count188
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsm
+ath.sty
+Package: amsmath 2022/04/08 v2.17n AMS math features
+\@mathmargin=\skip50
+
+For additional information on amsmath, use the `?' option.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amst
+ext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsg
+en.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks17
+\ex@=\dimen150
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsb
+sy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen151
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amso
+pn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count189
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count190
+\leftroot@=\count191
+LaTeX Info: Redefining \overline on input line 399.
+LaTeX Info: Redefining \colon on input line 410.
+\classnum@=\count192
+\DOTSCASE@=\count193
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box51
+\strutbox@=\box52
+LaTeX Info: Redefining \big on input line 722.
+LaTeX Info: Redefining \Big on input line 723.
+LaTeX Info: Redefining \bigg on input line 724.
+LaTeX Info: Redefining \Bigg on input line 725.
+\big@size=\dimen152
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count194
+LaTeX Info: Redefining \bmod on input line 905.
+LaTeX Info: Redefining \pmod on input line 910.
+LaTeX Info: Redefining \smash on input line 940.
+LaTeX Info: Redefining \relbar on input line 970.
+LaTeX Info: Redefining \Relbar on input line 971.
+\c@MaxMatrixCols=\count195
+\dotsspace@=\muskip16
+\c@parentequation=\count196
+\dspbrk@lvl=\count197
+\tag@help=\toks18
+\row@=\count198
+\column@=\count199
+\maxfields@=\count266
+\andhelp@=\toks19
+\eqnshift@=\dimen153
+\alignsep@=\dimen154
+\tagshift@=\dimen155
+\tagwidth@=\dimen156
+\totwidth@=\dimen157
+\lineht@=\dimen158
+\@envbody=\toks20
+\multlinegap=\skip51
+\multlinetaggap=\skip52
+\mathdisplay@stack=\toks21
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.
+sty
+Package: array 2022/03/10 v2.5f Tabular extension package (FMi)
+\col@sep=\dimen159
+\ar@mcellbox=\box53
+\extrarowheight=\dimen160
+\NC@list=\toks22
+\extratabsurround=\skip53
+\backup@length=\skip54
+\ar@cellbox=\box54
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolo
+r.sty
+Package: xcolor 2022/06/12 v2.14 LaTeX color extensions (UK)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg
+\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 227.
+LaTeX Info: Redefining \color on input line 711.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mat
+hcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1353.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1357.
+Package xcolor Info: Model `RGB' extended on input line 1369.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1371.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1374.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1375.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1376.
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ams
+symb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ams
+fonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/sttools\flus
+hend.sty
+Package: flushend 2021/10/04 v4.0 Balancing columns in twocolumn mode
+\flushend@@lastskip@a=\skip55
+\flushend@@lastskip@b=\skip56
+\flushend@@lastnode=\count267
+\var@@loop@iter=\count268
+\var@@temp@spread=\dimen161
+\var@@temp@a=\dimen162
+\var@@temp@loop=\dimen163
+\flushend@@page@rule=\dimen164
+\flushend@@varbox@lastpage=\box55
+\flushend@@varbox@a=\box56
+\flushend@@varbox@c=\box57
+\flushend@@tempbox@a=\box58
+\flushend@@tempbox@c=\box59
+\flushend@@floatbox=\box60
+\@viper=\box61
+\hold@viper=\box62
+\atColsBreak=\toks23
+\atColsEnd=\toks24
+\oldbreak@skip=\dimen165
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/sttools\stfl
+oats.sty
+Package: stfloats 2017/03/27 v3.3 Improve float mechanism and baselineskip sett
+ings
+\@dblbotnum=\count269
+\c@dblbotnumber=\count270
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/graphics\rot
+ating.sty
+Package: rotating 2016/08/11 v2.16d rotated objects in LaTeX
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.
+sty
+Package: ifthen 2022/04/13 v1.1d Standard LaTeX ifthen package (DPC)
+)
+\c@r@tfl@t=\count271
+\rotFPtop=\skip57
+\rotFPbot=\skip58
+\rot@float@box=\box63
+\rot@mess@toks=\toks25
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/changepage\c
+hngpage.sty
+Package: chngpage 2009/10/20 v1.2b change page layout
+\c@cp@cnt=\count272
+\c@cp@tempcnt=\count273
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/totcount\tot
+count.sty
+Package: totcount 2011/01/25 v1.2 package for gettingthe total value of LaTeX c
+ounters
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/base\fix-cm.
+sty
+Package: fix-cm 2020/11/24 v1.1t fixes to LaTeX
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1enc.
+def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
+))
+\croppaperwidth=\dimen166
+\croppaperheight=\dimen167
+\Croppdfwidth=\dimen168
+\Croppdfheight=\dimen169
+\Trimpdfwidth=\dimen170
+\Trimpdfheight=\dimen171
+\CP@toff@wd=\dimen172
+\CP@toff@ht=\dimen173
+\CP@boff@wd=\dimen174
+\CP@boff@ht=\dimen175
+\CP@crop@wd=\dimen176
+\CP@crop@ht=\dimen177
+\CP@bled@wd=\dimen178
+\CP@bled@ht=\dimen179
+\CP@trim@wd=\dimen180
+\CP@trim@ht=\dimen181
+\c@section=\count274
+\c@subsection=\count275
+\c@subsubsection=\count276
+\c@paragraph=\count277
+\c@subparagraph=\count278
+\c@figure=\count279
+\c@table=\count280
+\dropfromtop=\skip59
+\c@myauthcount=\count281
+\c@myauthcount@totc=\count282
+\c@myhistorycount=\count283
+\c@myhistorycount@totc=\count284
+\c@myaddcount=\count285
+\c@myaddcount@totc=\count286
+\extraspace=\skip60
+\aboveskipchk=\skip61
+\titlepagewd=\skip62
+\rotdimen=\dimen182
+\tempdime=\dimen183
+\temptbox=\box64
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbi
+b.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip63
+\bibsep=\skip64
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count287
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/wrapfig\wrap
+fig.sty
+\wrapoverhang=\dimen184
+\WF@size=\dimen185
+\c@WF@wrappedlines=\count288
+\WF@box=\box65
+\WF@everypar=\toks26
+Package: wrapfig 2003/01/31  v 3.6
+)
+\wraplines=\count289
+\@authorfigbox=\box66
+\@authorfigboxdim=\skip65
+\biofigadjskip=\skip66
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsth
+m.sty
+Package: amsthm 2020/05/29 v2.20.6
+\thm@style=\toks27
+\thm@bodyfont=\toks28
+\thm@headfont=\toks29
+\thm@notefont=\toks30
+\thm@headpunct=\toks31
+\thm@preskip=\skip67
+\thm@postskip=\skip68
+\thm@headsep=\skip69
+\dth@everypar=\toks32
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/subfloat\sub
+float.sty
+Package: subfloat 2003/08/21 version 2.14
+ Package `subfloat', Version 2.14 of 2003/08/21.
+\c@subfloatfiguremax=\count290
+\c@subfloattablemax=\count291
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/anyfontsize\
+anyfontsize.sty
+Package: anyfontsize 2007/11/22 anyfontsize.sty by pts
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/multirow\mul
+tirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip70
+\multirow@cntb=\count292
+\multirow@dima=\skip71
+\bigstrutjot=\dimen186
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/mdwtools\foo
+tnote.sty
+Package: footnote 1997/01/28 1.13 Save footnotes around boxes
+\fn@notes=\box67
+\fn@width=\dimen187
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/jknappen\mat
+hrsfs.sty
+Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
+\symrsfs=\mathgroup6
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\a
+lgorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/float\float.
+sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count293
+\float@exts=\toks33
+\float@box=\box68
+\@float@everytoks=\toks34
+\@floatcapt=\box69
+)
+\@float@every@algorithm=\toks35
+\c@algorithm=\count294
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/algorithmicx
+\algorithmicx.sty
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count295
+\c@ALG@rem=\count296
+\c@ALG@nested=\count297
+\ALG@tlm=\skip72
+\ALG@thistlm=\skip73
+\c@ALG@Lnr=\count298
+\c@ALG@blocknr=\count299
+\c@ALG@storecount=\count300
+\c@ALG@tmpcounter=\count301
+\ALG@tmplength=\skip74
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/algorithmicx
+\algpseudocode.sty
+Package: algpseudocode 
+
+Document Style - pseudocode environments for use with the `algorithmicx' style
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/listings\lis
+tings.sty
+\lst@mode=\count302
+\lst@gtempboxa=\box70
+\lst@token=\toks36
+\lst@length=\count303
+\lst@currlwidth=\dimen188
+\lst@column=\count304
+\lst@pos=\count305
+\lst@lostspace=\dimen189
+\lst@width=\dimen190
+\lst@newlines=\count306
+\lst@lineno=\count307
+\lst@maxwidth=\dimen191
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/listings\lst
+misc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+\c@lstnumber=\count308
+\lst@skipnumbers=\count309
+\lst@framebox=\box71
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/listings\lis
+tings.cfg
+File: listings.cfg 2020/03/24 1.8d listings configuration
+))
+Package: listings 2020/03/24 1.8d (Carsten Heinz)
+\c@@pps=\count310
+\c@@ppsavesec=\count311
+\c@@ppsaveapp=\count312
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyp
+erref.sty
+Package: hyperref 2022-11-13 v7.00u Hypertext links for LaTeX
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\lt
+xcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds
+\pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\
+infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kv
+setkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/kvdefineke
+ys\kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\
+pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hyco
+lor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\
+letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxh
+ook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nam
+eref.sty
+Package: nameref 2022-05-17 v2.50 Cross-referencing by name of section
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/refcount\ref
+count.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/gettitlest
+ring\gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kv
+options.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count313
+)
+\@linkdim=\dimen192
+\Hy@linkcounter=\count314
+\Hy@pagecounter=\count315
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1
+enc.def
+File: pd1enc.def 2022-11-13 v7.00u Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\in
+tcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\e
+texcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count316
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pue
+nc.def
+File: puenc.def 2022-11-13 v7.00u Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4162.
+Package hyperref Info: Link nesting OFF on input line 4167.
+Package hyperref Info: Hyper index ON on input line 4170.
+Package hyperref Info: Plain pages OFF on input line 4177.
+Package hyperref Info: Backreferencing OFF on input line 4182.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4410.
+\c@Hy@tempcnt=\count317
+LaTeX Info: Redefining \url on input line 4748.
+\XeTeXLinkMargin=\dimen193
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bit
+set.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc
+\bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count318
+\Field@Width=\dimen194
+\Fld@charsize=\dimen195
+Package hyperref Info: Hyper figures OFF on input line 6027.
+Package hyperref Info: Link nesting OFF on input line 6032.
+Package hyperref Info: Hyper index ON on input line 6035.
+Package hyperref Info: backreferencing OFF on input line 6042.
+Package hyperref Info: Link coloring OFF on input line 6047.
+Package hyperref Info: Link coloring with OCG OFF on input line 6052.
+Package hyperref Info: PDF/A mode OFF on input line 6057.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegsh
+i-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count319
+\c@Item=\count320
+\c@Hfootnote=\count321
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpd
+ftex.def
+File: hpdftex.def 2022-11-13 v7.00u Hyperref driver for pdfTeX
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/base\atverye
+nd-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
+)
+\Fld@listcount=\count322
+\c@bookmark@seq@number=\count323
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/rerunfileche
+ck\rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/uniquecoun
+ter\uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+85.
+)
+\Hy@SectionHShift=\skip75
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontend
+layer\tikz.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclay
+er\pgf.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilitie
+s\pgfrcs.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfutil-common.tex
+\pgfutil@everybye=\toks37
+\pgfutil@tempdima=\dimen196
+\pgfutil@tempdimb=\dimen197
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfutil-common-lists.tex))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfutil-latex.def
+\pgfutil@abb=\box72
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfrcs.code.tex
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.re
+vision.tex)
+Package: pgfrcs 2021/05/15 v3.1.9a (3.1.9a)
+))
+Package: pgf 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclay
+er\pgfcore.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemla
+yer\pgfsys.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/system
+layer\pgfsys.code.tex
+Package: pgfsys 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks38
+\pgfkeys@temptoks=\toks39
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfkeysfiltered.code.tex
+\pgfkeys@tmptoks=\toks40
+))
+\pgf@x=\dimen198
+\pgf@y=\dimen199
+\pgf@xa=\dimen256
+\pgf@ya=\dimen257
+\pgf@xb=\dimen258
+\pgf@yb=\dimen259
+\pgf@xc=\dimen260
+\pgf@yc=\dimen261
+\pgf@xd=\dimen262
+\pgf@yd=\dimen263
+\w@pgf@writea=\write3
+\r@pgf@reada=\read2
+\c@pgf@counta=\count324
+\c@pgf@countb=\count325
+\c@pgf@countc=\count326
+\c@pgf@countd=\count327
+\t@pgf@toka=\toks41
+\t@pgf@tokb=\toks42
+\t@pgf@tokc=\toks43
+\pgf@sys@id@count=\count328
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/system
+layer\pgf.cfg
+File: pgf.cfg 2021/05/15 v3.1.9a (3.1.9a)
+)
+Driver file for pgf: pgfsys-pdftex.def
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/system
+layer\pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/system
+layer\pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2021/05/15 v3.1.9a (3.1.9a)
+)))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/system
+layer\pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfsyssoftpath@smallbuffer@items=\count329
+\pgfsyssoftpath@bigbuffer@items=\count330
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/system
+layer\pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcore.code.tex
+Package: pgfcore 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmath.code.tex
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathcalc.code.tex
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathutil.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathparser.code.tex
+\pgfmath@dimen=\dimen264
+\pgfmath@count=\count331
+\pgfmath@box=\box73
+\pgfmath@toks=\toks44
+\pgfmath@stack@operand=\toks45
+\pgfmath@stack@operation=\toks46
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.code.tex
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.basic.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.trigonometric.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.random.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.comparison.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.base.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.round.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.misc.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfunctions.integerarithmetics.code.tex)))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count332
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfint.code.tex)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@picminx=\dimen265
+\pgf@picmaxx=\dimen266
+\pgf@picminy=\dimen267
+\pgf@picmaxy=\dimen268
+\pgf@pathminx=\dimen269
+\pgf@pathmaxx=\dimen270
+\pgf@pathminy=\dimen271
+\pgf@pathmaxy=\dimen272
+\pgf@xx=\dimen273
+\pgf@xy=\dimen274
+\pgf@yx=\dimen275
+\pgf@yy=\dimen276
+\pgf@zx=\dimen277
+\pgf@zy=\dimen278
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@path@lastx=\dimen279
+\pgf@path@lasty=\dimen280
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorepathusage.code.tex
+File: pgfcorepathusage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@shorten@end@additional=\dimen281
+\pgf@shorten@start@additional=\dimen282
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfpic=\box74
+\pgf@hbox=\box75
+\pgf@layerbox@main=\box76
+\pgf@picture@serial@count=\count333
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgflinewidth=\dimen283
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoretransformations.code.tex
+File: pgfcoretransformations.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@pt@x=\dimen284
+\pgf@pt@y=\dimen285
+\pgf@pt@temp=\dimen286
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfarrowsep=\dimen287
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@max=\dimen288
+\pgf@sys@shading@range@num=\count334
+\pgf@shadingcount=\count335
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfexternal@startupbox=\box77
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcoretransparency.code.tex
+File: pgfcoretransparency.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basicl
+ayer\pgfcorerdf.code.tex
+File: pgfcorerdf.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/module
+s\pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfnodeparttextbox=\box78
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/module
+s\pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatib
+ility\pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@nodesepstart=\dimen289
+\pgf@nodesepend=\dimen290
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatib
+ility\pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2021/05/15 v3.1.9a (3.1.9a)
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilitie
+s\pgffor.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilitie
+s\pgfkeys.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgfkeys.code.tex))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgf
+math.sty
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmath.code.tex))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilit
+ies\pgffor.code.tex
+Package: pgffor 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\p
+gfmath.code.tex)
+\pgffor@iter=\dimen291
+\pgffor@skip=\dimen292
+\pgffor@stack=\toks47
+\pgffor@toks=\toks48
+))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/fronte
+ndlayer/tikz\tikz.code.tex
+Package: tikz 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/librar
+ies\pgflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgf@plot@mark@count=\count336
+\pgfplotmarksize=\dimen293
+)
+\tikz@lastx=\dimen294
+\tikz@lasty=\dimen295
+\tikz@lastxsaved=\dimen296
+\tikz@lastysaved=\dimen297
+\tikz@lastmovetox=\dimen298
+\tikz@lastmovetoy=\dimen299
+\tikzleveldistance=\dimen300
+\tikzsiblingdistance=\dimen301
+\tikz@figbox=\box79
+\tikz@figbox@bg=\box80
+\tikz@tempbox=\box81
+\tikz@tempbox@bg=\box82
+\tikztreelevel=\count337
+\tikznumberofchildren=\count338
+\tikznumberofcurrentchild=\count339
+\tikz@fig@count=\count340
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/module
+s\pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfmatrixcurrentrow=\count341
+\pgfmatrixcurrentcolumn=\count342
+\pgf@matrix@numberofcolumns=\count343
+)
+\tikz@expandcount=\count344
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/fronte
+ndlayer/tikz/libraries\tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+)))
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/fronte
+ndlayer/tikz/libraries\tikzlibrarysvg.path.code.tex
+File: tikzlibrarysvg.path.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/librar
+ies\pgflibrarysvg.path.code.tex
+File: pgflibrarysvg.path.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/generic/pgf/module
+s\pgfmoduleparser.code.tex
+File: pgfmoduleparser.code.tex 2021/05/15 v3.1.9a (3.1.9a)
+\pgfparserdef@arg@count=\count345
+)
+\pgf@lib@svg@last@x=\dimen302
+\pgf@lib@svg@last@y=\dimen303
+\pgf@lib@svg@last@c@x=\dimen304
+\pgf@lib@svg@last@c@y=\dimen305
+\pgf@lib@svg@count=\count346
+\pgf@lib@svg@max@num=\count347
+))
+\@curXheight=\skip76
+)
+\c@theorem=\count348
+\c@example=\count349
+\c@remark=\count350
+\c@definition=\count351
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3
+backend-pdftex.def
+File: l3backend-pdftex.def 2022-10-26 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count352
+\l__pdf_internal_box=\box83
+)
+
+LaTeX Warning: Unused global option(s):
+    [unnumsec,webpdf,contemporary,large].
+
+(oup-authoring-template.aux)
+\openout1 = `oup-authoring-template.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 61.
+LaTeX Font Info:    ... okay on input line 61.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\
+supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count353
+\scratchdimen=\dimen306
+\scratchbox=\box84
+\nofMPsegments=\count354
+\nofMParguments=\count355
+\everyMPshowfont=\toks49
+\MPscratchCnt=\count356
+\MPscratchDim=\dimen307
+\MPnumerator=\count357
+\makeMPintoPDFobject=\count358
+\everyMPtoPDFconversion=\toks50
+)
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg
+\epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\eps
+topdf-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+Package crop Info: requested driver: `' on input line 61.
+Package crop Info: detected driver: `pdftex' on input line 61.
+Package crop Info: using `pdftex' graphics driver on input line 61.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: rotating package is loaded.
+Package caption Info: wrapfig package is loaded.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Redeclaring symbol font `AMSa' on input line 61.
+LaTeX Font Info:    Overwriting symbol font `AMSa' in version `normal'
+(Font)                  U/msa/m/n --> U/msa/m/n on input line 61.
+LaTeX Font Info:    Overwriting symbol font `AMSa' in version `bold'
+(Font)                  U/msa/m/n --> U/msa/m/n on input line 61.
+\c@lstlisting=\count359
+Package hyperref Info: Link coloring OFF on input line 61.
+ (oup-authoring-template.out) (oup-authoring-template.out)
+\@outlinefile=\write4
+\openout4 = `oup-authoring-template.out'.
+
+LaTeX Font Info:    Calculating math sizes for size <13.04874> on input line 11
+9.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 119
+.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ums
+a.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 119
+.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ums
+b.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 11
+9.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/jknappen\urs
+fs.fd
+File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
+)
+LaTeX Font Info:    Calculating math sizes for size <9.13406> on input line 119
+.
+LaTeX Font Info:    Calculating math sizes for size <7.52812> on input line 119
+.
+LaTeX Font Info:    Calculating math sizes for size <6.52437> on input line 119
+.
+LaTeX Font Info:    Calculating math sizes for size <4.56703> on input line 119
+.
+ [1
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+
+{C:/Users/franck.delaplace/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}
+
+
+]
+Underfull \hbox (badness 6364) in paragraph at lines 231--232
+[]\OT1/cmr/m/n/7.52812 Lengthy tables which do not fit within tex-tw-idth
+ []
+
+
+Underfull \hbox (badness 1742) in paragraph at lines 231--232
+\OT1/cmr/m/n/7.52812 should be set as rota-ted tables. For this, we need to
+ []
+
+LaTeX Font Info:    Calculating math sizes for size <6.02249> on input line 247
+.
+
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [2
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 357.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/listings\lst
+lang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 3
+89.
+
+(C:\Users\franck.delaplace\AppData\Local\Programs\MiKTeX\tex/latex/base\omscmr.
+fd
+File: omscmr.fd 2022/07/10 v2.5l Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <7.52812> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 389.
+
+Overfull \hbox (7.29399pt too wide) in paragraph at lines 384--395
+[]$[]$ 
+ []
+
+
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [3
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [4
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [5
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Underfull \hbox (badness 4647) in paragraph at lines 613--614
+\OT1/cmr/m/n/7.52812 There are three types of pre-de-fi-ned the-o-rem sty-les -
+
+ []
+
+
+Underfull \hbox (badness 2547) in paragraph at lines 625--628
+[][]\OT1/cmr/bx/n/7.52812 Theorem 1 \OT1/cmr/m/n/7.52812 (The-o-rem subh-ead) [
+]\OT1/cmr/m/it/7.52812 Exam-ple the-o-rem text.
+ []
+
+
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [6
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Overfull \hbox (0.83797pt too wide) in paragraph at lines 740--749
+[][] 
+ []
+
+
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [7
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Overfull \hbox (9.4117pt too wide) in paragraph at lines 834--843
+[][] 
+ []
+
+
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+
+Overfull \vbox (1.0pt too high) has occurred while \output is active []
+
+ [8
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+]
+Overfull \hbox (10.0pt too wide) in paragraph at lines 963--963
+[][][] 
+ []
+
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+[leftcolumn badness]: 1000000 on 22.14105pt
+[rightcolumn badness]: 1000000 on 22.14105pt
+- LAST -
+Extra skip:21.32274pt
+Left:293.5pt/1.46379pt
+Right:273.64105pt/0.0pt
+Split: 293.82053pt
+Output:293.82053pt
+Pageshrink: 0.0pt
+Pagestretch: 0.0pt
+@colht:671.5pt
+FLUSHEND [output]: 293.82053pt
+FLUSHEND [leftcolumn badness]: 10000
+FUSHEND [rightcolumn badness]: 1221
+
+Overfull \hbox (253.25pt too wide) has occurred while \output is active
+[][][] 
+ []
+
+[9
+Non-PDF special ignored!
+<special> ps: [{ThisPage} << /CropBox [0 0 595.26013 782.33696] >> /PUT pdf...
+] (oup-authoring-template.aux)
+Package rerunfilecheck Info: File `oup-authoring-template.out' has not changed.
+
+(rerunfilecheck)             Checksum: 344B1E2F34C4FEF3402267A64F05802D;6426.
+ ) 
+Here is how much of TeX's memory you used:
+ 26135 strings out of 476408
+ 491621 string characters out of 2784390
+ 1885787 words of memory out of 3000000
+ 45916 multiletter control sequences out of 15000+600000
+ 549617 words of font info for 178 fonts, out of 8000000 for 9000
+ 1145 hyphenation exceptions out of 8191
+ 99i,12n,94p,17367b,1520s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ <C:\Users\franck.delaplace\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/
+dpi650\tcrm0600.pk><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/amsfonts/cm/cmb10.pfb><C:/Users/franck.delaplace/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbsy10.pfb><C:/Users/franck.del
+aplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+<C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmbx6.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/amsfonts/cm/cmbx7.pfb><C:/Users/franck.delaplace/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Users/franck.delap
+lace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex8.pf
+b><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/a
+msfonts/cm/cmmi5.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/franck.delaplace/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/franck.del
+aplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><
+C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsf
+onts/cm/cmr5.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/franck.delaplace/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/franck.delaplace
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/User
+s/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
+/cmr9.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/
+public/amsfonts/cm/cmss8.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Users/franck.delaplace/A
+ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users
+/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
+cmsy7.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/
+public/amsfonts/cm/cmti7.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/Users/franck.delaplace/AppD
+ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/Users/fr
+anck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmt
+t8.pfb><C:/Users/franck.delaplace/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/amsfonts/symbols/msam7.pfb><C:/Users/franck.delaplace/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm7.pfb><C:/Users/franck.delapla
+ce/AppData/Local/Programs/MiKTeX/fonts/type1/public/rsfs/rsfs10.pfb>
+Output written on oup-authoring-template.pdf (9 pages, 407918 bytes).
+PDF statistics:
+ 418 PDF objects out of 1000 (max. 8388607)
+ 107 named destinations out of 1000 (max. 500000)
+ 237 words of extra memory for PDF output out of 10000 (max. 10000000)
+

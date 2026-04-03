@@ -1,0 +1,18 @@
+"Search query: (boolean[Title/Abstract]) AND ( (model[Title/Abstract]) OR (network[Title/Abstract]) OR (modelling[Title/Abstract]) OR (modeling[Title/Abstract]) OR (dynamics[Title/Abstract]) OR (dynamical[Title/Abstract]) OR (system[Title/Abstract]) ) AND (""2010""[Date - Publication] : ""2024""[Date - Publication])"
+Year,Count
+2024,192
+2023,246
+2022,229
+2021,190
+2020,174
+2019,162
+2018,194
+2017,143
+2016,152
+2015,128
+2014,140
+2013,153
+2012,123
+2011,110
+2010,97
+2009,7

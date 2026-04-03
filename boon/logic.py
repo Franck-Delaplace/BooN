@@ -164,7 +164,8 @@ def sympy2z3(formula):
     elif isinstance(formula, Implies):
         return z3.Implies(sympy2z3(formula.args[0]), sympy2z3(formula.args[1]))
     elif isinstance(formula, Equivalent):
-        return sympy2z3(formula.args[0]) == sympy2z3(formula.args[1])
+        a, b = sympy2z3(formula.args[0]), sympy2z3(formula.args[1])
+        return z3.Not(z3.Xor(a, b))
     else:
         errmsg("a piece of the formula is not recognized", formula)
 
