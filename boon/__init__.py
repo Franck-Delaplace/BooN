@@ -256,7 +256,7 @@ class BooN:
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str: # str representation of the BooN is also its repr representation. (useful for pprint )
         return self.__str__()
 
     def str(self, sep: str = BOONSEP, assign: str = "=") -> str:
