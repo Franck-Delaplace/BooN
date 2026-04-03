@@ -256,6 +256,9 @@ class BooN:
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
 
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def str(self, sep: str = BOONSEP, assign: str = "=") -> str:
         """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
 
@@ -1048,25 +1051,31 @@ class BooN:
     @property
     def stable_states(self) -> list[dict]:
         """Compute all the stable states of a BooN. The algorithm is based on SAT solver.
-
         :return: List of stable states.
         :rtype: List[dict]
         """
 
-        solver = z3.Solver()  # initialize z3 solver
-        solver.add(logic.sympy2z3(self.stability_constraints()))  # add stability constraints translated in z3.
+        # Initialize the z3 SAT solver and add the stability constraints converted from sympy to z3.
+        solver = z3.Solver()
+        solver.add(logic.sympy2z3(self.stability_constraints()))
 
-        # Enumerate all models
+        # Build the list of all network variables as z3 Boolean variables.
+        # This is essential to include free variables of the form X=X that may not appear in z3 models because their constraints are tautological.
+        all_vars = [z3.Bool(str(var)) for var in self.variables]
+
+        # Enumerate all satisfying models using model blocking.
         models = []
         while solver.check() == z3.sat:
             model = solver.model()
             models.append(model)
-            # Block the current model to enable the finding of another model.
-            block = [sol() != model[sol] for sol in model]
+            # Build a clause that forbids the current model:
+            # at least one variable must differ from its current value.
+            # model_completion=True forces z3 to assign a concrete value to free variables rather than leaving them symbolic.
+            block = [v != model.eval(v, model_completion=True) for v in all_vars]
             solver.add(z3.Or(block))
 
-        # convert the solution to a list of states.
-        return list(map(lambda model: {symbols(str(sol())): bool(model[sol]) for sol in model}, models))
+        # Convert each z3 model to a Python dictionary {sympy symbol: boolean}.
+        return list(map(lambda model: {symbols(str(v)): bool(model.eval(v, model_completion=True)) for v in all_vars}, models))
 
     # DEF CONTROLLABILITY
 
