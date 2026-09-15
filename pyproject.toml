@@ -4,38 +4,54 @@ build-backend = "hatchling.build"
 
 [project]
 name = "BooN"
-version = "1.01"
+version = "1.0.1"
 authors = [
   { name = "Franck Delaplace", email = "franck.delaplace@univ-evry.fr" }
 ]
 description = "Boolean network analysis"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Operating System :: OS Independent",
 ]
 keywords = ["Boolean network", "Gene network modelling", "Controllability", "Abduction", "Dynamical system"]
 
 dependencies = [
-    "functools",
     "matplotlib",
     "networkx",
-    "PyQt5",
-    "PyQtWebEngine",
+    "numpy",
     "sympy",
     "tabulate",
     "tqdm",
     "PuLP",
     "python-libsbml",
-    "z3-solver"
+    "z3-solver",
 ]
 
 [project.optional-dependencies]
-gui = ["PyQt5"]
+gui = ["PyQt5", "PyQtWebEngine"]
+
+# Décommenter une fois que boonify.py expose une fonction main() :
+# [project.scripts]
+# boonify = "boonify:main"
 
 [project.urls]
 Homepage = "https://github.com/Franck-Delaplace/BooN"
 Issues = "https://github.com/Franck-Delaplace/BooN/issues/"
 Repository = "https://github.com/Franck-Delaplace/BooN"
+
+[tool.hatch.build.targets.wheel]
+packages = ["boon"]
+# Pour distribuer aussi l'interface graphique, ajouter "BooNGui" ci-dessus
+# (BooNGui doit alors contenir un __init__.py), et déclarer ses ressources :
+# [tool.hatch.build.targets.wheel.force-include]
+# "BooNGui/resources" = "BooNGui/resources"
