@@ -21,7 +21,6 @@ keywords = ["Boolean network", "Gene network modelling", "Controllability", "Abd
 dependencies = [
     "functools",
     "matplotlib",
-    "netgraph",
     "networkx",
     "PyQt5",
     "PyQtWebEngine",

@@ -1,0 +1,475 @@
+3c3,5
+< # Creation date: January 2024
+---
+> # Creation date: February 2024
+> # Co-author: Boomika SELVARADJOU
+> # Modification date: April 2026
+77,82c79,86
+<      Determines if a literal contains a controller.
+<      :param lit: The literal to be validated.
+<      :type lit: Literal
+<      :return: True if the literal is a negative control, False otherwise.
+<      :rtype: Bool
+<      """
+---
+>     Determines if a literal contains a controller.
+> 
+>     :param lit: The literal to be validated.
+>     :type lit: Literal
+> 
+>     :return: True if the literal is a negative control, False otherwise.
+>     :rtype: Bool
+>     """
+88c92,93
+<     """Check whether a formula is controlled.
+---
+>     """
+>     Check whether a formula is controlled.
+92c97,98
+<     :return: True if the formula is controlled otherwise False
+---
+> 
+>     :return: True if the formula is controlled otherwise False.
+103,108c109,116
+<      Determines if a given literal is a negative control.
+<      :param lit: The literal to be validated.
+<      :type lit: Literal
+<      :return: True if the literal is a negative control, False otherwise.
+<      :rtype: Bool
+<      """
+---
+>     Determines if a given literal is a negative control.
+> 
+>     :param lit: The literal to be validated.
+>     :type lit: Literal
+> 
+>     :return: True if the literal is a negative control, False otherwise.
+>     :rtype: Bool
+>     """
+113c121,123
+<     """Convert a set of controls into a list of actions where an action is a pair (symbol, boolean value).
+---
+>     """
+>     Convert a set of controls into a list of actions where an action is a pair (symbol, boolean value).
+>     
+115a126
+> 
+123c134,135
+<     """Convert the core to a list of actions where an action is a list of (variable, Boolean).
+---
+>     """
+>     Convert the core to a list of actions where an action is a list of (variable, Boolean).
+127a140
+> 
+131d143
+< 
+138c150,151
+<     """Asynchronous or sequential mode. One variable is updated per transition.
+---
+>     """
+>     Asynchronous or sequential mode. One variable is updated per transition.
+142c155,156
+<     :return:  of sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
+---
+> 
+>     :return:  Sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
+149c163,164
+<     """synchronous or parallel mode. All the variables are updated jointly per transition.
+---
+>     """
+>     Synchronous or parallel mode. All the variables are updated jointly per transition.
+151,155c166,171
+<         :param variables: list of variables.
+<         :type variables: list or set
+<         :return:  of sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
+<         :rtype: frozenset[frozenset[Symbol]]
+<         """
+---
+>     :param variables: list of variables.
+>     :type variables: list or set
+> 
+>     :return:  Sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
+>     :rtype: frozenset[frozenset[Symbol]]
+>     """
+160c176,177
+<     """Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
+---
+>     """
+>     Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
+163d179
+<     :param variables: List of variables.
+164a181
+>     :param variables: List of variables.
+166c183,184
+<     :return: an integer such that its binary profile represents the state.
+---
+> 
+>     :return: An integer such that its binary profile represents the state.
+185c203,204
+<     """ Convert an integer state to a dictionary state.
+---
+>     """
+>     Convert an integer state to a dictionary state.
+188d206
+<     :param variables: List of variables.
+189a208
+>     :param variables: List of variables.
+191c210,211
+<     :return: a dictionary representing the state {variable: boolean state…}.
+---
+> 
+>     :return: A dictionary representing the state {variable: boolean state…}.
+199c219,220
+<     """Compute the hypercube layout of a graph.
+---
+>     """
+>     Compute the hypercube layout of a graph.
+203c224,225
+<     :return: a dictionary {int:position} where int is the integer code of the hypercube labels.
+---
+> 
+>     :return: A dictionary {int:position} where int is the integer code of the hypercube labels.
+219c241,242
+<     """Boolean Network Class.
+---
+>     """
+>     Boolean Network Class.
+221,226c244,254
+<     :param  desc:  Boolean network descriptor { variable: formula, ...}.
+<     :param  style: Output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, ...,
+<     :param  pos: the positions of the nodes in the interaction graph. {node:position, ...}.
+<     :type  desc: Dict
+<     :type  style: dict
+<     :type  pos: dict
+---
+>     :param descriptor: The descriptor of a Boolean Network {variable: formula, …} (Default: None).
+>     :param style: The output style of formulas (Default: LOGICAL).
+>     :param pos: Positions of the variable in the interaction graph drawing.
+>         If empty, the positions are generated during the drawing (Default: {}).
+> 
+>     :ivar desc: Boolean network descriptor {variable: formula, …}.
+>     :vartype desc: Dict
+>     :ivar style: Output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, …
+>     :vartype style: dict
+>     :ivar pos: Positions of the nodes in the interaction graph.
+>     :vartype pos: dict
+232,240c260,261
+<     def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}):
+<         """Initialize the BooN object.
+< 
+<         :param descriptor: The descriptor of a Boolean Network {variable: formula, ...}
+<         (Default None).
+<         :param style: The output style of formulas (Default: LOGICAL).
+<         :param pos: Positions of the variable in the interaction graph drawing.
+<         If empty, the positions are generated during the drawing (Default: {})
+<         """
+---
+>     def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}, meta: dict = None):
+>         """Initialize the BooN object."""
+247a269
+>         self.meta = meta if meta is not None else {}                                        #Stores GUI display state (edge_family_colors, node_sizes, node_label_top)
+251c273,275
+<         return BooN(self.desc, self.style, self.pos)
+---
+>         b = BooN(self.desc, self.style, self.pos)
+>         b.meta = copy.copy(getattr(self, 'meta', {}))                                       #Preserve meta through copy so save/load always has access to display state
+>         return b
+254c278,280
+<         return BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
+---
+>         b = BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
+>         b.meta = copy.deepcopy(getattr(self, 'meta', {}), memo)                             #Preserve meta through deepcopy so history snapshots retain display state
+>         return b
+263c289,290
+<         """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
+---
+>         """
+>         Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
+265,266c292
+<         :param sep: The separator between formulas (default BOONSEP constant)
+<         :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '='). (Default: '=')
+---
+>         :param sep: The separator between formulas (Default: BOONSEP constant).
+267a294
+>         :param assign: The operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '=') (Default: '=').
+273c300
+<         """ The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
+---
+>         """The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
+282,283c309,310
+<         """Return the set of variables.
+<         (property)
+---
+>         """Return the set of variables. (property)
+> 
+290c317,318
+<         """Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
+---
+>         """
+>         Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
+293a322
+> 
+334c363,364
+<         """Rename a variable.
+---
+>         """
+>         Rename a variable.
+337d366
+<         :param  target:  The variable renaming the source.
+338a368
+>         :param  target:  The variable renaming the source.
+362c392,393
+<         """ Generate a random BooN where the formulas are in DNF.
+---
+>         """
+>         Generate a random BooN where the formulas are in DNF.
+367c398
+<         :param p_link: probability related to interaction between variables, the use depends on the topology class.
+---
+>         :param p_link: Probability related to interaction between variables, the use depends on the topology class.
+370c401
+<         :param topology: the topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
+---
+>         :param topology: The topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
+372c403
+<         :param min_clauses: the minimum number of clauses required to define a formula (default 1).
+---
+>         :param min_clauses: The minimum number of clauses required to define a formula (default 1).
+374c405
+<         :param max_clauses: the minimum number of clauses required to define a formula (default 5).
+---
+>         :param max_clauses: The minimum number of clauses required to define a formula (default 5).
+376c407
+<         :param prefix: the prefix of the variable name, the variables are of the form <prefix> <int> (default 'x').
+---
+>         :param prefix: The prefix of the variable name, the variables are of the form <prefix> <int> (default 'x').
+378c409,410
+<         :return: a random BooN
+---
+> 
+>         :return: A random BooN
+427c459,460
+<         """Save the Boolean Network to file.
+---
+>         """
+>         Save the Boolean Network to file.
+431a465
+> 
+443c477,478
+<         """Load the Boolean Network from a file.
+---
+>         """
+>         Load the Boolean Network from a file.
+448a484
+> 
+470,473d505
+<         :param sep: The separator between formulas (default BOONSEP constant)
+<         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
+<         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
+<         :param header: Header text inserted at the beginning of the saved file.
+474a507
+>         :param sep: The separator between formulas (Default: BOONSEP constant).
+475a509
+>         :param assign: The operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
+476a511
+>         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
+477a513
+>         :param header: Header text inserted at the beginning of the saved file.
+478a515
+> 
+495c532,533
+<         """Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
+---
+>         """
+>         Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
+502,505d539
+<         :param sep: The separator between definitions (default BOONSEP constant)
+<         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
+<         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
+<         :param skipline: Regular expression describing which lines must be skipped and not analyzed.
+506a541
+>         :param sep: The separator between definitions (default BOONSEP constant)
+507a543
+>         :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
+508a545
+>         :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
+509a547
+>         :param skipline: Regular expression describing which lines must be skipped and not analyzed.        
+510a549
+> 
+581a621
+> 
+662c702,703
+<         """Convert the formulas of the Boolean network to CNF.Convert the formulas of the Boolean network to CNF.
+---
+>         """
+>         Convert the formulas of the Boolean network to CNF.Convert the formulas of the Boolean network to CNF.
+665,666d705
+<         :param simplify:  Boolean flag determining whether the formula should be simplified (Default True).
+<         :param force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
+667a707
+>         :param simplify:  Boolean flag determining whether the formula should be simplified (Default True).
+668a709
+>         :param force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
+669a711
+> 
+685c727,728
+<         """Convert formula(s) of the Boolean network to DNF.
+---
+>         """
+>         Convert formula(s) of the Boolean network to DNF.
+689c732
+<         :type  variable: Symbol
+---
+>         :type variable: Symbol
+691c734
+<         :type  simplify: bool
+---
+>         :type simplify: bool
+693c736,737
+<         :type  force: bool
+---
+>         :type force: bool
+> 
+711c755,756
+<         """Build the interaction graph.
+---
+>         """
+>         Build the interaction graph.
+776c821,822
+<         """Draw the interaction graph.
+---
+>         """
+>         Draw the interaction graph.
+778a825
+>         :type IG: networkx DiGraph
+779a827
+>         :type modular: bool
+781,783c829,830
+<         :type   IG: networkx DiGraph
+<         :type   modular: bool
+<         :type   kwargs: dict
+---
+>         :type kwargs: dict
+> 
+826a874
+> 
+857c905,906
+<         """ Compute the dynamical model of the BooN with respect to a mode.
+---
+>         """
+>         Compute the dynamical model of the BooN with respect to a mode.
+859,862c908
+<         :param  mode: Determines the mode policy applied to the model (Default: asynchronous).
+<         :param  self_loop: Determines whether the boon loops are included in the model (Default: False).
+<         :param trace: Define whether the trace of the execution is enabled (Default: False (disabled)).
+<         :type self_loop: Bool
+---
+>         :param mode: Determines the mode policy applied to the model (Default: asynchronous).
+863a910,912
+>         :param self_loop: Determines whether the boon loops are included in the model (Default: False).
+>         :type self_loop: Bool
+>         :param trace: Define whether the trace of the execution is enabled (Default: False (disabled)).
+865c914,915
+<         :return: a Digraph representing the complete state-based dynamics.
+---
+>         
+>         :return: A Digraph representing the complete state-based dynamics.
+926c976,977
+<         """Draw the graph representing the model of dynamics.
+---
+>         """
+>         Draw the graph representing the model of dynamics.
+929,931d979
+<         :param mode:  Function characterizing the mode of the model (Default: asynchronous)
+<         :param color: list of colors for highlighting the equlibria (Default: COLOR)
+<         :param kwargs: extra parameters of nx.draw_networkx.
+932a981
+>         :param mode:  Function characterizing the mode of the model (Default: asynchronous)
+933a983
+>         :param color: List of colors for highlighting the equlibria (Default: COLOR)
+934a985
+>         :param kwargs: Extra parameters of nx.draw_networkx.
+935a987
+> 
+980,981d1031
+<         :param mode: Updating mode function, used if the model is None (Default: asynchronous).
+<         :param trace: Define whether the trace of execution is enabled (Default: False (disabled)).
+982a1033
+>         :param mode: Updating mode function, used if the model is None (Default: asynchronous).
+983a1035
+>         :param trace: Define whether the trace of execution is enabled (Default: False (disabled)).
+984a1037
+> 
+994c1047
+< 
+---
+>             
+1002,1003c1055
+<             :param partition: A list of frozensets, where each frozenset represents a group of nodes
+<                 in the partition of the graph.
+---
+>             :param partition: A list of frozensets, where each frozenset represents a group of nodes in the partition of the graph.
+1005,1006c1057,1058
+<             :return: A directed quotient graph based on the provided partition of the input directed
+<                 graph.
+---
+> 
+>             :return: A directed quotient graph based on the provided partition of the input directed graph.
+1053c1105,1107
+<         """Compute all the stable states of a BooN. The algorithm is based on SAT solver.
+---
+>         """
+>         Compute all the stable states of a BooN. The algorithm is based on SAT solver.
+>         
+1083c1137,1138
+<         """Set control on the BooN.
+---
+>         """
+>         Set control on the BooN.
+1089d1143
+<         :param frozentrue: List, set or sequence of variables that should be frozen to true by control.
+1090a1145
+>         :param frozentrue: List, set or sequence of variables that should be frozen to true by control.
+1091a1147
+>         
+1112c1168,1169
+<         """Compute the possibility constraint.
+---
+>         """
+>         Compute the possibility constraint.
+1116c1173,1174
+<         :return: a formula specifying the possibility.
+---
+>         
+>         :return: A formula specifying the possibility.
+1122c1180,1181
+<         """Compute the necessary constraints.
+---
+>         """
+>         Compute the necessary constraints.
+1126d1184
+<         :param trace: Boolean flag determining whether the trace is activated (Default value = False).
+1127a1186
+>         :param trace: Boolean flag determining whether the trace is activated (Default value = False).
+1128a1188
+>         
+1145c1205,1207
+<         """Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
+---
+>         """
+>         Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
+>         
+1151d1212
+< 
+1154d1214
+< 
+1157d1216
+< 
+1193a1253
+> 
+1243c1303
+<         return filtered_core
+---
+>         return filtered_core
+\ No newline at end of file

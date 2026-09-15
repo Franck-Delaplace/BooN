@@ -1,6 +1,8 @@
 # Boolean Network analysis module
 # Author: Franck Delaplace
-# Creation date: January 2024
+# Creation date: February 2024
+# Co-author: Boomika SELVARADJOU
+# Modification date: April 2026
 
 # In comments :
 # DEF means definition which is a code part gathering functions related to a process or an object definition.
@@ -26,7 +28,7 @@ from itertools import product
 
 from pulp import PULP_CBC_CMD
 
-import netgraph as ng
+# import netgraph as ng -- deprecated, replaced by networkx and matplotlib
 import networkx as nx
 
 from matplotlib.colors import to_rgb
@@ -74,22 +76,26 @@ BOOLNETHEADER: str = PYTHONHEADER + '\ntargets, factors'  # header for boolnet f
 
 def isctrl(lit) -> bool:
     """
-     Determines if a literal contains a controller.
-     :param lit: The literal to be validated.
-     :type lit: Literal
-     :return: True if the literal is a negative control, False otherwise.
-     :rtype: Bool
-     """
+    Determines if a literal contains a controller.
+
+    :param lit: The literal to be validated.
+    :type lit: Literal
+
+    :return: True if the literal is a negative control, False otherwise.
+    :rtype: Bool
+    """
 
     return firstsymbol(lit).name.startswith(CONTROL)
 
 
 def is_controlled(formula) -> bool:
-    """Check whether a formula is controlled.
+    """
+    Check whether a formula is controlled.
 
     :param formula: The input formula.
     :type formula: Sympy formula.
-    :return: True if the formula is controlled otherwise False
+
+    :return: True if the formula is controlled otherwise False.
     :rtype: bool
     """
     try:
@@ -100,19 +106,24 @@ def is_controlled(formula) -> bool:
 
 def isnegctrl(lit) -> bool:
     """
-     Determines if a given literal is a negative control.
-     :param lit: The literal to be validated.
-     :type lit: Literal
-     :return: True if the literal is a negative control, False otherwise.
-     :rtype: Bool
-     """
+    Determines if a given literal is a negative control.
+
+    :param lit: The literal to be validated.
+    :type lit: Literal
+
+    :return: True if the literal is a negative control, False otherwise.
+    :rtype: Bool
+    """
     return isinstance(lit, Not) and isctrl(lit)
 
 
 def controls2actions(controls: frozenset) -> list[tuple]:
-    """Convert a set of controls into a list of actions where an action is a pair (symbol, boolean value).
+    """
+    Convert a set of controls into a list of actions where an action is a pair (symbol, boolean value).
+    
     :param controls: The set of control parameters.
     :type controls: frozenset[Sympy symbols]
+
     :return: A list of actions.
     :rtype: list[tuple[Sympy symbol, bool]]
     """
@@ -120,50 +131,57 @@ def controls2actions(controls: frozenset) -> list[tuple]:
 
 
 def core2actions(core: frozenset) -> list:
-    """Convert the core to a list of actions where an action is a list of (variable, Boolean).
+    """
+    Convert the core to a list of actions where an action is a list of (variable, Boolean).
     The actions are sorted by length, meaning that the more parsimonious actions are at first.
 
     :param core: The core.
     :type core: Frozenset[Frozenset[Sympy symbol]].
+
     :return: A list of combined actions where an action is defined as:[(variable, bool) ...]
     :rtype: List[list[tuple]]
     """
-
     actions = [controls2actions(primes) for primes in core]
     # Sort the actions by length.
     return sorted(actions, key=len, reverse=False)
 
 
 def asynchronous(variables: list | set) -> frozenset:
-    """Asynchronous or sequential mode. One variable is updated per transition.
+    """
+    Asynchronous or sequential mode. One variable is updated per transition.
 
     :param variables: List of variables.
     :type variables: List or set
-    :return:  of sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
+
+    :return:  Sets: {{x1},...,{xi},...,{xn}} representing the asynchronous mode.
     :rtype: frozenset[frozenset[Symbol]]
     """
     return frozenset({frozenset({x}) for x in variables})
 
 
 def synchronous(variables: list | set) -> frozenset:
-    """synchronous or parallel mode. All the variables are updated jointly per transition.
+    """
+    Synchronous or parallel mode. All the variables are updated jointly per transition.
 
-        :param variables: list of variables.
-        :type variables: list or set
-        :return:  of sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
-        :rtype: frozenset[frozenset[Symbol]]
-        """
+    :param variables: list of variables.
+    :type variables: list or set
+
+    :return:  Sets: {{x1,...,xi,...,xn}} representing the synchronous mode.
+    :rtype: frozenset[frozenset[Symbol]]
+    """
     return frozenset({frozenset({*variables})})
 
 
 def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
-    """Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
+    """
+    Convert a set of states to an integer the binary profile of which corresponds to the state of the variables.
 
     :param state: State of the variables.
-    :param variables: List of variables.
     :type state: Dict or tuple
+    :param variables: List of variables.
     :type variables: list or set
-    :return: an integer such that its binary profile represents the state.
+
+    :return: An integer such that its binary profile represents the state.
     :rtype: Int
     """
 
@@ -182,13 +200,15 @@ def state2int(state: dict | tuple, variables: set | list | None = None) -> int:
 
 
 def int2state(int_state: int, variables: list | set) -> dict:
-    """ Convert an integer state to a dictionary state.
+    """
+    Convert an integer state to a dictionary state.
 
     :param int_state: The state coded into integer.
-    :param variables: List of variables.
     :type int_state: Int
+    :param variables: List of variables.
     :type variables: list or set
-    :return: a dictionary representing the state {variable: boolean state…}.
+
+    :return: A dictionary representing the state {variable: boolean state…}.
     :rtype: Dict
     """
     bin_state = format(int_state, 'b').zfill(len(variables))
@@ -196,11 +216,13 @@ def int2state(int_state: int, variables: list | set) -> dict:
 
 
 def hypercube_layout(arg: int | nx.Digraph) -> dict:
-    """Compute the hypercube layout of a graph.
+    """
+    Compute the hypercube layout of a graph.
 
     :param arg: The dimension of the hypercube or the network to which the layout is applied.
     :type arg: Int or networkx Digraph
-    :return: a dictionary {int:position} where int is the integer code of the hypercube labels.
+
+    :return: A dictionary {int:position} where int is the integer code of the hypercube labels.
     :rtype: Dict
     """
     dim = 0  # dim gives the dimension of the hypercube, captured from arg.
@@ -216,28 +238,27 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
 
 # noinspection PyMethodFirstArgAssignment
 class BooN:
-    """Boolean Network Class.
+    """
+    Boolean Network Class.
 
-    :param  desc:  Boolean network descriptor { variable: formula, ...}.
-    :param  style: Output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, ...,
-    :param  pos: the positions of the nodes in the interaction graph. {node:position, ...}.
-    :type  desc: Dict
-    :type  style: dict
-    :type  pos: dict
+    :param descriptor: The descriptor of a Boolean Network {variable: formula, …} (Default: None).
+    :param style: The output style of formulas (Default: LOGICAL).
+    :param pos: Positions of the variable in the interaction graph drawing.
+        If empty, the positions are generated during the drawing (Default: {}).
+
+    :ivar desc: Boolean network descriptor {variable: formula, …}.
+    :vartype desc: Dict
+    :ivar style: Output form of the BooN: LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET, …
+    :vartype style: dict
+    :ivar pos: Positions of the nodes in the interaction graph.
+    :vartype pos: dict
     """
     desc: dict = {}
     style: dict = {}
     pos: dict = {}
 
-    def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}):
-        """Initialize the BooN object.
-
-        :param descriptor: The descriptor of a Boolean Network {variable: formula, ...}
-        (Default None).
-        :param style: The output style of formulas (Default: LOGICAL).
-        :param pos: Positions of the variable in the interaction graph drawing.
-        If empty, the positions are generated during the drawing (Default: {})
-        """
+    def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}, meta: dict = None):
+        """Initialize the BooN object."""
 
         if descriptor:
             self.desc = descriptor
@@ -245,13 +266,18 @@ class BooN:
             self.desc = {}
         self.style = style
         self.pos = pos
+        self.meta = meta if meta is not None else {}                                        #Stores GUI display state (edge_family_colors, node_sizes, node_label_top)
         return
 
     def __copy__(self) -> BooN:
-        return BooN(self.desc, self.style, self.pos)
+        b = BooN(self.desc, self.style, self.pos)
+        b.meta = copy.copy(getattr(self, 'meta', {}))                                       #Preserve meta through copy so save/load always has access to display state
+        return b
 
     def __deepcopy__(self, memo) -> BooN:
-        return BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
+        b = BooN(copy.deepcopy(self.desc, memo), self.style, copy.deepcopy(self.pos, memo))
+        b.meta = copy.deepcopy(getattr(self, 'meta', {}), memo)                             #Preserve meta through deepcopy so history snapshots retain display state
+        return b
 
     def __str__(self, sep: str = BOONSEP, assign: str = "=") -> str:
         return sep.join([f"{str(var)} {assign} {logic.prettyform(self.desc[var], self.style, 0)}" for var in self.variables])
@@ -260,17 +286,18 @@ class BooN:
         return self.__str__()
 
     def str(self, sep: str = BOONSEP, assign: str = "=") -> str:
-        """Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
+        """
+        Return a string representing the BooN. The output format can be parameterized (see style argument of BooN)
 
-        :param sep: The separator between formulas (default BOONSEP constant)
-        :param assign: the operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '='). (Default: '=')
+        :param sep: The separator between formulas (Default: BOONSEP constant).
         :type sep: str
+        :param assign: The operator defining the assignment of a formula to a variable (e.g., a = f(...) → assign is '=') (Default: '=').
         :type assign: str
         """
         return self.__str__(sep, assign)
 
     def __eq__(self, other: BooN) -> bool:
-        """ The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
+        """The equality between BooNs is based on the descriptor only, and not on the style or the nodes position."""
         if not isinstance(other, BooN):
             return NotImplemented
         return self.desc == other.desc
@@ -279,18 +306,20 @@ class BooN:
 
     @property
     def variables(self) -> set:
-        """Return the set of variables.
-        (property)
+        """Return the set of variables. (property)
+
         :return: Variables
         :rtype: set[Symbol]
         """
         return set(self.desc.keys())
 
     def delete(self, variable) -> BooN:
-        """Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
+        """
+        Delete a variable in a BooN. The formulas must all be in DNF to properly delete the variable.
 
         :param  variable: The variable to delete.
         :type variable: Symbol
+
         :return: self
         :rtype: BooN
         """
@@ -331,11 +360,12 @@ class BooN:
         return self
 
     def rename(self, source: Symbol, target: Symbol) -> BooN:
-        """Rename a variable.
+        """
+        Rename a variable.
 
         :param  source:  The variable to rename.
-        :param  target:  The variable renaming the source.
         :type source: Symbol
+        :param  target:  The variable renaming the source.
         :type target: Symbol
         """
 
@@ -359,23 +389,25 @@ class BooN:
 
     @classmethod
     def random(cls, n: int, p_link: float, p_pos: float = 0.5, topology: str = 'Erdos-Reny', min_clauses: int = 1, max_clauses: int = 5, prefix: str = VARPREFIX) -> BooN:
-        """ Generate a random BooN where the formulas are in DNF.
+        """
+        Generate a random BooN where the formulas are in DNF.
         The method is a class method.
 
         :param n: The number of variables.
         :type n: Int
-        :param p_link: probability related to interaction between variables, the use depends on the topology class.
+        :param p_link: Probability related to interaction between variables, the use depends on the topology class.
         :param p_pos: The probability of defining a variable as a positive term (default 0.5).
         :type  p_pos: Float
-        :param topology: the topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
+        :param topology: The topology class of the interaction graph: 'Erdos-Reny', 'Scale-Free', 'Small-World' (default 'Erdos-Reny')
         :type topology: str
-        :param min_clauses: the minimum number of clauses required to define a formula (default 1).
+        :param min_clauses: The minimum number of clauses required to define a formula (default 1).
         :type  min_clauses: Int
-        :param max_clauses: the minimum number of clauses required to define a formula (default 5).
+        :param max_clauses: The minimum number of clauses required to define a formula (default 5).
         :type  max_clauses: Int
-        :param prefix: the prefix of the variable name, the variables are of the form <prefix> <int> (default 'x').
+        :param prefix: The prefix of the variable name, the variables are of the form <prefix> <int> (default 'x').
         :type prefix: Str
-        :return: a random BooN
+
+        :return: A random BooN
         :rtype: BooN
         """
         assert 0 < n
@@ -424,11 +456,13 @@ class BooN:
 
     # DEF: FILE
     def save(self, filename: str = "BooN" + datetime.now().strftime("%d-%b-%y-%H") + EXTBOON) -> None:
-        """Save the Boolean Network to file.
+        """
+        Save the Boolean Network to file.
         If the extension is freestates, then .boon is added.
 
         :param filename:  The name of the file to save the network (Default: BooN+date+hour.boon)
         :type  filename: str
+
         :return: None
         :rtype: None
         """
@@ -440,12 +474,14 @@ class BooN:
 
     @classmethod
     def load(cls, filename: str) -> BooN:
-        """Load the Boolean Network from a file.
+        """
+        Load the Boolean Network from a file.
         If the extension is freestates, then .boon is added.
         The method is a class method
 
         :param filename: The name of the file to load the network.
         :type  filename: Str
+
         :return: self
         :rtype: BooN
         """
@@ -467,15 +503,16 @@ class BooN:
         The default format is BOOLNET.
 
         :param filename: The file name to export the Boolean network.
-        :param sep: The separator between formulas (default BOONSEP constant)
-        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
-        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
-        :param header: Header text inserted at the beginning of the saved file.
         :type  filename: Str
+        :param sep: The separator between formulas (Default: BOONSEP constant).
         :type sep: str
+        :param assign: The operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',' Boolnet Format).
         :type assign: str
+        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
         :type ops: dict
+        :param header: Header text inserted at the beginning of the saved file.
         :type header: str
+
         :return: self
         :rtype: BooN
         """
@@ -492,22 +529,24 @@ class BooN:
 
     @classmethod
     def from_textfile(cls, filename: str, sep: str = BOONSEP, assign: str = ',', ops: dict = BOOLNET, skipline: str = BOOLNETSKIP) -> BooN:
-        """Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
+        """
+        Import the Boolean network from a text file, the syntax of which depends on the ops' descriptor.
         The formulas must be in normal form containing OR, AND, NOT operators only.
         The nodes are circularly mapped.
         The default format is the Bool Net format (see ops and assign defaults).
         The method is a class method.
 
         :param filename: The file name to import the Boolean network. If the file extension is freestates, then .bnet is added.
-        :param sep: The separator between definitions (default BOONSEP constant)
-        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
-        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
-        :param skipline: Regular expression describing which lines must be skipped and not analyzed.
         :type filename: Str
+        :param sep: The separator between definitions (default BOONSEP constant)
         :type sep: str
+        :param assign: the operator defining the formula for a variable, e.g., a = f(...) → assign is '=' (Default: ',').
         :type assign: str
+        :param ops: A dictionary stipulating how the operators And, Or, Not are syntactically written (Default: BOOLNET).
         :type ops: dict
+        :param skipline: Regular expression describing which lines must be skipped and not analyzed.        
         :type skipline: str (regexp)
+
         :return: BooN
         :rtype: BooN
         """
@@ -579,6 +618,7 @@ class BooN:
 
         :param filename: The name of the file, if the extension is freestates, then .sbml is added.
         :type filename: Str
+
         :return: BooN
         :rtype: BooN
         """
@@ -659,14 +699,16 @@ class BooN:
 
     # DEF: NORMAL FORM CONVERSION
     def cnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> BooN:
-        """Convert the formulas of the Boolean network to CNF.Convert the formulas of the Boolean network to CNF.
+        """
+        Convert the formulas of the Boolean network to CNF.Convert the formulas of the Boolean network to CNF.
 
         :param variable: The variable where the formula is to be converted in CNF (Default None).  If variable is None, then all the formulas are converted to CNF.
-        :param simplify:  Boolean flag determining whether the formula should be simplified (Default True).
-        :param force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
         :type variable: Symbol
+        :param simplify:  Boolean flag determining whether the formula should be simplified (Default True).
         :type simplify: bool
+        :param force: Boolean flag forcing the complete simplification of the resulting CNF (Default True).
         :type force: bool
+
         :return: self
         :rtype: BooN
         """
@@ -682,15 +724,17 @@ class BooN:
         return self
 
     def dnf(self, variable: Symbol | None = None, simplify: bool = True, force: bool = True) -> BooN:
-        """Convert formula(s) of the Boolean network to DNF.
+        """
+        Convert formula(s) of the Boolean network to DNF.
 
         :param variable:  The variable where the formula is to be converted in DNF (Default: None).
             If variable is None, then all the formulas are converted to DNF.
-        :type  variable: Symbol
+        :type variable: Symbol
         :param simplify: Boolean flag determining whether the formula should be simplified (Default: True).
-        :type  simplify: bool
+        :type simplify: bool
         :param force:  Boolean flag forcing the complete simplification (Default: True).
-        :type  force: bool
+        :type force: bool
+
         :return: modified BooN
         :rtype: BooN
         """
@@ -708,7 +752,8 @@ class BooN:
     # DEF: INTERACTION GRAPH
     @property
     def interaction_graph(self) -> nx.DiGraph:
-        """Build the interaction graph.
+        """
+        Build the interaction graph.
 
         :return: The interaction graph.
         :rtype: Networkx DiGraph
@@ -773,14 +818,16 @@ class BooN:
         return ig
 
     def draw_IG(self, IG: nx.DiGraph | None = None, modular: bool = False, **kwargs) -> nx.DiGraph:
-        """Draw the interaction graph.
+        """
+        Draw the interaction graph.
 
         :param IG: The interaction graph or None. If None, the interaction graph is generated from BooN (Default: None).
+        :type IG: networkx DiGraph
         :param modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
+        :type modular: bool
         :param kwargs: additional keyword arguments to pass to the interaction graph drawing
-        :type   IG: networkx DiGraph
-        :type   modular: bool
-        :type   kwargs: dict
+        :type kwargs: dict
+
         :return: interaction graph
         :rtype: Networkx DiGraph
         """
@@ -824,6 +871,7 @@ class BooN:
         The method is a class method.
 
         :param  IG:  Interaction graph.
+
         :return: BooN
         :rtype: BooN
         """
@@ -854,15 +902,17 @@ class BooN:
 
     # DEF: DYNAMICS
     def model(self, mode: Callable = asynchronous, self_loop: bool = False, trace: bool = False) -> nx.DiGraph:
-        """ Compute the dynamical model of the BooN with respect to a mode.
+        """
+        Compute the dynamical model of the BooN with respect to a mode.
 
-        :param  mode: Determines the mode policy applied to the model (Default: asynchronous).
-        :param  self_loop: Determines whether the boon loops are included in the model (Default: False).
-        :param trace: Define whether the trace of the execution is enabled (Default: False (disabled)).
-        :type self_loop: Bool
+        :param mode: Determines the mode policy applied to the model (Default: asynchronous).
         :type mode:  function
+        :param self_loop: Determines whether the boon loops are included in the model (Default: False).
+        :type self_loop: Bool
+        :param trace: Define whether the trace of the execution is enabled (Default: False (disabled)).
         :type trace: bool
-        :return: a Digraph representing the complete state-based dynamics.
+        
+        :return: A Digraph representing the complete state-based dynamics.
         :rtype: Networkx Digraph
         """
 
@@ -923,16 +973,18 @@ class BooN:
         return G
 
     def draw_model(self, model: nx.DiGraph | None = None, mode: Callable = asynchronous, color: list[str] = COLOR, **kwargs) -> None:
-        """Draw the graph representing the model of dynamics.
+        """
+        Draw the graph representing the model of dynamics.
 
         :param model: Input graph model of the BooN or None (Default: None). If it is None, the asynchronous model computed from the BooN.
-        :param mode:  Function characterizing the mode of the model (Default: asynchronous)
-        :param color: list of colors for highlighting the equlibria (Default: COLOR)
-        :param kwargs: extra parameters of nx.draw_networkx.
         :type model: Networkx DiGraph
+        :param mode:  Function characterizing the mode of the model (Default: asynchronous)
         :type mode: function
+        :param color: List of colors for highlighting the equlibria (Default: COLOR)
         :type color: list
+        :param kwargs: Extra parameters of nx.draw_networkx.
         :type kwargs: dict
+
         :return: None
         :rtype: None
         """
@@ -977,11 +1029,12 @@ class BooN:
         The method examines an exponential number of states, and thus it is restricted to networks with a small number of variables (max. ~10).
 
         :param model: Data model from which the equilibria are calculated (Default: None)
-        :param mode: Updating mode function, used if the model is None (Default: asynchronous).
-        :param trace: Define whether the trace of execution is enabled (Default: False (disabled)).
         :type model: Networkx DiGraph
+        :param mode: Updating mode function, used if the model is None (Default: asynchronous).
         :type mode: function
+        :param trace: Define whether the trace of execution is enabled (Default: False (disabled)).
         :type trace: bool
+
         :return: Equilibria structure as a list of lists where each sublist is an attractor.
         :rtype: List[list]
         """
@@ -991,7 +1044,7 @@ class BooN:
         def quotient_graph(graph: nx.DiGraph, partition: list[frozenset]) -> nx.DiGraph:
             """
             Generates and returns the quotient graph from the provided directed graph and partition.
-
+            
             The function computes the quotient graph based on a given partition of nodes in the input
             directed graph. The nodes in the quotient graph correspond to the groups from the partition,
             and edges are added between groups if any node in one group connects to any node in another
@@ -999,11 +1052,10 @@ class BooN:
 
             :param graph: The original directed graph.
             :type graph: nx.DiGraph
-            :param partition: A list of frozensets, where each frozenset represents a group of nodes
-                in the partition of the graph.
+            :param partition: A list of frozensets, where each frozenset represents a group of nodes in the partition of the graph.
             :type partition: list[frozenset]
-            :return: A directed quotient graph based on the provided partition of the input directed
-                graph.
+
+            :return: A directed quotient graph based on the provided partition of the input directed graph.
             :rtype: nx.DiGraph
             """
             # Initialize the quotient graph
@@ -1050,7 +1102,9 @@ class BooN:
 
     @property
     def stable_states(self) -> list[dict]:
-        """Compute all the stable states of a BooN. The algorithm is based on SAT solver.
+        """
+        Compute all the stable states of a BooN. The algorithm is based on SAT solver.
+        
         :return: List of stable states.
         :rtype: List[dict]
         """
@@ -1080,15 +1134,17 @@ class BooN:
     # DEF CONTROLLABILITY
 
     def control(self, frozenfalse: set | list | frozenset, frozentrue: set | list | frozenset) -> None:
-        """Set control on the BooN.
+        """
+        Set control on the BooN.
         The controlled variables are divided in two classes:
         the variables frozen to false and the variables frozen to true.
         A variable can belong to both classes.
 
         :param frozenfalse: List, set or sequence of variables that should be frozen to false by control.
-        :param frozentrue: List, set or sequence of variables that should be frozen to true by control.
         :type frozenfalse: Iterable object (list, set, tuple)
+        :param frozentrue: List, set or sequence of variables that should be frozen to true by control.
         :type frozentrue: iterable object (list, set, tuple)
+        
         :return: self
         :rtype: BooN
         """
@@ -1109,23 +1165,27 @@ class BooN:
         return self
 
     def possibly(self, query):
-        """Compute the possibility constraint.
+        """
+        Compute the possibility constraint.
 
         :param query: A formula characterizing the query, objective or goal.
         :type query: Sympy formula
-        :return: a formula specifying the possibility.
+        
+        :return: A formula specifying the possibility.
         :rtype: Sympy formula
         """
         return And(self.stability_constraints(), query)
 
     def necessary(self, query, trace: bool = False):
-        """Compute the necessary constraints.
+        """
+        Compute the necessary constraints.
         The computation may take time because the query is converted to CNF that may contain a lot of terms.
 
         :param query: A formula characterizing the query, objective or goal.
-        :param trace: Boolean flag determining whether the trace is activated (Default value = False).
         :type query: Sympy formula
+        :param trace: Boolean flag determining whether the trace is activated (Default value = False).
         :type trace: bool
+        
         :return: CNF specifying the necessity.
         :rtype: Sympy formula
         """
@@ -1142,19 +1202,18 @@ class BooN:
         return necessary
 
     def destify(self, query, max_solutions: int = sys.maxsize, trace: bool = False, solver=PULP_CBC_CMD):
-        """Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
+        """
+        Compute the core which is the minimal set of controls under the inclusion to satisfy the query at stable state.
+        
         Destify is a neologism that refers to the deliberate and purposeful act of shaping destiny by
         influencing or directing the course of events or outcomes towards an expected goal.
 
         :param query: The query defining the expected destiny or goal as propositional formula.
         :type query: Sympy formula
-
         :param max_solutions: Maximal number of solutions (Default the largest integer = sys.maxsize)
         :type max_solutions: int
-
         :param trace: Boolean flag determining whether the trace is activated (Default: False).
         :type trace: Bool
-
         :param solver: The PulpSolver used for solving the problem (Default: PULP_CBC_CMD).
         :type solver: Pulp function
 
@@ -1191,6 +1250,7 @@ class BooN:
         :param core: A set of prime implicants (controls) that will be filtered.
         :param trace: Determines whether to display progress information during filtering (Defaults: False).
         :type trace: bool
+
         :return: A subset of the given `core` containing only the necessary controls.
         :rtype: frozenset
         """

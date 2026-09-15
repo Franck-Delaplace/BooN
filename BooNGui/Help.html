@@ -4,239 +4,437 @@
  CREATION DATE: January 2024
  -->
 <html lang="en-US">
-    <style>
-        html {
-            font-family: "Arial",sans-serif;
-            font-size: large;
-        }
-        h1 {
-            text-align:center;
-        }
-        p {
-            text-align: justify;
-            text-justify: auto;
-            justify-content: space-around;
-        }
-        .info
-        {
-            text-align: justify;
-            text-justify: auto;
-            justify-content: space-around;
-            background-color: #eeeeee;
-        }
-        .info-title
-        {
-            font-weight : bold;
-            color: red;
-        }
-        .cmd
-        {
-            color: #ff9966;
-            font-family: Consolas, "Liberation Mono", Courier, monospace;
-            font-weight: bolder;
-        }
-</style>
-    <head>
-        <meta content="text/html; charset=utf-8" http-equiv="content-type">
-        <title>BooN GUI</title>
-    </head>
-    <body>
-
-    <h1> BooN GUI</h1>
+  <style>
+    html {
+      font-family: "Arial", sans-serif;
+      font-size: large;
+    }
+    h1 {
+      text-align: center;
+    }
+    p {
+      text-align: justify;
+      text-justify: auto;
+      justify-content: space-around;
+    }
+    .info {
+      text-align: justify;
+      text-justify: auto;
+      justify-content: space-around;
+      background-color: #eeeeee;
+    }
+    .info-title {
+      font-weight: bold;
+      color: red;
+    }
+    .cmd {
+      color: #ff9966;
+      font-family: Consolas, "Liberation Mono", Courier, monospace;
+      font-weight: bolder;
+    }
+    ul,
+    dl {
+      margin-bottom: 20px;
+    }
+    dt {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <title>BooN GUI</title>
+  </head>
+  <body>
+    <h1>BooN GUI</h1>
     <ul>
-        <li><a href="#design"> Design network </a></li>
-        <li><a href="#file"> File Menu </a></li>
-        <li><a href="#analysis"> Boolean Network Analysis </a></li>
-		 <li><a href="#controllability"> Controllability Analysis </a></li>
-        <li><a href="#utilities"> Help and Utilities </a></li>
-
+      <li><a href="#design"> Design network </a></li>
+      <li><a href="#file"> File Menu </a></li>
+      <li><a href="#analysis"> Boolean Network Analysis </a></li>
+      <li><a href="#controllability"> Controllability Analysis </a></li>
+      <li><a href="#utilities"> Help and Utilities </a></li>
     </ul>
-    <p> The graphical interface enables the creation and analysis of Boolean networks, called <b>BooN</b>, through two classes of methods: file and network.
-        The file methods manage files containing networks, while the network methods analyze the network.
-        The network methods are also available in the toolbar on the left side of the window.
-        The last help menu also includes basic utilities.
+    <p>
+      The graphical interface enables the creation and analysis of Boolean
+      networks, called <b>BooN</b>, through two classes of methods: file and
+      network. The file methods manage files containing networks, while the
+      network methods analyze the network. The network methods are also
+      available in the toolbar on the left side of the window. The last help
+      menu also includes basic utilities.
+    </p>
 
-    <h2 id="design"> Design network</h2>
-    <p > The network is designed interactively.
-        At the bottom of the graph window, there is a <i>pattern network</i> which is used to
-        select the edge sign: either positive (<span style="color: Green;">Green</span>) or negative (<span style="color:red">Red</span>).&nbsp;
-        This network will never be included in the final BooN.
-        Clicking on an edge of the pattern network will apply the selected-edge type to all new edges.
-        Selecting a node or edge will always highlight it.
-        If the interaction is not monotone, its definition can only be achieved by modifying the formula directly.<br>
-        The network design commands are: </p>
+    <h2 id="design">Design network</h2>
+    <p>
+      The network is designed interactively inside the graph editor. Each node
+      represents a Boolean variable and each edge represents an interaction
+      between variables. At the side of the graph window, there are several
+      commands available to create an editable boolean network. 
+    </p>
+      <p>
+      <strong>Note: The left mouse button is used for nodes, while the right mouse button is used for edges.</strong>
+       The network design is based on the basic following commands:
+       </p>
+
+
     <dl>
-        <dt><b>Create a node:</b></dt><dd>press <span class="cmd">[insert]</span> or
-            <span class="cmd">+</span> will add a new node to the
-            graph at the current mouse position. This node is unlabelled and must be named after.</dd>
-         <dt><b>Create an edge:</b></dt><dd> Select an edge with the desired sign or color,
-        then double-click the starting and destination nodes.</dd>
-        <dt><b>Delete a node or edge:</b> </dt><dd>select the node or edge and press <span class="cmd">[delete]</span>
-            or <span class="cmd">-</span>.</dd>
-        <dt><b>Change edge direction:</b></dt><dd> pressing <span class="cmd">[@]</span>
-            will reverse the direction of the selected edge.</dd>
-        <dt><b>Label node or edge:</b></dt><dd>click on the node or edge, press <span class="cmd">[enter]</span>
-            , next type the label, and press <span class="cmd">[enter]</span> again. A label must follow the
-syntax of a variable.</dd>
+      <dt><b>Create a node:</b></dt>
+      <dd>
+        <i>Left click on the mouse</i> will add a new node to the graph at the
+        current mouse position. This node is labelled by default
+        (<code>x1</code>, <code>x2</code>, etc), and can be renamed after.
+      </dd>
+      <dt><b>Create an edge:</b></dt>
+      <dd>
+        <i>Right-click on the mouse</i>, at a starting node and release once
+        reached the target node. A preview line of the edge will also be shown.
+      </dd>
+      <dt><b>Assign edge sign:</b></dt>
+      <ul>
+        <li>
+          <dd>
+            Click on the button in the toolbar <code>Edge Plus Sign</code> to
+            assign positive (<span style="color: Green">Green</span>) edge sign
+            by default for all edges created forward = activation (+1).
+          </dd>
+        </li>
+        <li>
+          <dd>
+            Click on the button in the toolbar <code>Edge Minus Sign</code> to
+            assign negative (<span style="color: red">Red</span>) edge sign by
+            default for all edges created forward = inhibition (-1).
+          </dd>
+        </li>
+      </ul>
+      <dt><b>Change edge sign:</b></dt>
+      <dd>
+        Do a right-click on the edge to switch its sign, from positive (<span
+          style="color: Green"
+          >Green</span
+        >) to negative (<span style="color: red">Red</span>) or vice-versa.
+      </dd>
+      <dt><b>Rename a node:</b></dt>
+      <dd>
+        Click on a node and then select the button <code>Rename node</code> to
+        change the name by default or rename the selected node. In addition,
+        renaming of node can also be done when double left-clicked on a node.
+      </dd>
+      <dt><b>Assign Family Color to an Edge:</b></dt>
+      <dd>
+        Select an edge and click on the button <code>Set Family color</code> to
+        assign a family color to the edge from the palette. More colors are
+        availaible when pressing the <span class="cmd">+</span> button in the
+        palette, and can be reduced too when pressing the
+        <span class="cmd">-</span> button. Also, a family color can be removed
+        by assigning white as color (<span
+          style="color: White; background-color: black"
+          >White</span
+        >).
+      </dd>
+      <dt><b>Hide Family Color View:</b></dt>
+      <dd>
+        Click on the button <code>Hide Family Color View</code> at the
+        bottom-right on the color palette of the
+        <code> Assign Family Color</code> button, to hide or show the family
+        colors of the network.
+      </dd>
+      <dt><b>Resize the node:</b></dt>
+      <dd>
+        Click on the node then on the button <code>Resize Node</code> in order
+        to decrease or increase its size by a slider.
+        <ul>
+          <li>
+            We can specify to apply the resizing changes to all the nodes at
+            once or only the selected node.
+          </li>
+          <li>
+            Also, we can select to position the name of the node at the center
+            or on top of the node, for display purposes.
+          </li>
+        </ul>
+      </dd>
+      <dt><b>Delete a node or edge:</b></dt>
+      <dd>
+        Select the node or edge and press <span class="cmd">[delete]</span> or
+        the button <code> Delete Node or Edge</code>.
+      </dd>
+      <dt><b>Zoom In:</b></dt>
+      <dd>
+        Click on the button <code>Zoom In</code> to zoom in on the network to
+        increase the graph display size.
+      </dd>
+      <dt><b>Zoom Out:</b></dt>
+      <dd>
+        Click on the button <code>Zoom Out</code> to zoom out on the network to
+        reduce the graph display size.
+      </dd>
     </dl>
 
-<p class="info">
-    <span class="info-title">INFO</span>
-    <ul class="info">
-		<li>The network design is based on
-        <code>EditableGraph</code>  function of <code>Netgraph</code> Python module. Please refer to the
-        documentation of this function for the commands related to the graph design. </li>
+    <p class="info">
+      <span class="info-title">INFO</span>
+    </p>
 
-        <li> To prevent the GUI from becoming unresponsive, press <span class="cmd">[enter]</span>
-		   a second time to complete the labeling process.
-            If forgotten, press again <span class="cmd">[enter]</span> to end the labeling.
-        </li>
-        <li> Nodes will only be integrated if they are named, so naming a node is necessary to include it in the BooN.
-        </li>
-        <li> Edge labels correspond to module ID and must be integers, otherwise they are not considered.
-            A module is a set of variables acting together. The variables having the same module ID belong to the same clause for formula in DNF.
-        <li> The labels are assumed to be in the sign of the edge.
-        If there is a discrepancy in the sign of the label compared to the interaction sign,
-        the system will automatically correct it.
-        This correction is not achieved for non-monotone interaction.</li>
-        <li> If a variable occurs in several modules, separate the integer label of each module by a space.</li>
-        <li>  If no labels are set for an edge, then the source node is implicitly
-            included in the first module (ID = 1). </li>
-        <li> The default formula for a newly created node is False when it is isolated. </li>
-		<li> It is also possible to create a network by directly writing the formula of a node in the <b>BooN View</b> window
-            (See <span class="cmd">[View BooN]</span> in <a href="#analysis"> Boolean Network Analysis </a> section).
-        <br>
+    <ul class="info">
+      <li>
+        The graph editor is based on the
+        <code>EditableGraph</code> functionality from the Netgraph library.
+      </li>
+
+      <li>
+        The network design is based on <code>EditableGraph</code> function of
+        <code>Netgraph</code> Python module. Please refer to the documentation
+        of this function for the commands related to the graph design.
+      </li>
+
+      <li>
+        Node positions are preserved when converting between graph and BooN
+        representations.
+      </li>
+
+      <li>
+        The default formula for a newly created node is False when it is
+        isolated.
+      </li>
+
+      <li>
+        It is also possible to create a network by directly writing the formula
+        of a node in the <b>BooN View</b> window (See
+        <span class="cmd">[View BooN]</span> in
+        <a href="#analysis"> Boolean Network Analysis </a> section). <br />
+      </li>
     </ul>
 
-    <h2 id="file"> File Menu </h2>
+    <h2 id="file">File Menu</h2>
     The different items are:
     <dl>
-        <dt> <span class="cmd">[Open]</span></dt><dd>Open/load the file.</dd>
-        <dt> <span class="cmd">[Save]</span> </dt> <dd>Save the BooN with the current file name.</dd>
-        <dt> <span class="cmd">[Save as]</span> </dt> <dd>Save the BooN with a new file name.</dd>
-         <dt> <span class="cmd">[Import]</span> </dt> <dd>Import a text, Boolnet, or SBML file containing the BooN description. The admitted extensions are <code>.txt,.bnet, .sbml, .xml</code></dd>
-         <dt> <span class="cmd">[Export]</span> </dt> <dd>Export the BooN as text</dd>
+      <dt><span class="cmd">[Open]</span></dt>
+      <dd>Open/load the file.</dd>
+      <dt><span class="cmd">[Save]</span></dt>
+      <dd>Save the BooN with the current file name.</dd>
+      <dt><span class="cmd">[Save as]</span></dt>
+      <dd>Save the BooN with a new file name.</dd>
+      <dt><span class="cmd">[Import]</span></dt>
+      <dd>
+        Import a text, Boolnet, or SBML file containing the BooN description.
+        The admitted extensions are <code>.txt,.bnet, .sbml, .xml</code>
+      </dd>
+      <dt><span class="cmd">[Export]</span></dt>
+      <dd>Export the BooN as text</dd>
     </dl>
 
     <p class="info"><span class="info-title">INFO:</span></p>
-        <ul class="info">
-            <li> The extension of a BooN file is <code>.boon</code>.</li>
-            <li> The exportation or importation is defined from a text file
-                specification of a BooN  with <code>.bnet</code> as default extension. </li>
-            <li> setting the extension to <code>.txt</code> leads to import or export in Sympy format.</li>
-            <li> setting the extension to <code>.bnet</code> leads to import or export in Bool Net format</li>
-            <li> The imported SBML files must correspond to the Qualitative Model or the "qual" extension for SBML</li>
-            <li>The coordinates of the nodes are lost during the exportation, to keep them save the BooN before. </li>
-            <li>The nodes of an imported BooN are circularly arranged The node layout computation may take time.</li>
-            <li>At the bottom-left a flag indicates whether the file is saved:
-                <ul>
-                    <li> &#9898; means the file is saved,</li>
-                    <li> &#9899; means the file is not saved.</li>
-                    </ul>
-            </li>
+    <ul class="info">
+      <li>The extension of a BooN file is <code>.boon</code>.</li>
+      <li>
+        The exportation or importation is defined from a text file specification
+        of a BooN with <code>.bnet</code> as default extension.
+      </li>
+      <li>
+        setting the extension to <code>.txt</code> leads to import or export in
+        Sympy format.
+      </li>
+      <li>
+        setting the extension to <code>.bnet</code> leads to import or export in
+        Bool Net format
+      </li>
+      <li>
+        The imported SBML files must correspond to the Qualitative Model or the
+        "qual" extension for SBML
+      </li>
+      <li>
+        The coordinates of the nodes are lost during the exportation, to keep
+        them save the BooN before.
+      </li>
+      <li>
+        The nodes of an imported BooN are circularly arranged The node layout
+        computation may take time.
+      </li>
+      <li>
+        At the bottom-left a flag indicates whether the file is saved:
+        <ul>
+          <li>&#9898; means the file is saved,</li>
+          <li>&#9899; means the file is not saved.</li>
         </ul>
+      </li>
+    </ul>
 
-    <h3>Syntax of the imported text follows the BoolNet or the text format </h3>
+    <h3>Syntax of the imported text follows the BoolNet or the text format</h3>
     <h4>Boolnet format (extension .bnet)</h4>
-    <p> For the Boolnet format, the file contains a set of
-        equations where a Boolean equation must be written in the same
-        line.&nbsp; Comments start by&nbsp; <code>#</code>.&nbsp; The
-        formula must follow the <a href="http://colomoto.org/biolqm/doc/format-bnet.html" title="BoolNet Documentation">BoolNet</a>
-        syntax where: AND = &amp;, OR = |, NOT = !.
-    <p> The grammar of a formula definition related to a variable is :<span class="cmd"> &lt;variable&gt; ',' &lt;formula&gt;</span>. For example, we have:<br>
+    <p>
+      For the Boolnet format, the file contains a set of equations where a
+      Boolean equation must be written in the same line.&nbsp; Comments start
+      by&nbsp; <code>#</code>.&nbsp; The formula must follow the
+      <a
+        href="http://colomoto.org/biolqm/doc/format-bnet.html"
+        title="BoolNet Documentation"
+        >BoolNet</a
+      >
+      syntax where: AND = &amp;, OR = |, NOT = !.
     </p>
-    <p class="info"><span class="info-title">EXAMPLE:</span><br>
-        <span style="font-family: Consolas, monospace; text-align:left;"># Example of BooN<br>
-            target, factors <br>
-            x , (!x &amp; y) | z <br>
-            y , !z | x <br>
-            z , y &amp; x &amp; !z </span>
-    </p>
-     <h4>Text format (extension .txt)</h4>
-    <p> For the text format, vomments start by&nbsp; <code>#</code> and the logical operators are Python operators: AND = &amp;, OR = |, NOT = ~.
-    <p> The grammar of a formula definition related to a variable is :<span class="cmd"> &lt;variable&gt; '=' &lt;formula&gt;</span>. For example, we have:<br>
-    </p>
-    <p class="info"><span class="info-title">EXAMPLE:</span><br>
-        <span style="font-family: Consolas, monospace; text-align:left;"># Example of BooN<br>
-          x  =  (~x &amp; y) | z <br>
-          y  =  ~z | x <br>
-          z  = y &amp; x &amp; ~z </span></p>
 
-    <h2 id="analysis"> Boolean Network Analysis </h2>
-    The different items are:
-     <dl>
-         <dt><span class="cmd">[View BooN]</span></dt> <dd>shows the Boolean network specification corresponding to the current BooN.
-            Conversion to DNF is available via this functionality.
-			Moreover, the formulas can be redefined by typing a new formula in the formula field of a variable.
-     </dd>
-         <dt><span class="cmd">[Stable states]</span></dt>
-         <dd>compute the stable states of the BooN. The method is based on SAT Solver and
-             can be applied to large network.
-        </dd>
-         <dt><span class="cmd">[Controllability]</span></dt>
-         <dd>perform a controllability analysis to determine which variables must be frozen
-             to reach the expected goal identified by a variable marking. (see Section <a href="#controllability"> Controllability Analysis </a>) </dd>
-          <dt><span class="cmd">[Model and Equilibria]</span></dt>
-            <dd>Compute the dynamics following the asynchronous or synchronous mode.
-                In asynchronous mode, only one variable is updated per transition,
-                whereas in synchronous mode,</dd>
-     </dl>
-    <p class="info">
-        <b><span class="info-title">INFO:</span></b><br>
-        The dynamics model comprises an exponential number of states derived from the variables, and thus this computation is reduced to a given number of variables.
-        <br>
-		The syntax of a new formula typed in the formula field must follow the SYMPY/Python syntax whatever the current output style,
-		and only use the already drawn nodes. Switching to Python style first is advisable to make these changes.
-        <br>
-        To create a network directly from a formula specification,
-        it is first necessary to create the nodes of the variables involved in the network
-        and then enter the formula.
+    <p>
+      The grammar of a formula definition related to a variable is :<span
+        class="cmd"
+      >
+        &lt;variable&gt; ',' &lt;formula&gt;</span
+      >. For example, we have:<br />
     </p>
-	 <h2 id="controllability"> Controllability analysis </h2>
-	 <p style="text-align: justify;"> Controllability analysis determines the variables that must be fixed/frozen to achieve a specific goal.
-	 The goal is either to reach or avoid a Boolean profile of variables as markers at steady-state.
-	The markers are purposely selected variables.
-         The procedure is decomposed into the following steps:
-	 </p>
-	 <dl>
-	 <dt><b>Define marker profile:</b> </dt> <dd>
-         On the left-hand side table, in the <span class="cmd"> Destiny</span> sheet,
-         select the destiny profile by choosing the Boolean value of markers.
-         </dd>
-	 <dt><b>Observers characterization:</b> </dt>  <dd> The observers are variables that cannot be controlled.
-         Set the observers in the <span class="cmd">Observers</span> sheet.
-         The markers are always observers and implicitly set when their values are fixed.
-         This set can be further completed to prevent the control of other variables.
-	 </dd>
-	 <dt><b>Choose the nature of the aim:</b> </dt> <dd> Choose either to <span class="cmd">[Reach]</span> or <span class="cmd">[Avoid]</span> the marking.
-         <span class="cmd">[Reach]</span> implies that the marking will be reached at stable state while
-         <span class="cmd">[Avoid]</span> means that the marking will be avoided.
-	 <dt> 
-	 <dt><b>Determine the modality of the goal:</b></dt> <dd> There are two modalities: the <span class="cmd">[Possibility]</span>and the <span class="cmd">[Necessity]</span>.
-	 In the case of a marking profile to be reached, the possibility implies that this marking profile exists for at least one stable state.
-	 The necessity dictates that all stable states possess this profile.
-	 The same applies to avoidance.
-	  <dt><b>Find the possible control:</b></dt> <dd> Click on the control button to compute the different possible solutions which are displayed at the right.
-	 <dt><b>Apply the control:</b></dt> <dd> 
-	 Select one control solution and click on the rightmost button to apply it to the BooN.
-         The BooN will be changed according to the solution by freezing the appropriate variables.
-         Next the controllability analysis window will close.</dd>
-    <dt> <b>Trace:</b></dt><dd> the trace of execution of the controllability
-    is displayed in the console if it is checked (Default checked). </dd>
-     </dl>
-    <p class="info"><span class="info-title">INFO:</span><br>
-      For profile avoidance, the necessity alone could generate solutions without stable states.
-	 To impose a solution with a stable state, select both <span class="cmd">[Possibility]</span>and <span class="cmd">[Necessity]</span>.
+    <p class="info">
+      <span class="info-title">EXAMPLE:</span><br />
+      <span style="font-family: Consolas, monospace; text-align: left"
+        ># Example of BooN<br />
+        target, factors <br />
+        x , (!x &amp; y) | z <br />
+        y , !z | x <br />
+        z , y &amp; x &amp; !z
+      </span>
+    </p>
+    <h4>Text format (extension .txt)</h4>
+    <p>
+      For the text format, vomments start by&nbsp; <code>#</code> and the
+      logical operators are Python operators: AND = &amp;, OR = |, NOT = ~.
+    </p>
+    <p>
+      The grammar of a formula definition related to a variable is :<span
+        class="cmd"
+      >
+        &lt;variable&gt; '=' &lt;formula&gt;</span
+      >. For example, we have:<br />
+    </p>
+    <p class="info">
+      <span class="info-title">EXAMPLE:</span><br />
+      <span style="font-family: Consolas, monospace; text-align: left"
+        ># Example of BooN<br />
+        x = (~x &amp; y) | z <br />
+        y = ~z | x <br />
+        z = y &amp; x &amp; ~z
+      </span>
+    </p>
+
+    <h2 id="analysis">Boolean Network Analysis</h2>
+    The different items are:
+    <dl>
+      <dt><span class="cmd">[View BooN]</span></dt>
+      <dd>
+        shows the Boolean network specification corresponding to the current
+        BooN. Conversion to DNF is available via this functionality. Moreover,
+        the formulas can be redefined by typing a new formula in the formula
+        field of a variable.
+      </dd>
+      <dt><span class="cmd">[Stable states]</span></dt>
+      <dd>
+        compute the stable states of the BooN. The method is based on SAT Solver
+        and can be applied to large network.
+      </dd>
+      <dt><span class="cmd">[Controllability]</span></dt>
+      <dd>
+        perform a controllability analysis to determine which variables must be
+        frozen to reach the expected goal identified by a variable marking. (see
+        Section <a href="#controllability"> Controllability Analysis </a>)
+      </dd>
+      <dt><span class="cmd">[Model and Equilibria]</span></dt>
+      <dd>
+        Compute the dynamics following the asynchronous or synchronous mode. In
+        asynchronous mode, only one variable is updated per transition, whereas
+        in synchronous mode,
+      </dd>
+    </dl>
+    <p class="info">
+      <b><span class="info-title">INFO:</span></b
+      ><br />
+      The dynamics model comprises an exponential number of states derived from
+      the variables, and thus this computation is reduced to a given number of
+      variables.
+      <br />
+      The syntax of a new formula typed in the formula field must follow the
+      SYMPY/Python syntax whatever the current output style, and only use the
+      already drawn nodes. Switching to Python style first is advisable to make
+      these changes.
+      <br />
+      To create a network directly from a formula specification, it is first
+      necessary to create the nodes of the variables involved in the network and
+      then enter the formula.
+    </p>
+    <h2 id="controllability">Controllability analysis</h2>
+    <p style="text-align: justify">
+      Controllability analysis determines the variables that must be
+      fixed/frozen to achieve a specific goal. The goal is either to reach or
+      avoid a Boolean profile of variables as markers at steady-state. The
+      markers are purposely selected variables. The procedure is decomposed into
+      the following steps:
+    </p>
+    <dl>
+      <dt><b>Define marker profile:</b></dt>
+      <dd>
+        On the left-hand side table, in the
+        <span class="cmd"> Destiny</span> sheet, select the destiny profile by
+        choosing the Boolean value of markers.
+      </dd>
+      <dt><b>Observers characterization:</b></dt>
+      <dd>
+        The observers are variables that cannot be controlled. Set the observers
+        in the <span class="cmd">Observers</span> sheet. The markers are always
+        observers and implicitly set when their values are fixed. This set can
+        be further completed to prevent the control of other variables.
+      </dd>
+      <dt><b>Choose the nature of the aim:</b></dt>
+      <dd>
+        Choose either to <span class="cmd">[Reach]</span> or
+        <span class="cmd">[Avoid]</span> the marking.
+        <span class="cmd">[Reach]</span> implies that the marking will be
+        reached at stable state while <span class="cmd">[Avoid]</span> means
+        that the marking will be avoided.
+      </dd>
+
+      <dt></dt>
+      <dt><b>Determine the modality of the goal:</b></dt>
+      <dd>
+        There are two modalities: the <span class="cmd">[Possibility]</span>and
+        the <span class="cmd">[Necessity]</span>. In the case of a marking
+        profile to be reached, the possibility implies that this marking profile
+        exists for at least one stable state. The necessity dictates that all
+        stable states possess this profile. The same applies to avoidance.
+      </dd>
+
+      <dt><b>Find the possible control:</b></dt>
+      <dd>
+        Click on the control button to compute the different possible solutions
+        which are displayed at the right.
+      </dd>
+      <dt><b>Apply the control:</b></dt>
+      <dd>
+        Select one control solution and click on the rightmost button to apply
+        it to the BooN. The BooN will be changed according to the solution by
+        freezing the appropriate variables. Next the controllability analysis
+        window will close.
+      </dd>
+      <dt><b>Trace:</b></dt>
+      <dd>
+        the trace of execution of the controllability is displayed in the
+        console if it is checked (Default checked).
+      </dd>
+    </dl>
+    <p class="info">
+      <span class="info-title">INFO:</span><br />
+      For profile avoidance, the necessity alone could generate solutions
+      without stable states. To impose a solution with a stable state, select
+      both <span class="cmd">[Possibility]</span>and
+      <span class="cmd">[Necessity]</span>.
     </p>
     <h2 id="utilities">Help and Utilities</h2>
     The different items are:
     <dl>
-        <dt> <span class="cmd">[Help]</span></dt><dd>Open this Help.</dd>
-        <dt> <span class="cmd">[Undo]</span> </dt> <dd>Undo the current network to return to the previous version.
-        Only changes made to networks are saved, not changes to node positions.</dd>
-        <dt> <span class="cmd">[Redo]</span> </dt> <dd>Retrieve the current version
-        if <span class="cmd">[Undo]</span> was performed.</dd>
+      <dt><span class="cmd">[Help]</span></dt>
+      <dd>Open this Help.</dd>
+      <dt><span class="cmd">[Undo]</span></dt>
+      <dd>
+        Undo the current network to return to the previous version. Only changes
+        made to networks are saved, not changes to node positions.
+      </dd>
+      <dt><span class="cmd">[Redo]</span></dt>
+      <dd>
+        Retrieve the current version if <span class="cmd">[Undo]</span> was
+        performed.
+      </dd>
     </dl>
-
-    </body>
+  </body>
 </html>

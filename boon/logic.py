@@ -46,11 +46,12 @@ def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     Display an error message and exit in case of error (kind = "ERROR").
 
     :param msg: The error message.
-    :param arg: The argument of the error message (Default: "" no args).
-    :param kind: Type of error (Default: ERROR). Only the "ERROR" option will exit the application.
     :type msg: str
+    :param arg: The argument of the error message (Default: "" no args).
     :type arg: str
+    :param kind: Type of error (Default: ERROR). Only the "ERROR" option will exit the application.
     :type kind: str
+
     :return: None
     :rtype: None
     """
@@ -65,7 +66,9 @@ def firstsymbol(formula):
 
     :param formula: The input dnf.
     :type formula: Sympy formula
-    :return: the first symbol."""
+
+    :return: The first symbol.
+    """
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):  # The formula is reduced to a Boolean value, no symbols.
         return None
     else:  # The formula has at least 1 symbol.
@@ -78,8 +81,10 @@ def cnf2clauses(cnf):
 
     :param cnf: CNF formula
     :type cnf: sympy formula
-    :return: sequence of clauses.
-    :rtype: Tuple[formula]"""
+
+    :return: Sequence of clauses.
+    :rtype: Tuple[formula]
+    """
     if isinstance(cnf, And):  # The cnf is plain (And of Or-clauses).
         clauses = cnf.args
     elif isinstance(cnf, bool | BooleanFalse | BooleanTrue):  # The cnf is reduced to a boolean value.
@@ -94,8 +99,10 @@ def clause2literals(clause) -> set:
 
     :param  clause: The clause or cube.
     :type clause: Sympy formula
-    :return: set of literals.
-    :rtype: Set"""
+
+    :return: Set of literals.
+    :rtype: Set
+    """
     if isinstance(clause, Symbol | Not):  # clause reduced to a single literal.
         literals_clause = {clause}
     elif isinstance(clause, bool | BooleanFalse | BooleanTrue):  # clause reduced to Boolean value.
@@ -110,11 +117,12 @@ def prettyform(formula, style: dict = LOGICAL, depth=0):
     """Return a string of a formula in nice form.
 
     :param formula: The input formula.
-    :param style: The style of the logical operators (Default: LOGICAL)
-    :param depth: the current depth of the formula for setting parentheses (Default: 0)
     :type formula: sympy formula
+    :param style: The style of the logical operators (Default: LOGICAL).
     :type style: dict
-    :type depth: int"""
+    :param depth: The current depth of the formula for setting parentheses (Default: 0).
+    :type depth: int
+    """
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return style[formula]
     elif isinstance(formula, Symbol):
@@ -145,8 +153,10 @@ def sympy2z3(formula):
 
     :param formula: The formula to convert.
     :type formula: Sympy formula
-    :return: the equivalent z3 formula.
-    :rtype: Z3 formula"""
+
+    :return: The equivalent z3 formula.
+    :rtype: Z3 formula
+    """
     if isinstance(formula, bool):
         return formula
     elif isinstance(formula, BooleanTrue):
@@ -178,10 +188,12 @@ _varcounter = 0  # counter1 used in newvar.
 def newvar(initialize: int | None = None):
     """Create a new sympy symbol of the form <prefix><number>. The prefix is given by TSEITIN constant.
 
-     :param initialize: Initialize the counter if the value is an integer or let the counter increment by 1 if it is set to None (Default value = None)
-     :type  initialize: int|None
-     :return: a Simpy symbol.
-     :rtype: Symbol"""
+    :param initialize: Initialize the counter if the value is an integer or let the counter increment by 1 if it is set to None (Default value = None)
+    :type  initialize: int|None
+
+    :return: A Simpy symbol.
+    :rtype: Symbol
+    """
     global _varcounter
     if initialize is not None:
         _varcounter = initialize
@@ -196,8 +208,10 @@ def tseitin(formula):
 
     :param formula: The formula.
     :type formula: Sympy formula
-    :return: a pair: Tseitin variable, Tseitin CNF.
-    :rtype: Tuple"""
+
+    :return: A pair: Tseitin variable, Tseitin CNF.
+    :rtype: Tuple
+    """
     if isinstance(formula, bool | BooleanFalse | BooleanTrue):
         return formula, True
     elif isinstance(formula, Symbol):
@@ -242,8 +256,10 @@ def tseitin_cnf(formula):
 
     :param formula: The formula to be converted.
     :type formula: Sympy formula
+
     :return: CNF formula.
-    :rtype: Sympy formula"""
+    :rtype: Sympy formula
+    """
     newvar(0)  # initialize the counter1
     p, f = tseitin(formula)
     return And(p, f)
@@ -253,9 +269,10 @@ def supercnf(formula, trace: bool = False):
     """ Convert the formula to CNF. The method is well adapted to large formula.
 
     :param formula: The formula to convert.
-    :param trace: Boolean flag if True trace the computational steps (Default value = False)
     :type formula: sympy formula
+    :param trace: Boolean flag if True trace the computational steps (Default value = False)
     :type trace: bool
+
     :return: CNF formula
     :rtype: sympy formula
     """
@@ -301,15 +318,16 @@ def prime_implicants(formula, kept: Callable = lambda lit: not firstsymbol(lit).
 
     :param formula: The input formula. The formula does not need to be in CNF.
     :type formula: Sympy formula
-    :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables)
+    :param kept: Predicate selecting the literals that are kept in the solutions (Default: function discarding the Tseitin working variables).
     :type kept: function
-    :param max_solutions: maximal number of solutions (Default sys.maxsize)
+    :param max_solutions: Maximal number of solutions (Default sys.maxsize).
     :type max_solutions: int
-    :param trace: a Boolean flag determining whether the trace showing the resolution is activated (Default: False).
+    :param trace: A Boolean flag determining whether the trace showing the resolution is activated (Default: False).
     :type trace: bool
     :param solver: The solver to use (Default: Pulp solver).
     :type solver: solver function
-    :return: all the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.
+
+    :return: All the prime implicants in the form of a set of sets where each subset represents one prime implicant filtered by kept.
     :rtype: frozenset
     """
     global prime_implicants_problem

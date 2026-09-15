@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>400</height>
+    <width>1035</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
-    <height>400</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -24,57 +24,83 @@
    <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="Main">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QScrollArea" name="scrollArea">
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>886</width>
+         <height>750</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
+        <property name="leftMargin">
+         <number>5</number>
         </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
+        <property name="topMargin">
+         <number>5</number>
         </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>418</width>
-           <height>366</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="DesignCanvas">
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="leftMargin">
-           <number>5</number>
-          </property>
-          <property name="topMargin">
-           <number>5</number>
-          </property>
-          <property name="rightMargin">
-           <number>5</number>
-          </property>
-          <property name="bottomMargin">
-           <number>5</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" name="DesignCanvas">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-           </layout>
-          </item>
          </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -114,7 +140,7 @@
     <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
+    <enum>RightToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
@@ -159,8 +185,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>528</width>
-     <height>18</height>
+     <width>1035</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -200,6 +226,86 @@
    <addaction name="MenuFile"/>
    <addaction name="MenuNetwork"/>
    <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>70</width>
+     <height>520</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>60</width>
+     <height>60</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionEdgePlus"/>
+   <addaction name="actionEdgeMinus"/>
+   <addaction name="separator"/>
+   <addaction name="actionRenameNode"/>
+   <addaction name="actionFamilyColor"/>
+   <addaction name="actionResizeNode"/>
+   <addaction name="actionDelete"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>70</width>
+     <height>1000</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>60</width>
+     <height>60</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
   </widget>
   <action name="ActionOpen">
    <property name="icon">
@@ -361,6 +467,96 @@
    </property>
    <property name="text">
     <string>Model and Equilibria</string>
+   </property>
+  </action>
+  <action name="actionEdgePlus">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/edge_plus_sign.svg</normaloff>resources/edge_plus_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edge Plus Sign</string>
+   </property>
+  </action>
+  <action name="actionEdgeMinus">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/edge_minus_sign.svg</normaloff>resources/edge_minus_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edge Minus Sign</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/delete_sign.svg</normaloff>resources/delete_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Node or Edge</string>
+   </property>
+  </action>
+  <action name="actionFamilyColor">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/family_color_sign.svg</normaloff>resources/family_color_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Family Color</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Family Color</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/zoom_in_sign.svg</normaloff>resources/zoom_in_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/zoom_out_sign.svg</normaloff>resources/zoom_out_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionRenameNode">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/rename_node_sign.svg</normaloff>resources/rename_node_sign.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Rename Node</string>
+   </property>
+   <property name="toolTip">
+    <string>Rename Node</string>
+   </property>
+  </action>
+  <action name="actionResizeNode">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/resize_node.svg</normaloff>resources/resize_node.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Resize Node</string>
+   </property>
+   <property name="toolTip">
+    <string>Resize Node</string>
    </property>
   </action>
  </widget>
