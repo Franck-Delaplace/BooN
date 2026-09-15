@@ -1,3 +1,5 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python.defaultInterpreterPath": "C:\\venvs\\boon\\Scripts\\python.exe",
+    "black-formatter.path": ["C:\\venvs\\boon\\Scripts\\black.exe"],
+    "python.terminal.activateEnvironment": true
 }
