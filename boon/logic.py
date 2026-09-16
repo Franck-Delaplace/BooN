@@ -12,7 +12,7 @@ import pulp
 import sys
 import z3
 from pulp import PULP_CBC_CMD
-from sympy import symbols
+from sympy import symbols, preorder_traversal
 from collections.abc import Callable
 from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent, Xor, Xnor, Boolean, BooleanTrue, BooleanFalse
@@ -73,6 +73,21 @@ def firstsymbol(formula):
         return None
     else:  # The formula has at least 1 symbol.
         return next(iter(formula.free_symbols))
+
+
+def is_and_or_not(formula) -> bool:
+    """ Check whether a formula only uses the And, Or, Not operators (and Boolean constants).
+    Operators such as Xor, Xnor, Implies or Equivalent are excluded: the formulas of a BooN must not contain them.
+
+    :param formula: The input formula.
+    :type formula: Sympy formula
+
+    :return: True if the formula is written with And, Or, Not only.
+    :rtype: bool
+    """
+    if isinstance(formula, bool):
+        return True
+    return all(isinstance(sub, Symbol | And | Or | Not | BooleanTrue | BooleanFalse) for sub in preorder_traversal(formula))
 
 
 # DEF: Functions decomposing a formula.

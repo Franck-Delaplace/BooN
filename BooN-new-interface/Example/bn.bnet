@@ -1,0 +1,6 @@
+# BooN saved on 03-04-2026
+targets, factors
+z , v | y | !x
+x , y
+y , x & z
+v , (x & y) | (z & !v & !x)
