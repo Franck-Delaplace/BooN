@@ -17,6 +17,8 @@ import math
 import re
 import copy
 import keyword
+import threading
+import traceback
 import numpy as np
 
 # Third-party imports: import functions only used
@@ -29,7 +31,6 @@ from sympy import SOPform, symbols
 from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import is_cnf, is_dnf, is_nnf, to_dnf
 from sympy.logic.boolalg import And, Not
-from sympy.parsing.sympy_parser import parse_expr
 from pulp import PULP_CBC_CMD
 
 # PyQt5
@@ -66,8 +67,6 @@ ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.
 MODELBOUND: int = 8                                                                         #Size bound of the dynamics model in terms of variables.
 LPSOLVER = PULP_CBC_CMD                                                                     #LP-Solver related to the controllability resolution. (destify)
 
-FORMULA_NAMES: set = {"True", "False", "And", "Or", "Not", "Xor", "Nand", "Nor",           #Non-variable names admitted in a formula typed in the View
-                      "Implies", "Equivalent", "ITE", "true", "false"}
 INTPAT: str = r"\s*-?[0-9]+\s*"                                                           #Integer regular expression
 BASIC_FAMILY_COLOR : tuple[int, int, int ] = (1 ,1 ,1 )                                     #White: default/basic family color
 
@@ -3372,30 +3371,16 @@ class View(QDialog):
         variable = list(theboon.desc.keys())[row]                                           #Variable of the modified formula
         text = self.formulas[row].text()                                                    #Get the text of the line edit formula
 
-        #STEP: Check the names before parsing (otherwise names such as S or E are silently taken as sympy objects)
-        known = {str(v) for v in theboon.variables} | FORMULA_NAMES
-        unknown = set(re.findall(r"[A-Za-z_]\w*", text)) - known
-        if unknown:
-            QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{', '.join(sorted(unknown))}\nThe formula is not changed.")
-            return
-
         try:
-            #The BooN variables are given explicitly so that names such as S, E, I or Q are not taken as sympy objects.
-            formula = parse_expr(text, local_dict={str(v): v for v in theboon.variables})   #Converts input/string into symbolic expression(formula)
-        except Exception:                                                                   #Show error: if invalid expression (SyntaxError, TokenError, TypeError...)
+            formula = logic.parse_formula(text)                                             #Converts input/string into symbolic expression (every identifier is a variable)
+        except SyntaxError:                                                                 #Show error: if invalid expression
             QMessageBox.critical(self, "SYNTAX ERROR", "Syntax Error.\nThe formula is not changed.\nTIP: please select the Python output form. ")
             return
 
-        if isinstance(formula, bool):                                                       #Bool constant: no variables
-            variables = set()
-        elif hasattr(formula, "free_symbols"):                                              #Get the variables used in the formula
-            variables = formula.free_symbols
-        else:                                                                               #Not a Boolean expression (e.g. a number)
-            QMessageBox.critical(self, "SYNTAX ERROR", f"'{text}' is not a Boolean formula.\nThe formula is not changed.")
-            return
+        variables = set() if isinstance(formula, bool) else formula.free_symbols            #Get the variables used in the formula
         diff = variables.difference(theboon.variables)
         if diff:                                                                            #Show error: unknown variables
-            QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{diff}\nThe formula is not changed.")
+            QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{', '.join(sorted(map(str, diff)))}\nThe formula is not changed.")
             return
 
         if not logic.is_and_or_not(formula):                                                #Xor, Implies, Equivalent... are excluded from the BooN formulas: convert to DNF
@@ -3429,7 +3414,7 @@ class View(QDialog):
             if hasattr(self.parent.boon, "desc"):
                 for k, v in self.parent.boon.desc.items():
                     if isinstance(v, str):
-                        self.parent.boon.desc[k] = parse_expr(v)
+                        self.parent.boon.desc[k] = logic.parse_formula(v)
             self.parent.boon.dnf()                                                          #Convert all BooN formulas into DNF
             self.parent.update_from_formulas()                                              #Record the change and refresh all views (including this one)
         except Exception as e:
@@ -4016,8 +4001,23 @@ class Threader(QObject):
 
 
 
+#DEF: Error handling
+def gui_excepthook(exc_type, exc_value, exc_traceback):
+    """
+    Displays the uncaught exceptions in a dialog instead of aborting the application.
+    WARNING: PyQt5 aborts the application on an exception raised in a slot unless sys.excepthook is replaced.
+
+    :return: None
+    """
+    traceback.print_exception(exc_type, exc_value, exc_traceback)                           #Keep the full trace in the console
+    if QApplication.instance() is not None and threading.current_thread() is threading.main_thread():  #Dialogs can only be opened from the main (GUI) thread
+        QMessageBox.critical(None, "Error", f"{exc_type.__name__}: {exc_value}\n\nThe operation has been aborted.")
+
+
+
 #DEF: Main
 if __name__ == "__main__":
+    sys.excepthook = gui_excepthook
     app = QApplication(sys.argv)
     boonify = Boonify()
     boonify.show()

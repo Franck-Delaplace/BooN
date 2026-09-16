@@ -8,14 +8,17 @@
 # WARNING is a warning.
 
 import inspect
+import os
+import re
 import pulp
 import sys
 import z3
 from pulp import PULP_CBC_CMD
 from sympy import symbols, preorder_traversal
+from sympy.parsing.sympy_parser import parse_expr
 from collections.abc import Callable
 from sympy.core.symbol import Symbol
-from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent, Xor, Xnor, Boolean, BooleanTrue, BooleanFalse
+from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent, Xor, Xnor, Nand, Nor, ITE, BooleanTrue, BooleanFalse
 from sympy.logic.boolalg import is_cnf
 from tqdm import tqdm
 
@@ -32,7 +35,11 @@ C: dict = {'type': 'normal form', And: "&&", Or: "||", Not: "!", False: '0', Tru
 BOOLNET: dict = {'type': 'normal form', And: "&", Or: "|", Not: "!", False: "0", True: "1"}
 
 SOLVER = PULP_CBC_CMD  # Default PULP solver
-PATHSEP: str = "\\"  # Separator in the file path.
+PATHSEP: str = os.sep  # Separator in the file path.
+
+# Names that are not variables in a formula written in Python/Sympy syntax (see parse_formula).
+FORMULA_FUNCTIONS: dict = {'True': True, 'False': False, 'true': True, 'false': False, 'And': And, 'Or': Or, 'Not': Not, 'Xor': Xor, 'Xnor': Xnor,
+                           'Implies': Implies, 'Equivalent': Equivalent, 'Nand': Nand, 'Nor': Nor, 'ITE': ITE}
 
 prime_implicants_problem = None  # Global variable storing the last prime implicants problem specification.
 trc_clauses = 0  # global variables counting the number of CNF clauses in supercnf function
@@ -41,24 +48,31 @@ nb_implicants = 0  # global variables counting the number of prime implicants in
 
 
 # DEF: Basic functions
+class BooNError(Exception):
+    """Exception raised by errmsg for errors (kind = "ERROR")."""
+
+
 def errmsg(msg: str, arg="", kind: str = "ERROR") -> None:
     """
-    Display an error message and exit in case of error (kind = "ERROR").
+    Display an error message and raise a BooNError exception in case of error (kind = "ERROR").
+    The exception can be caught by the caller (e.g., a GUI) instead of exiting the application.
 
     :param msg: The error message.
     :type msg: str
     :param arg: The argument of the error message (Default: "" no args).
     :type arg: str
-    :param kind: Type of error (Default: ERROR). Only the "ERROR" option will exit the application.
+    :param kind: Type of error (Default: ERROR). Only the "ERROR" option raises an exception.
     :type kind: str
 
     :return: None
     :rtype: None
+    :raises BooNError: If kind is "ERROR".
     """
-
-    print(f"** {kind}: {inspect.stack()[1].filename.split(PATHSEP)[-1]} - {inspect.stack()[1].function}: {msg}: {arg}")
+    caller = inspect.stack()[1]
+    message = f"{os.path.basename(caller.filename)} - {caller.function}: {msg}: {arg}"
+    print(f"** {kind}: {message}")
     if kind == "ERROR":
-        exit()
+        raise BooNError(message)
 
 
 def firstsymbol(formula):
@@ -73,6 +87,30 @@ def firstsymbol(formula):
         return None
     else:  # The formula has at least 1 symbol.
         return next(iter(formula.free_symbols))
+
+
+def parse_formula(text: str):
+    """ Parse a formula written in Python/Sympy syntax (e.g., "a & ~b | Xor(c, d)").
+    Every identifier except the logical functions and constants (FORMULA_FUNCTIONS) is a variable, so that
+    names such as S, E, I, N, O or Q are not taken as sympy objects.
+
+    :param text: The formula.
+    :type text: str
+
+    :return: The sympy formula.
+    :rtype: Sympy formula
+    :raises SyntaxError: If the text is not a well-formed Boolean formula.
+    """
+    local_dict = {name: FORMULA_FUNCTIONS[name] if name in FORMULA_FUNCTIONS else symbols(name)
+                  for name in re.findall(r"[A-Za-z_]\w*", text)}
+    try:
+        formula = parse_expr(text, local_dict=local_dict)
+    except Exception as error:  # SyntaxError, TokenError, TypeError...
+        raise SyntaxError(f"wrong formula: {text} ({error})") from error
+    if not isinstance(formula, bool | BooleanTrue | BooleanFalse | Symbol | And | Or | Not | Xor | Xnor
+                      | Implies | Equivalent | Nand | Nor | ITE):
+        raise SyntaxError(f"not a Boolean formula: {text}")
+    return formula
 
 
 def is_and_or_not(formula) -> bool:

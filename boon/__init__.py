@@ -37,7 +37,6 @@ from sympy import symbols
 from sympy.core.symbol import Symbol
 from sympy.logic.boolalg import And, Or, Not, Implies, Equivalent
 from sympy.logic.boolalg import to_cnf, to_dnf, is_dnf, simplify_logic
-from sympy.parsing.sympy_parser import parse_expr
 
 from boon.logic import LOGICAL, SYMPY, BOOLNET, errmsg, firstsymbol
 import boon.logic as logic
@@ -614,7 +613,7 @@ class BooN:
                             formula = re.sub(r'((?<=\||&|~|\s|\()|^)' + ops[True], 'True', formula)  # Convert True
 
                             # STEP: Now the formula is a string rewritten in Python/Sympy syntax then parse it.
-                            trueformula = parse_expr(formula)
+                            trueformula = logic.parse_formula(formula)
                         except SyntaxError:
                             errmsg(f"Syntax error, wrong formula parsing, line {i} in file", fullfilename, "READ ERROR")
                             return boon
@@ -664,12 +663,6 @@ class BooN:
             errmsg("The model does not have the Qual plugin", kind="WARNING")
             return boon
 
-        # Create a dictionary associating the string name of a variable to its corresponding Symbol.
-        vars_dic = {}
-        for species in qualitative_model.getListOfQualitativeSpecies():
-            species_name = species.getName() if species.isSetName() else species.getId()
-            vars_dic[species_name] = symbols(species_name)
-
         # STEP: read the formulas from transitions and convert them to sympy format.
         desc = {}
         for transition in qualitative_model.getListOfTransitions():  # Scan all the transitions.
@@ -698,9 +691,16 @@ class BooN:
             normal_formula = re.sub(r'&&', '&', normal_formula)  # convert && to &
             normal_formula = re.sub(r'\b(\w+)\s*==\s*1\b', r'\1', normal_formula)  # convert <var> == 1 to <var>
             normal_formula = re.sub(r'\b(\w+)\s*==\s*0\b', r'~\1', normal_formula)  # convert <var> == 0 to ~ <var>
+            normal_formula = re.sub(r'\b(\w+)\s*!=\s*1\b', r'~\1', normal_formula)  # convert <var> != 1 to ~ <var>
+            normal_formula = re.sub(r'\b(\w+)\s*!=\s*0\b', r'\1', normal_formula)  # convert <var> != 0 to <var>
+            normal_formula = re.sub(r'!', '~', normal_formula)  # convert !<expr> to ~<expr> (the != cases are converted above)
+            for l3_function, sympy_function in (('xor', 'Xor'), ('implies', 'Implies'), ('and', 'And'), ('or', 'Or'), ('not', 'Not')):
+                normal_formula = re.sub(r'\b' + l3_function + r'\s*\(', sympy_function + '(', normal_formula)  # convert xor(...) to Xor(...), etc.
+            normal_formula = re.sub(r'\btrue\b', 'True', normal_formula)  # convert Boolean constants
+            normal_formula = re.sub(r'\bfalse\b', 'False', normal_formula)
             # Parse the formula to get a sympy formula and complete desc
             try:
-                sympy_formula = parse_expr(normal_formula, vars_dic)
+                sympy_formula = logic.parse_formula(normal_formula)
             except SyntaxError:
                 errmsg("Syntax error in the following formula", normal_formula, "SYNTAX ERROR")
                 return boon
