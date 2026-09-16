@@ -16,10 +16,12 @@ import os
 import math
 import re
 import copy
+import keyword
 import numpy as np
 
-# Third-party imports: import functions only used 
+# Third-party imports: import functions only used
 import matplotlib as mpl
+mpl.use("Qt5Agg")                                                                           #Select the Qt backend before pyplot is imported
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -32,35 +34,30 @@ from pulp import PULP_CBC_CMD
 
 # PyQt5
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtWidgets import QToolButton, QMenu, QWidget, QGridLayout, QPushButton, QWidgetAction, QMessageBox, QColorDialog, QLabel, QVBoxLayout, QHBoxLayout
-from PyQt5.QtGui import QIcon, QPixmap, QStandardItemModel, QStandardItem, QColor, QCursor
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QDialog, QWidget, QMenu, QWidgetAction, QFrame,
+                             QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QSlider,
+                             QComboBox, QTableWidgetItem, QHeaderView, QMessageBox, QColorDialog,
+                             QFileDialog, QInputDialog)
+from PyQt5.QtGui import QIcon, QStandardItemModel, QStandardItem, QColor, QCursor
+from PyQt5.QtCore import Qt, QSize, QUrl, QTimer
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.uic import loadUi
 
-from turtle import color, pos
-from matplotlib import colors
-from matplotlib.pylab import norm
-from matplotlib.patches import Rectangle
-from tabulate import tabulate
-
-from matplotlib.patches import PathPatch, FancyArrowPatch
+from matplotlib.patches import Rectangle, PathPatch, FancyArrowPatch
 from matplotlib.path import Path
+from tabulate import tabulate
 
 # Local 
 import boon
-from boon import BooN, SIGNCOLOR, COLORSIGN, EXTSBML, EXTXT, BOONSEP, PYTHONSKIP, PYTHONHEADER
+from boon import BooN, SIGNCOLOR, BOONSEP, PYTHONSKIP, PYTHONHEADER
 import boon.logic as logic
 from boon.logic import LOGICAL, SYMPY, MATHEMATICA, JAVA, BOOLNET
 
-import BooNGui.booneries_rc  #resources
+import BooNGui.booneries_rc  # noqa: F401 - registers the Qt resources (icons)
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-
-mpl.use("Qt5Agg")
 
 # Parameters
 HSIZE: int = 10                                                                             #Size of the history
@@ -69,7 +66,9 @@ ICON01: dict = {None: ":/icon/resources/none.svg", True: ":/icon/resources/true.
 MODELBOUND: int = 8                                                                         #Size bound of the dynamics model in terms of variables.
 LPSOLVER = PULP_CBC_CMD                                                                     #LP-Solver related to the controllability resolution. (destify)
 
-INTPAT: str = r"\s*-?[0-9]+\s*"                                                             #Integer regular expression
+FORMULA_NAMES: set = {"True", "False", "And", "Or", "Not", "Xor", "Nand", "Nor",           #Non-variable names admitted in a formula typed in the View
+                      "Implies", "Equivalent", "ITE", "true", "false"}
+INTPAT: str = r"\s*-?[0-9]+\s*"                                                           #Integer regular expression
 BASIC_FAMILY_COLOR : tuple[int, int, int ] = (1 ,1 ,1 )                                     #White: default/basic family color
 
 TRACEGUI: bool = False                                                                         #Trace flag for debugging purposes. If True, prints the actions to the console.
@@ -83,7 +82,21 @@ def trace_gui(msg: str):
     """
     if TRACEGUI:
         print(msg)
-        
+
+
+def is_valid_variable_name(name: str) -> bool:
+    """
+    Checks whether a string can be used as a BooN variable name.
+    The name must be a Python identifier that is not a keyword, so that it can be converted into a single
+    sympy Symbol and parsed back from a formula.
+
+    :param name: The candidate name.
+    :type name: str
+    :return: True if the name is valid.
+    :rtype: bool
+    """
+    return name.isidentifier() and not keyword.iskeyword(name)
+
 
 
 class Boonify(QMainWindow):
@@ -211,7 +224,6 @@ class Boonify(QMainWindow):
         self.worker = Threader()
 
         #STEP: Initialize the Matplotlib Canvas for network design
-        self.network = Network()
         fig = plt.figure()
         manager = fig.canvas.manager                                                        #Figure manager required by the graph editor(plt)
 
@@ -280,11 +292,29 @@ class Boonify(QMainWindow):
             self.graph_editor,
             current_boon=self.boon
         )
+        self.graph_editor.boon = self.boon                                                  #Keep the editor bound to the current BooN (positions and meta are written into it)
+        self.graph_editor._sync_node_sizes_to_boon()                                        #Complete boon.meta (family colors) before the snapshot is recorded
 
         #STEP: Record the modification in the undo/redo history
         self.add_history()
 
         #STEP: Refresh all visible views and analysis windows
+        self.refresh()
+
+    def update_from_formulas(self):
+        """
+        Propagates a modification of the BooN formulas made outside the graph editor (View, DNF conversion,
+        control actions): records the change in the history, rebuilds the graph editor and refreshes all views.
+
+        :return: None
+        """
+        self.disablecallback = True                                                         #setup_design must not trigger a graph -> BooN conversion
+        try:
+            self.graph_editor.setup_design(self.boon)                                       #Rebuild the graph from the new formulas
+            self.graph_editor._sync_node_sizes_to_boon()                                    #Keep boon.meta consistent with the rebuilt editor
+            self.add_history()
+        finally:
+            self.disablecallback = False
         self.refresh()
 
     def setup_callbacks(self):
@@ -307,15 +337,33 @@ class Boonify(QMainWindow):
 
         :return: None
         """
-        filename = QFileDialog.getOpenFileName(self, "Open file", "", "Boon Files (*.boon);; All Files (*);;")
+        filename, _ = QFileDialog.getOpenFileName(self, "Open file", "", "Boon Files (*.boon);; All Files (*);;")
+        if not filename:                                                                    #Dialog cancelled
+            return
 
-        if filename:
-            self.filename = filename[0]
-            self.boon = BooN.load(filename[0])                                              #Load the BooN from selected file
-            self.refresh()                                                                  #Refresh all open analysis views
-            self.graph_editor.edge_family_colors = {}                                       #Clear previous file's colors so setup_design restores from the new boon.meta
-            self.graph_editor.setup_design(self.boon)                                       #Rebuild the graph editor from the loaded BooN
-            self.history_raz()                                                              #Reset undo/redo history to imported state
+        try:
+            boon_loaded = BooN.load(filename)                                               #Load the BooN from selected file
+        except Exception as e:
+            QMessageBox.critical(self, "Open error", f"The file cannot be loaded:\n{e}")
+            return
+
+        self.filename = filename
+        self.set_boon(boon_loaded)
+
+    def set_boon(self, new_boon):
+        """
+        Installs a new BooN (after opening or importing a file): refreshes the views, rebuilds the graph editor
+        and resets the undo/redo history.
+
+        :param new_boon: The BooN to install.
+        :type new_boon: BooN
+        :return: None
+        """
+        self.boon = new_boon
+        self.graph_editor.edge_family_colors = {}                                           #Clear previous file's colors so setup_design restores from the new boon.meta
+        self.graph_editor.setup_design(self.boon)                                           #Rebuild the graph editor from the new BooN
+        self.refresh()                                                                      #Refresh all open analysis views
+        self.history_raz()                                                                  #Reset undo/redo history to the new state
 
     def save(self):
         """
@@ -327,7 +375,11 @@ class Boonify(QMainWindow):
         """
         if self.filename:
             self.graph_editor._sync_node_sizes_to_boon()                                   #Flush node_sizes, node_label_top, and edge_family_colors into boon.meta before writing
-            self.boon.save(self.filename)
+            try:
+                self.boon.save(self.filename)
+            except OSError as e:
+                QMessageBox.critical(self, "Save error", f"The file cannot be saved:\n{e}")
+                return
             self.display_saved_flag()                                                       #Mark the BooN as saved in the status bar
         else:
             self.saveas()                                                                   #No filename yet: delegate to Save As dialog
@@ -340,42 +392,44 @@ class Boonify(QMainWindow):
 
         :return: None
         """
-        filename = QFileDialog.getSaveFileName(self, "Save", "", "Boon Files (*.boon);; All Files (*);;")
-        if filename:
-            self.filename = filename[0]
-            self.graph_editor._sync_node_sizes_to_boon()                                   #Flush node_sizes, node_label_top, and edge_family_colors into boon.meta before writing
-            self.boon.save(self.filename)
-            self.display_saved_flag()                                                       #Mark the BooN as saved in the status bar
+        filename, _ = QFileDialog.getSaveFileName(self, "Save", "", "Boon Files (*.boon);; All Files (*);;")
+        if not filename:                                                                    #Dialog cancelled
+            return
+        self.filename = filename
+        self.save()
 
     def importation(self):
         """
         Imports a BooN from an external file format and updates the application state.
         Supported formats are BoolNet (.bnet), Python/SymPy (.txt), and SBML (.sbml, .xml).
-        After a successful import, self.filename is set to None because the BooN is not stored in the native .boon format. 
+        After a successful import, self.filename is cleared because the BooN is not stored in the native .boon format. 
         All open views are refreshed and the history is reset. An error dialog is shown if the file extension isn't recognised.
 
         :return: None
         """
-        filename = QFileDialog.getOpenFileName(self, "Import from files", "", "Text or SBML Files (*.bnet *.txt *.xml *.sbml);; All Files (*);;")
-        if filename:
-            self.filename = None                                                            #No file name since the BooN is not saved in the internal format.
-            _, extension = os.path.splitext(filename[0])
+        filename, _ = QFileDialog.getOpenFileName(self, "Import from files", "", "Text or SBML Files (*.bnet *.txt *.xml *.sbml);; All Files (*);;")
+        if not filename:                                                                    #Dialog cancelled
+            return
+
+        extension = os.path.splitext(filename)[1].lower()
+        try:
             #STEP: Dispatch to the appropriate import function based on file extension
-            match extension:  
+            match extension:
                 case ".bnet":                                                               #BoolNet format
-                    self.boon = BooN.from_textfile(filename[0])
+                    imported = BooN.from_textfile(filename)
                 case ".txt":                                                                #Python format
-                    self.boon = BooN.from_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, skipline=PYTHONSKIP)
-                case ".sbml":                                                               #SBML format
-                    self.boon = BooN.from_sbmlfile(filename[0])
-                case ".xml":                                                                #SBML format (alternative extension)
-                    self.boon = BooN.from_sbmlfile(filename[0])
-                case _:                                                                     #Unknown extension: show error
+                    imported = BooN.from_textfile(filename, sep=BOONSEP, assign='=', ops=SYMPY, skipline=PYTHONSKIP)
+                case ".sbml" | ".xml":                                                      #SBML format
+                    imported = BooN.from_sbmlfile(filename)
+                case _:                                                                     #Unknown extension: show error and keep the current BooN
                     QMessageBox.critical(self, "File extension error", f"The extension is unknown. \nFound {extension}\nAdmitted extension: .txt, .bnet, .sbml, .xml")
-            self.refresh()                                                                  #Refresh all open analysis view
-            self.graph_editor.edge_family_colors = {}                                       #Clear previous file's colors so setup_design restores from the new boon.meta
-            self.graph_editor.setup_design(self.boon)                                       #Rebuild graph editor from imported BooN
-            self.history_raz()                                                              #Reset undo/redo history to imported state
+                    return
+        except Exception as e:
+            QMessageBox.critical(self, "Import error", f"The file cannot be imported:\n{e}")
+            return
+
+        self.filename = ""                                                                  #No file name since the BooN is not saved in the internal format.
+        self.set_boon(imported)
 
     def exportation(self):
         """
@@ -383,72 +437,82 @@ class Boonify(QMainWindow):
         Supported formats are BoolNet (.bnet) and Python/SymPy (.txt). 
         The export format is determined automatically from the chosen file extension.
 
-        :raises ValueError: If the filename extension is unsupported or invalid.
+        An error dialog is shown if the extension is unsupported or if writing fails.
+
         :return: None
         """
-        filename = QFileDialog.getSaveFileName(self, "Export to BoolNet or Python format.", "", "Text Files (*.bnet *.txt);;")
-        if not filename[0]:
+        filename, _ = QFileDialog.getSaveFileName(self, "Export to BoolNet or Python format.", "", "Text Files (*.bnet *.txt);;")
+        if not filename:                                                                    #Dialog cancelled
             return
-        if filename:
-            _, extension = os.path.splitext(filename[0])
+
+        extension = os.path.splitext(filename)[1].lower()
+        try:
             #STEP: Dispatch to the appropriate writer based on file extension.
             match extension:
                 case ".bnet":                                                               #BoolNet format
-                    self.boon.to_textfile(filename[0])
+                    self.boon.to_textfile(filename)
                 case ".txt":                                                                #Python/SymPy format
-                    self.boon.to_textfile(filename[0], sep=BOONSEP, assign='=', ops=SYMPY, header=PYTHONHEADER)
-                case _:                                                                     #Unknown extension: show error  
-                    raise ValueError(f"Unsupported file extension: {extension}")
+                    self.boon.to_textfile(filename, sep=BOONSEP, assign='=', ops=SYMPY, header=PYTHONHEADER)
+                case _:                                                                     #Unknown extension: show error
+                    QMessageBox.critical(self, "File extension error", f"Unsupported file extension: {extension}\nAdmitted extension: .bnet, .txt")
+        except Exception as e:
+            QMessageBox.critical(self, "Export error", f"The file cannot be exported:\n{e}")
 
-    def quit(self):
+    def confirm_quit(self) -> bool:
         """
-        Terminates the application, prompting the user to save if there are unsaved changes.
-        If the BooN is already saved, the application exits immediately. Otherwise a dialog
+        Asks the user what to do with unsaved changes before quitting.
+        If the BooN is already saved, quitting is accepted immediately. Otherwise a dialog
         offers three choices: Save then quit, Quit without saving, or Cancel.
+        Choosing Save but cancelling the Save As dialog aborts the quit, so no work is lost.
 
-        :return: None
+        :return: True if the application may quit.
+        :rtype: bool
         """
         #STEP: Exit directly if there are no unsaved changes.
         if self.saved:
-            quitting = True
+            return True
 
         #STEP: Ask the user what to do with the unsaved BooN.
-        else: 
-            reply = QMessageBox.question(
-                self,
-                "Quit",
-                "Are you sure you want to quit? \nThe BooN is not saved.",
-                QMessageBox.Save | QMessageBox.Close | QMessageBox.Cancel,
-                QMessageBox.Save)
-            match reply:
-                case QMessageBox.Save:                                                      #Save the BooN before quitting
-                    self.save()
-                    quitting = True
-                case QMessageBox.Close:                                                     #Quit without saving the BooN
-                    quitting = True
-                case QMessageBox.Cancel:                                                    #Abort the quit, return to application
-                    quitting = False
-                case _:                                                                     #Unexpected case: do not quit and show an error
-                    quitting = False
+        reply = QMessageBox.question(
+            self,
+            "Quit",
+            "Are you sure you want to quit? \nThe BooN is not saved.",
+            QMessageBox.Save | QMessageBox.Close | QMessageBox.Cancel,
+            QMessageBox.Save)
+        match reply:
+            case QMessageBox.Save:                                                          #Save the BooN before quitting
+                self.save()
+                return self.saved                                                           #False if the save was cancelled or failed
+            case QMessageBox.Close:                                                         #Quit without saving the BooN
+                return True
+            case _:                                                                         #Cancel (or dialog closed): return to application
+                return False
 
-        if quitting:
-            app.quit()
+    def quit(self):
+        """
+        Terminates the application after confirmation (see confirm_quit).
+
+        :return: None
+        """
+        self.close()                                                                        #closeEvent performs the confirmation
 
     #noinspection PyMethodOverriding
     def closeEvent(self, event):
         """
-        Handles the close event for the application window.
-        This method ensures that when the application's close event is triggered, it invokes the quit method to handle 
-        quitting properly. The `event.ignore()` ensures that the close event is ignored unless the application is closed 
-        successfully prior to that, in which case `event.ignore()` will not execute.
+        Handles the close event for the application window (menu Quit or window close button).
+        The event is accepted only if the user confirms; the background worker thread is then stopped.
 
         :param event: The Qt close event triggered when the user closes the window.
         :type event: QCloseEvent
 
         :return: None
         """
-        self.quit()
-        event.ignore()      #WARNING: If the application is closed when quit() is triggered, this line will not be executed.
+        if self.confirm_quit():
+            self.worker.quit()                                                              #Stop the worker thread cleanly
+            event.accept()
+            QApplication.instance().quit()                                                  #Also close the auxiliary windows
+        else:
+            event.ignore()
 
     #DEF: History management
     def history_raz(self):
@@ -617,11 +681,11 @@ class Boonify(QMainWindow):
         """
         view = []
         for i, theboon in enumerate(self.history):
-            label = [i] if i == self.hindex else i                                          #Wrap current index to highlight it in the table 
+            label = [i] if i == self.hindex else i                                          #Wrap current index to highlight it in the table
             content = (tabulate([(var, logic.prettyform(eq, theboon.style)) for var, eq in theboon.desc.items()], tablefmt='plain')
-                       if theboon else '-')                                                 #Show equations or placeholder if no BooN in this slot
+                       if theboon is not None else '-')                                     #Show equations or placeholder if no BooN in this slot
             view.append((label, content))
-        os.system('cls')                                                                    #Clear console before printing the history view
+        os.system('cls' if os.name == 'nt' else 'clear')                                    #Clear console before printing the history view
         print(tabulate(view, tablefmt='grid'))
 
     def refresh(self):
@@ -637,7 +701,11 @@ class Boonify(QMainWindow):
         if self.QStableStates and self.QStableStates.isVisible():                           #Refresh the stable states View if opened.
             self.QStableStates.stablestates()
         if self.QModel and self.QModel.isVisible():                                         #Refresh the Model view if opened.
-            self.QModel.modeling()
+            if len(self.boon.variables) > MODELBOUND:                                       #Model too large: close the view instead of computing it
+                self.QModel.close()
+                QMessageBox.warning(self, "No Model", f"The number of variables exceeds {MODELBOUND}.\nThe model view is closed.")
+            else:
+                self.QModel.modeling()
         if self.QControllability and self.QControllability.isVisible():                     #Refresh the Controllability View if opened.
             self.QControllability.initialize_controllability()
 
@@ -692,8 +760,12 @@ class Boonify(QMainWindow):
 
         :return: None
         """
-        self.QControllability = Controllability(self)
+        if self.QControllability is None:                                                   #Created once: its signals are connected to the shared worker
+            self.QControllability = Controllability(self)
+        else:
+            self.QControllability.initialize_controllability()
         self.QControllability.show()
+        self.QControllability.raise_()
 
     def display_saved_flag(self, val: bool = True):
         """
@@ -850,6 +922,19 @@ class Graph(QObject):
         self.canvas.axes.clear()
         self.SIGNCOLOR = SIGNCOLOR                                                          #Instance variable to assign colors for edge signs: +1=green, -1=red, 0=gray
 
+        #STEP: Convert int-keyed family colors to label keys using the CURRENT labels, before IDs are reassigned
+        #WARNING: IDs are reassigned below in sorted-label order, which may differ from the IDs of the editing session.
+        old_labels = self.node_labels
+        self.edge_family_colors = {
+            ((old_labels.get(u, u) if isinstance(u, int) else u),
+             (old_labels.get(v, v) if isinstance(v, int) else v)): c
+            for (u, v), c in self.edge_family_colors.items()
+        }
+        self.selected_nodes = set()                                                         #Former IDs are meaningless after the rebuild
+        self.selected_edge = None
+        self.edge_source = None
+        self.edge_preview = None
+
         #STEP: Build a fresh DiGraph from the BooN interaction graph
         #WARNING: To prevent its inclusion in the BooN, the variable names are strings while the other nodes are integers or symbols.
         ig = boon.interaction_graph
@@ -863,29 +948,29 @@ class Graph(QObject):
 
         self.node_labels = {symbol_to_id[sym]: str(sym) for sym in ig.nodes()}              #Store node labels for display, using the original symbol names from the BooN
 
-        #STEP: Remap edge_family_colors from label-string keys to current session int-ID keys.
-        #      color_history stores (label, label) pairs as stable keys; setup_design assigns
-        #      fresh int IDs each call, so we must convert back to int-ID keys here.
-        if hasattr(self, "edge_family_colors") and self.edge_family_colors:
-            label_to_id = {str(sym): nid for sym, nid in symbol_to_id.items()}             #label string -> new int ID for this session
-            remapped = {}
-            for (u_key, v_key), color in self.edge_family_colors.items():
-                if isinstance(u_key, str) and isinstance(v_key, str):                       #Label-keyed entry (from color_history): convert to int IDs
-                    u_new = label_to_id.get(u_key)
-                    v_new = label_to_id.get(v_key)
-                    if u_new is not None and v_new is not None:
-                        remapped[(u_new, v_new)] = color
-                else:                                                                        #Already int-keyed (mid-session assignment): keep as-is
-                    remapped[(u_key, v_key)] = color
-            self.edge_family_colors = remapped
+        #STEP: Remap edge_family_colors from label-string keys to the new int-ID keys.
+        #      color_history and the conversion above use (label, label) pairs as stable keys.
+        label_to_id = {str(sym): nid for sym, nid in symbol_to_id.items()}                 #label string -> new int ID for this session
+        remapped = {}
+        for (u_key, v_key), color in self.edge_family_colors.items():
+            u_new = label_to_id.get(u_key)
+            v_new = label_to_id.get(v_key)
+            if u_new is not None and v_new is not None:                                     #Colors of vanished nodes are dropped
+                remapped[(u_new, v_new)] = color
+        self.edge_family_colors = remapped
 
-        #STEP: Assign node positions
-        pos = getattr(boon, "pos", None)
-        if pos:                                                                             #If available: assign node positions from boon.pos
-            self.node_positions = {symbol_to_id[sym]: coord for sym, coord in pos.items() if sym in symbol_to_id}
-        else:                                                                               #Or else: use a spring layout to compute node positions
-            sym_layout = nx.spring_layout(ig)
-            self.node_positions = {symbol_to_id[sym]: coord for sym, coord in sym_layout.items()}
+        #STEP: Assign node positions from boon.pos; nodes without a stored position are placed by a spring layout
+        pos = getattr(boon, "pos", None) or {}
+        self.node_positions = {symbol_to_id[sym]: tuple(coord) for sym, coord in pos.items() if sym in symbol_to_id}
+        missing = [sym for sym in ig.nodes() if symbol_to_id[sym] not in self.node_positions]
+        if missing:
+            fixed = [sym for sym in ig.nodes() if symbol_to_id[sym] in self.node_positions]
+            init = {sym: np.array(pos[sym], dtype=float) for sym in fixed}
+            sym_layout = nx.spring_layout(ig, pos=init or None, fixed=fixed or None,        #Keep the stored positions, place only the missing nodes
+                                          center=(0.5, 0.5) if not fixed else None,
+                                          scale=0.4 if not fixed else 1, seed=0)
+            for sym in missing:
+                self.node_positions[symbol_to_id[sym]] = tuple(sym_layout[sym])
 
         #STEP: Restore per-node sizes from boon.meta if available
         self.node_sizes = {}
@@ -966,9 +1051,6 @@ class Graph(QObject):
             if isinstance(label, str) and label.strip()
         }
 
-        if not hasattr(self.boon, 'pos') or self.boon.pos is None:
-            self.boon.pos = {}
-
         #STEP: Write each dragged node's final position into boon.pos under its Symbol key
         for node in self.selected_nodes:
             if node in self.node_positions:
@@ -977,9 +1059,9 @@ class Graph(QObject):
                     self.boon.pos[sym] = self.node_positions[node]                          #Symbol key position
         self.redraw_graph()
 
-        #STEP: Record position change in history (structural: boon.pos was modified)
+        #STEP: Record position change in history (layout-only change: the descriptor is unchanged, so add_history would ignore it)
         if hasattr(self, "_boonify_parent"):
-            self._boonify_parent.add_history()
+            self._boonify_parent.add_color_history()
 
 
     def _apply_edge_color(self, rgb):
@@ -1117,7 +1199,7 @@ class Graph(QObject):
         """
         self._clear_edge_preview()                                                          #Clear the drag preview line before committing the edge
 
-        if source is None or target is None:                                                #Invalid source or target: abort edge creation
+        if source not in self.graph or target not in self.graph:                            #Invalid (or deleted) source or target: abort edge creation
             return
 
         if self.graph.has_edge(source, target):                                             #Skip duplicate edges
@@ -1178,6 +1260,34 @@ class Graph(QObject):
                 largest_gap = gap
                 best_angle = a1 + gap / 2                                                   #Place the loop at the midpoint of the largest gap
         return best_angle
+
+    SELF_LOOP_RADIUS: float = 0.05                                                          #Fixed arc radius of a self-loop
+
+    def _self_loop_geometry(self, node):
+        """
+        Computes the geometry of the self-loop of a node, shared by drawing, family markers and hit-testing.
+        The anchor radius scales with node size so the arc always clears the node border,
+        while the arc radius stays fixed so the loop itself does not grow with the node.
+
+        :param node: Node identifier.
+        :return: (cx, cy, xr, yr) where (cx, cy) is the arc center and xr, yr are the arc sample coordinates.
+        :rtype: tuple
+        """
+        x, y = self.node_positions[node]
+        angle = self._compute_self_loop_angle(node)                                         #Loop orientation avoiding the neighbors
+
+        size_scale = (self.node_sizes.get(node, self.NODE_SIZE_DEFAULT) / self.NODE_SIZE_DEFAULT) ** 0.25
+        radius = 0.07 * size_scale                                                          #Distance from node center to arc center: scale to node size
+        R = self.SELF_LOOP_RADIUS
+
+        cx = x + radius * math.cos(angle)
+        cy = y + radius * math.sin(angle)
+
+        #STEP: Build a circular arc whose opening faces the node
+        thetas = np.linspace(0.14 * np.pi, 1.9 * np.pi, 60) + angle + np.pi
+        xr = cx + R * np.cos(thetas)
+        yr = cy + R * np.sin(thetas)
+        return cx, cy, xr, yr
 
     #DEF: Graph View
     def _draw_nodes(self):
@@ -1381,29 +1491,7 @@ class Graph(QObject):
             if u != v:
                 continue
 
-            x, y = self.node_positions[u]
-
-            #STEP: Choose loop orientation
-            angle = self._compute_self_loop_angle(u)
-
-            #STEP: Scale the anchor radius with node size
-            size_scale = (self.node_sizes.get(u, self.NODE_SIZE_DEFAULT) / self.NODE_SIZE_DEFAULT) ** 0.25
-            radius = 0.07 * size_scale                                                      #Distance from node center to arc center: scale to node size
-            R = 0.05                                                                        #Fixed arc size/radius
-
-            cx = x + radius * math.cos(angle)
-            cy = y + radius * math.sin(angle)
-
-            #STEP: Build a circular arc
-            theta1 = 0.14 * np.pi
-            theta2 = 1.9 * np.pi
-            thetas = np.linspace(theta1, theta2, 60)
-            xs = cx + R * np.cos(thetas)
-            ys = cy + R * np.sin(thetas)
-
-            rot = angle + np.pi                                                             #Rotate arc opening toward node
-            xr = (xs - cx) * np.cos(rot) - (ys - cy) * np.sin(rot) + cx
-            yr = (xs - cx) * np.sin(rot) + (ys - cy) * np.cos(rot) + cy
+            _, _, xr, yr = self._self_loop_geometry(u)
 
             #STEP: Place arrowhead at tip of self-loop arc
             verts = np.column_stack([xr, yr])
@@ -1462,26 +1550,7 @@ class Graph(QObject):
 
             #STEP: Draw family circles for self-loop
             if u == v:
-                x, y = self.node_positions[u]
-
-                angle = self._compute_self_loop_angle(u)
-
-                size_scale = (self.node_sizes.get(u, self.NODE_SIZE_DEFAULT) / self.NODE_SIZE_DEFAULT) ** 0.25
-                radius = 0.07 * size_scale
-                R = 0.05                                                                    #Fixed arc size,  match _draw_self_loops
-
-                cx = x + radius * math.cos(angle)
-                cy = y + radius * math.sin(angle)
-
-                theta1 = 0.14 * np.pi
-                theta2 = 1.9 * np.pi
-                thetas = np.linspace(theta1, theta2, 60)
-                xs = cx + R * np.cos(thetas)
-                ys = cy + R * np.sin(thetas)
-
-                rot = angle + np.pi
-                xr = ((xs - cx) * np.cos(rot) - (ys - cy) * np.sin(rot) + cx)
-                yr = ((xs - cx) * np.sin(rot) + (ys - cy) * np.cos(rot) + cy )
+                _, _, xr, yr = self._self_loop_geometry(u)                                  #Same geometry as _draw_self_loops
 
                 mid_idx = len(xr) // 2                                                      #Place family circle halfway along loop
                 mx, my = xr[mid_idx], yr[mid_idx]
@@ -1716,18 +1785,17 @@ class Graph(QObject):
 
         :return: None
         """
-        #STEP: Cancel edge creation if right-click on empty space
-        if event.button == 3 and self.edge_source is not None:
-            nearest_node = self._get_nearest_node(event.xdata, event.ydata)
-            if nearest_node is None:
-                self.edge_source = None
-                self._clear_edge_preview()
-                return
-            
-        if event.xdata is None or event.ydata is None:
+        outside = event.xdata is None or event.ydata is None
+        nearest_node = None if outside else self._get_nearest_node(event.xdata, event.ydata)
+
+        #STEP: Cancel edge creation on right-click on empty space (or outside the axes)
+        if event.button == 3 and self.edge_source is not None and nearest_node is None:
+            self._cancel_edge_creation()
             return
-        
-        nearest_node = self._get_nearest_node(event.xdata, event.ydata)
+
+        if outside:
+            return
+
         nearest_edge = self._get_nearest_edge(event.xdata, event.ydata)
 
         #STEP: Right click
@@ -1755,7 +1823,7 @@ class Graph(QObject):
         if event.button == 1 and nearest_edge is not None and nearest_node is None:
             self.selected_edge = nearest_edge
             self.selected_nodes.clear()
-            trace(f"Selected edge: {nearest_edge}")
+            trace_gui(f"Selected edge: {nearest_edge}")
             return
         
         #STEP: Left click on node to select for dragging (or double-click to rename)
@@ -1783,8 +1851,17 @@ class Graph(QObject):
                 self.selected_nodes.clear()
                 self.selected_edge = None
                 self.dragging_nodes = False
-                self.edge_source = None
+                self._cancel_edge_creation()
                 return
+
+    def _cancel_edge_creation(self):
+        """
+        Leaves the edge creation mode and removes the preview line.
+
+        :return: None
+        """
+        self.edge_source = None
+        self._clear_edge_preview()
             
     def on_canvas_release(self, event):
         """
@@ -1856,12 +1933,14 @@ class Graph(QObject):
 
         #STEP: Edge preview (highest priority)
         if self.edge_source is not None:
+            if self.edge_source not in self.node_positions:                                 #Source node deleted meanwhile
+                self._cancel_edge_creation()
+                return
             x1, y1 = self.node_positions[self.edge_source]
             x2, y2 = event.xdata, event.ydata
 
-            self._draw_edge_preview(x1, y1, x2, y2)
-            self.canvas.draw_idle()
-            return 
+            self._draw_edge_preview(x1, y1, x2, y2)                                         #Already redraws the canvas
+            return
         
         #STEP: Selection rectangle preview
         if self.selection_rect_start is not None and not self.dragging_nodes:
@@ -1911,10 +1990,9 @@ class Graph(QObject):
         :return: None
         """
         if event.key == 'delete':
-            self.delete_selection()    
-        if event.key == 'escape':
-            self.edge_source = None
-            self._clear_edge_preview()
+            self.delete_selection()
+        elif event.key == 'escape':
+            self._cancel_edge_creation()
 
     def _handle_double_click(self, node):
         """
@@ -1990,7 +2068,7 @@ class Graph(QObject):
             if isinstance(node, int) or isinstance(node, Symbol):                           #Only user nodes, not pattern nodes
                 if min_x <= pos[0] <= max_x and min_y <= pos[1] <= max_y:
                     self.selected_nodes.add(node)
-        trace(f"Selected nodes (rectangle): {self.selected_nodes}")
+        trace_gui(f"Selected nodes (rectangle): {self.selected_nodes}")
 
     def delete_selection(self):
         """
@@ -2004,14 +2082,13 @@ class Graph(QObject):
         :return: None
         """
         if self.selected_nodes:                                                             #If node selected
-            self._delete_selected_nodes()                                                   #Delete node and associated edges
-            self.selected_edge=None                                                         #Clear edge selection when nodes deleted
             trace_gui(f"Deleted nodes: {self.selected_nodes}")
+            self.selected_edge = None                                                       #Clear edge selection when nodes deleted
+            self._delete_selected_nodes()                                                   #Delete node and associated edges
             return
         if self.selected_edge:                                                              #If edge selected
-            self._delete_selected_edge()                                                    #Delete edge
-            self.selected_edge = None                                                       #Clear edge selection after edge deleted
-            trace(f"Deleted edge: {self.selected_edge}")    
+            trace_gui(f"Deleted edge: {self.selected_edge}")
+            self._delete_selected_edge()                                                    #Delete edge and clear the edge selection
             return
         QMessageBox.warning(None, "No selection", "Please select a node or edge to delete") #Show error: if button pressed without selection
     
@@ -2110,16 +2187,10 @@ class Graph(QObject):
         for src, tgt in self.graph.edges():
             #STEP: Self-loop handling
             if src == tgt:
-                x0, y0 = self.node_positions[src]
-                radius = 0.08
-                for t in np.linspace(0, 2 * np.pi, 30):
-                    cx = x0 + radius * math.cos(t)
-                    cy = y0 + radius * math.sin(t)
-
-                    dist = math.hypot(x - cx, y - cy)
-
-                    if dist < threshold:
-                        candidates.append((dist, (src, tgt)))
+                cx, cy, _, _ = self._self_loop_geometry(src)                                #Same geometry as _draw_self_loops
+                dist = abs(math.hypot(x - cx, y - cy) - self.SELF_LOOP_RADIUS)              #Distance to the loop circle
+                if dist < threshold:
+                    candidates.append((dist, (src, tgt)))
                 continue
 
             #STEP: Normal/bi-directional edge handling
@@ -2234,21 +2305,9 @@ class Graph(QObject):
         if not self.selected_nodes or self.graph is None:
             return
         
-        #STEP: Apply shift to all selected nodes
-        positions = dict(self.node_positions)
-        for node in self.selected_nodes:
-            if node in positions:
-                x, y = positions[node]
-                positions[node] = (x + dx, y + dy)                                          #Shift node by given delta
-
-        #STEP: Update the boon positions to BooN model
-        for node in self.selected_nodes:
-            if isinstance(node, Symbol) or isinstance(node, int):
-                if hasattr(self.boon, 'pos') and node in self.boon.pos:
-                    x, y = self.boon.pos[node]
-                    self.boon.pos[node] = (x + dx, y + dy)                                  #Mirror shift in boon.pos
-
-        self._redraw_graph(positions)                                                       #Refresh canvas with updated positions
+        #STEP: Apply shift to all selected nodes, then mirror the positions in the BooN model
+        self._track_node_positions(dx, dy)                                                  #Shift node positions and redraw
+        self._commit_tracked_positions()                                                    #Write the positions into boon.pos and record history
     
     def rename_node(self):
         """
@@ -2272,11 +2331,22 @@ class Graph(QObject):
             text=old_name
         )
 
-        #STEP: Apply rename
-        if ok and new_name and new_name != old_name:                                        #Check if new name is valid and different from old name
-            self.node_labels[node] = new_name                                               #Update the node label
-            self.redraw_graph()                                                             #Redraw graph with new node name
-            self.graph_changed.emit()                                                       #Update graph with changes
+        #STEP: Validate the new name
+        new_name = new_name.strip()
+        if not ok or not new_name or new_name == old_name:                                  #Cancelled or unchanged
+            return
+        if not is_valid_variable_name(new_name):                                            #The name must be convertible into a single symbol
+            QMessageBox.warning(None, "Invalid name",
+                                f"'{new_name}' is not a valid variable name.\nUse letters, digits and '_' (not starting with a digit).")
+            return
+        if new_name in (str(lbl) for n, lbl in self.node_labels.items() if n != node):     #Duplicate names would merge two variables
+            QMessageBox.warning(None, "Duplicate name", f"A node named '{new_name}' already exists.")
+            return
+
+        #STEP: Apply rename (family colors are keyed by node IDs, node sizes are re-serialized from IDs: both follow the rename)
+        self.node_labels[node] = new_name                                                   #Update the node label
+        self.redraw_graph()                                                                 #Redraw graph with new node name
+        self.graph_changed.emit()                                                           #Update graph with changes
     
     def _point_to_segment_distance(self, px, py, x1, y1, x2, y2):
         """
@@ -2352,7 +2422,7 @@ class Graph(QObject):
         Otherwise, the user selects a color which is applied to the edge.
         """
         if not self.selected_edge:                                                          #Edge must be selected before assigning a family color
-            QMessageBox.warning(self, "No edge selected", "Select an edge first.")
+            QMessageBox.warning(None, "No edge selected", "Select an edge first.")
             return
         
         #STEP: Open system color dialog and extract normalised RGB components
@@ -2386,17 +2456,13 @@ class Graph(QObject):
 
         self.redraw_graph()
 
-        #STEP: Rebuild the BooN so formula is updated with family pairing
+        #STEP: Rebuild the BooN so formula is updated with family pairing (also persists the colors into boon.meta)
         self.graph_changed.emit()
 
-        #STEP: Store a color-only history snapshot for redo/undo
+        #STEP: Store a color-only history snapshot for redo/undo (when the formulas are unchanged)
+        self._sync_node_sizes_to_boon()
         if hasattr(self, "_boonify_parent"):
             self._boonify_parent.add_color_history()
-        # Persist family color assignment into boon.meta immediately
-        try:
-            self._sync_node_sizes_to_boon()
-        except Exception:
-            pass
 
     #DEF: Color palette menu
     def setup_color_menu(self, parent):
@@ -2700,11 +2766,16 @@ class Graph(QObject):
             #STEP: Persist node_sizes into boon.meta immediately so save() captures the latest sizes
             self._sync_node_sizes_to_boon()
 
-            #STEP: Record resize in undo/redo history
+            #STEP: Record resize in undo/redo history, once per user gesture (not at every intermediate value while dragging)
+            if not slider.isSliderDown():
+                _record_resize()
+
+        def _record_resize():
             if hasattr(self, "_boonify_parent"):
                 self._boonify_parent.add_color_history()
 
         slider.valueChanged.connect(_on_slider_changed)
+        slider.sliderReleased.connect(_record_resize)
 
         #STEP: Add separator between resize and label settings
         sep = QFrame()
@@ -2777,7 +2848,10 @@ class Graph(QObject):
             if checked:
                 #Reset all node sizes to default so the fixed offset is uniform across all nodes
                 self.node_sizes.clear()
+                slider.blockSignals(True)                                                   #Visual update only: avoid the resize handler (and its warning)
                 slider.setValue(self.NODE_SIZE_DEFAULT)
+                slider.blockSignals(False)
+                size_value_label.setText(str(self.NODE_SIZE_DEFAULT))
             slider.setEnabled(not checked)
             size_value_label.setEnabled(not checked)
             _update_label_pos_btn(checked)
@@ -2921,7 +2995,7 @@ class Graph(QObject):
         Requires an edge to be selected.
         """
         if not self.selected_edge:                                                          #Show error: if no edge selected
-            QMessageBox.warning(self, "No edge selected", "Select an edge first.")
+            QMessageBox.warning(None, "No edge selected", "Select an edge first.")
             return
         
         #STEP: Convert color value to normalised RGB and store it
@@ -2934,13 +3008,10 @@ class Graph(QObject):
         self.edge_family_colors[edge] = rgb                                                 #Map selected edge to its family color
 
         self.redraw_graph()
+        self.graph_changed.emit()                                                           #Family colors define the clauses: rebuild the formulas
+        self._sync_node_sizes_to_boon()                                                     #Persist family color assignment into boon.meta so Save/Load captures it
         if hasattr(self, "_boonify_parent"):                                                #Store a color-only history for undo/redo
             self._boonify_parent.add_color_history()
-        # Persist family color assignment into boon.meta immediately so Save/Load captures it
-        try:
-            self._sync_node_sizes_to_boon()
-        except Exception:
-            pass
 
     def _wrap_node_label(self, label, max_length=7):
         """
@@ -3151,13 +3222,8 @@ class Network:
         for src, tgt, data in ig.edges(data=True):
             src_id = symbol_to_id[src]
             tgt_id = symbol_to_id[tgt]
-            graph_editor.graph.add_edge(src_id, tgt_id, sign=data.get("sign", 1))
             sign = data.get("sign", 1)
-            if sign == -1:
-                influence = Not(src)                                                        #Inhibition: literal = Not(source)
-            else:
-                influence = src                                                             #Activation: literal = source
-
+            graph_editor.graph.add_edge(src_id, tgt_id, sign=sign)
             graph_editor.edge_colors[(src_id, tgt_id)] = graph_editor.SIGNCOLOR.get(sign, "black")  #Sign-based display color
             graph_editor.edge_modules[(src_id, tgt_id)]= data.get("module", {1})            #Module set for BooN logic
             graph_editor.edge_labels[(src_id, tgt_id)]= data.get("label", "")               #Edge display label
@@ -3192,9 +3258,9 @@ class Help(QMainWindow):
         self.web = QWebEngineView(self)                                                     #Web browser like widget
         self.WebContainer.addWidget(self.web)                      
         help_html = os.path.join(os.path.dirname(__file__), 'BooNGui', 'Help.html')
-        with open(help_html, 'r') as f:                                                     #Open local html file
+        with open(help_html, 'r', encoding='utf-8') as f:                                   #Open local html file
             html = f.read()
-            self.web.setHtml(html)                                                          #Load html into web view
+        self.web.setHtml(html, QUrl.fromLocalFile(help_html))                               #Load html into web view; base URL resolves relative resources
 
 
 
@@ -3264,8 +3330,8 @@ class View(QDialog):
         nbrow = len(theboon.desc)
         self.BooNContent.setRowCount(nbrow)                                                 #Set one row per variable 
         self.formulas = [QLineEdit() for _ in range(nbrow)]
-        for f in self.formulas:
-            f.editingFinished.connect(self.change_formula)                                  #Update formula when editing is done
+        for row, f in enumerate(self.formulas):
+            f.editingFinished.connect(lambda r=row: self.change_formula(r))                 #Update formula when editing is done; the row is bound (currentRow() does not follow cell widgets)
             f.setFrame(False)
 
         #STEP: Fill the table each row
@@ -3288,38 +3354,56 @@ class View(QDialog):
             item.setTextAlignment(Qt.AlignHCenter)
             self.BooNContent.setItem(row, 0, item)                                          #Formula type label
 
-    def change_formula(self):
+    def change_formula(self, row: int):
         """
         Update the BooN formula based on user input and refresh-related components.
-        This method processes the formula input provided through the GUI, verifies its syntax and the validity of the 
-        variables involved, and updates the associated BooN data structure if the formula passes all checks. 
-        It also refreshes related components to reflect the changes.
+        This method processes the formula input provided through the GUI, verifies its syntax and the validity of the
+        variables involved, and updates the associated BooN data structure if the formula passes all checks.
+        It also records the change in the history and refreshes related components to reflect the changes.
         In case of errors, appropriate error messages are displayed to the user.
 
+        :param row: The row of the edited formula.
+        :type row: int
         :return: None
         """
-        row = self.BooNContent.currentRow()                                                 #Get the current modified row
+        theboon = self.parent.boon
+        if row >= len(theboon.desc):                                                        #Stale widget (the BooN changed meanwhile)
+            return
+        variable = list(theboon.desc.keys())[row]                                           #Variable of the modified formula
         text = self.formulas[row].text()                                                    #Get the text of the line edit formula
 
-        try:                
-            formula = parse_expr(text)                                                      #Converts input/string into symbolic expression(formula)
-        except SyntaxError:                                                                 #Show error: if invalid expression
+        #STEP: Check the names before parsing (otherwise names such as S or E are silently taken as sympy objects)
+        known = {str(v) for v in theboon.variables} | FORMULA_NAMES
+        unknown = set(re.findall(r"[A-Za-z_]\w*", text)) - known
+        if unknown:
+            QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{', '.join(sorted(unknown))}\nThe formula is not changed.")
+            return
+
+        try:
+            #The BooN variables are given explicitly so that names such as S, E, I or Q are not taken as sympy objects.
+            formula = parse_expr(text, local_dict={str(v): v for v in theboon.variables})   #Converts input/string into symbolic expression(formula)
+        except Exception:                                                                   #Show error: if invalid expression (SyntaxError, TokenError, TypeError...)
             QMessageBox.critical(self, "SYNTAX ERROR", "Syntax Error.\nThe formula is not changed.\nTIP: please select the Python output form. ")
             return
+
         if isinstance(formula, bool):                                                       #Bool constant: no variables
-            variables = set()               
-        else:                                                                               #Get the variables used in the formula
+            variables = set()
+        elif hasattr(formula, "free_symbols"):                                              #Get the variables used in the formula
             variables = formula.free_symbols
-        diff = variables.difference(self.parent.boon.variables) 
+        else:                                                                               #Not a Boolean expression (e.g. a number)
+            QMessageBox.critical(self, "SYNTAX ERROR", f"'{text}' is not a Boolean formula.\nThe formula is not changed.")
+            return
+        diff = variables.difference(theboon.variables)
         if diff:                                                                            #Show error: unknown variables
             QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{diff}\nThe formula is not changed.")
             return
-        
-        #STEP: Apply the formula and refresh UI
-        variable = list(self.parent.boon.desc.keys())[row]                                  #Get variables of modified formulas in the row
-        self.parent.boon.desc[variable] = formula                                           #Update formulas
-        self.parent.refresh()
-        self.parent.graph_editor.setup_design(self.parent.boon)                             #Refresh editgraph with updated formulas
+
+        if formula == theboon.desc[variable]:                                               #Unchanged (editingFinished is also emitted on focus loss)
+            return
+
+        #STEP: Apply the formula, record it in the history and refresh UI
+        theboon.desc[variable] = formula                                                    #Update formulas
+        QTimer.singleShot(0, self.parent.update_from_formulas)                              #Deferred: the refresh replaces the line edit emitting this signal
 
     def cb_styling(self):
         """
@@ -3344,7 +3428,7 @@ class View(QDialog):
                     if isinstance(v, str):
                         self.parent.boon.desc[k] = parse_expr(v)
             self.parent.boon.dnf()                                                          #Convert all BooN formulas into DNF
-            self.initialize_view()                                                          #Refresh the view with converted formulas
+            self.parent.update_from_formulas()                                              #Record the change and refresh all views (including this one)
         except Exception as e:
             QMessageBox.critical(
                 self,
@@ -3410,7 +3494,7 @@ class StableStates(QDialog):
         :return: None
         """
         theboon = self.parent.boon                                                          #Get current BooN of parent
-        variables = theboon.variables                                                       #List of variables names in the model
+        variables = sorted(theboon.variables, key=str)                                      #List of variables names in the model (deterministic order)
         stablestates = theboon.stable_states                                                #List of stable_states (dict: var name -> bool value)
 
         #STEP: Define a model of data to store stable states
@@ -3423,6 +3507,7 @@ class StableStates(QDialog):
             column = []             
             for var in variables:                                                           #Each var = 1 row
                 val = stable.get(var, stable.get(str(var), None))
+                val01 = "-" if val is None else str(int(bool(val)))                         #0/1 form (undefined value shown as -)
                 icon = QIcon()
                 icon.addPixmap(QtGui.QPixmap(ICON01[val]), QtGui.QIcon.Normal, QtGui.QIcon.Off) #Icon for True/False/None
                 icon.pixmap(QSize(64, 64))
@@ -3434,11 +3519,11 @@ class StableStates(QDialog):
                     case 'Icon Boolean':                                                    #Icon + True/False 
                         item = QStandardItem(icon, str(val))                
                     case 'Icon 0-1':                                                        #Icon + 0/1
-                        item = QStandardItem(icon, str(int(val)))               
+                        item = QStandardItem(icon, val01)
                     case 'Boolean':                                                         #True/False only
                         item = QStandardItem(str(val))              
                     case '0-1':                                                             #0/1 only
-                        item = QStandardItem(str(int(val)))             
+                        item = QStandardItem(val01)
                     case _:                                                                 #Show error: if unknown style -> set default style
                         item = QStandardItem("None")
                 item.setTextAlignment(Qt.AlignCenter)
@@ -3458,7 +3543,7 @@ class Model(QMainWindow):
     :ivar mode: Represents the selected mode of dynamics (asynchronous or synchronous).
     :type mode: Enum or equivalent
 
-    :ivar layout: Defines the network layout function to be used for visualization.
+    :ivar layout_function: Defines the network layout function to be used for visualization.
     :type layout: Callable
 
     :ivar canvas: Matplotlib widget for rendering the network visualization.
@@ -3481,7 +3566,7 @@ class Model(QMainWindow):
         #STEP: Initialize attributes
         self.parent = parent
         self.mode = boon.asynchronous                                                       #Default dynamics mode: asynchronous
-        self.layout = boon.hypercube_layout                                                 #Default graph layout: hypercube
+        self.layout_function = boon.hypercube_layout                                        #Default graph layout: hypercube (named so as not to shadow QMainWindow.layout())
 
         #STEP: Connect Matplotlib canvas to GUI layout
         self.canvas = FigureCanvas(Figure())
@@ -3525,15 +3610,15 @@ class Model(QMainWindow):
         layout = self.NetworkLayout.currentText()
         match layout:
             case "Hypercube":
-                self.layout = boon.hypercube_layout
+                self.layout_function = boon.hypercube_layout
             case "Circular":
-                self.layout = nx.circular_layout
+                self.layout_function = nx.circular_layout
             case "Spring":
-                self.layout = nx.spring_layout
+                self.layout_function = nx.spring_layout
             case "Kamada Kawai":
-                self.layout = nx.kamada_kawai_layout
+                self.layout_function = nx.kamada_kawai_layout
             case "Random":
-                self.layout = nx.random_layout
+                self.layout_function = nx.random_layout
             case _:                                                                         #Show error: unknown layout
                 logic.errmsg("Internal Error - Unknown layout - Please contact the development team", "cb_network_layout")
         self.modeling()                                                                     #Recompute and redraw the model with the new mode
@@ -3550,10 +3635,11 @@ class Model(QMainWindow):
 
         model = self.parent.boon.model(mode=self.mode)
         if model.number_of_nodes() == 0:                                                    #Empty datamodel = empty BooN, nothing to draw
+            self.canvas.draw_idle()                                                         #Still clear the previous drawing
             return
-        
+
         #STEP: Apply chosen layout and render model on canvas
-        layout = self.layout(model)
+        layout = self.layout_function(model)
         self.parent.boon.draw_model(model, pos=layout, ax=self.canvas.axes)
         self.canvas.draw_idle()
 
@@ -3582,66 +3668,67 @@ class Controllability(QMainWindow):
         self.setGeometry(900, 300, 800, 600)
         self.parent = parent
         self.actions = None                                                                 #Current control actions
+        self.error = None                                                                   #Error raised by the last computation, if any
         self.row = None                                                                     #Index of the selected solution row
+        self.variables = []                                                                 #Variables in table row order
+
+        #STEP: Define signals (connected once: initialize_controllability is called again at each refresh)
+        self.parent.worker.finished.connect(self.display_controllability)                  #Queued to the main thread for Qt model building
+        self.Observers.itemChanged.connect(self.observers_to_destiny)
+        self.ControlButton.clicked.connect(self.start_controllability)
+        self.ControlActions.clicked.connect(self.select_action)
+        self.ActButton.clicked.connect(self.actupon)
+
+        header = self.ControlActions.header()
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
+        header.setStretchLastSection(True)
+
         self.initialize_controllability()
 
     def initialize_controllability(self):
         """
-        Initialize the controllability setup for the application.
+        Initialize the controllability tables (Destiny and Observers) from the current BooN.
 
         :return: None
         """
         theboon = self.parent.boon
-        variables = theboon.variables
-        nbrow = len(theboon.desc)
-
-        #STEP: Wire the controllability computation to the background worker thread
-        self.parent.worker.apply(self.controllability)
-        self.parent.worker.finished.connect(self.display_controllability)                   #Must run on the main thread for Qt model building
+        self.variables = sorted(theboon.variables, key=str)                                 #Deterministic row order shared by both tables
+        nbrow = len(self.variables)
+        self.actions = None
+        self.row = None
+        self.ControlActions.setModel(QStandardItemModel())                                  #Former solutions refer to the former BooN
 
         #STEP: Initialize Destiny page
         self.Destiny.setRowCount(nbrow)
         self.Destiny.resizeColumnToContents(0)                                              #Fit size to content
         self.Destiny.horizontalHeader().setStretchLastSection(True)
 
-        for row, var in enumerate(variables):
+        for row, var in enumerate(self.variables):
             item = QTableWidgetItem(str(var))                                               #Add variable name
             item.setTextAlignment(Qt.AlignCenter)
             self.Destiny.setItem(row, 0, item)
 
-            # Add a status combo box for each variable (None / True / False)
-            statusbox = QComboBox(self)                                                     
+            #Add a status combo box for each variable (None / True / False)
+            statusbox = QComboBox(self)
             statusbox.addItems(["None", "True", "False"])
-
-            icon = QIcon(ICON01[None])                                                      #Icon for None
-            icon.pixmap(QSize(64, 64))          
-            statusbox.setItemIcon(0, icon)          
-            icon = QIcon(ICON01[True])                                                      #Icon for True
-            icon.pixmap(QSize(64, 64))          
-            statusbox.setItemIcon(1, icon)          
-            icon = QIcon(ICON01[False])                                                     #Icon for False
-            icon.pixmap(QSize(64, 64))
-            statusbox.setItemIcon(2, icon)
+            statusbox.setItemIcon(0, QIcon(ICON01[None]))                                   #Icon for None
+            statusbox.setItemIcon(1, QIcon(ICON01[True]))                                   #Icon for True
+            statusbox.setItemIcon(2, QIcon(ICON01[False]))                                  #Icon for False
 
             self.Destiny.setCellWidget(row, 1, statusbox)                                   #Insert the status box in the table and connect it
-            statusbox.currentTextChanged.connect(self.destiny_to_observers)
+            statusbox.currentTextChanged.connect(lambda label, r=row: self.destiny_to_observers(r, label))
 
         #STEP: Initialize the observer page
+        self.Observers.blockSignals(True)                                                   #Filling the table must not trigger observers_to_destiny
         self.Observers.setRowCount(nbrow)
         self.Observers.horizontalHeader().setStretchLastSection(True)
 
-        for row, var in enumerate(variables):
+        for row, var in enumerate(self.variables):
             obschkbox = QTableWidgetItem(str(var))                                          #Add checkbox
-            obschkbox.setText(str(var))
             obschkbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             obschkbox.setCheckState(Qt.Unchecked)
             self.Observers.setItem(row, 0, obschkbox)
-
-        #STEP: Define signals
-        self.Observers.itemClicked.connect(self.observers_to_destiny)
-        self.ControlButton.clicked.connect(self.parent.worker.run)
-        self.ControlActions.clicked.connect(self.select_action)
-        self.ActButton.clicked.connect(self.actupon)
+        self.Observers.blockSignals(False)
 
         #STEP: Set the destiny page as default
         self.ControlPanel.setCurrentIndex(0)
@@ -3650,22 +3737,21 @@ class Controllability(QMainWindow):
         for i in range(self.ControlPanel.count()):
             self.ControlPanel.widget(i).adjustSize()
 
-        header = self.ControlActions.header()
-        header.setSectionResizeMode(QHeaderView.ResizeToContents)
-        header.setStretchLastSection(True)
-
-    def destiny_to_observers(self, label: str):
+    def destiny_to_observers(self, row: int, label: str):
         """
-        Updates the check state of an item in the `Observers` table based on the provided label and the currently
-        selected row in the `Destiny` table.
+        Updates the check state of the item in the `Observers` table corresponding to the modified row
+        of the `Destiny` table.
 
+        :param row: Row of the modified status box.
+        :type row: int
         :param label: If "None", the item is unchecked; otherwise it is checked.
         :type label: str
 
         :return: None
         """
-        row = self.Destiny.currentRow()
         item = self.Observers.item(row, 0)
+        if item is None:
+            return
 
         #STEP: Sync observer checkbox with destiny status selection
         if label == "None":
@@ -3688,72 +3774,87 @@ class Controllability(QMainWindow):
         #STEP: Reset the Destiny status to "None" when the corresponding observer is unchecked
         if chkitem.checkState() == Qt.Unchecked:
             combobox = self.Destiny.cellWidget(row, 1)
-            combobox.setCurrentText("None")                                                 #Clear target status when observer is unselected
+            if combobox is not None:
+                combobox.setCurrentText("None")                                             #Clear target status when observer is unselected
 
-    def controllability(self):
+    def start_controllability(self):
         """
-        The method calculates control actions required to achieve or avoid a defined goal (or state) in a system represented 
-        by the BooN model. The method determines the applicable control actions by analyzing a user-specified query defining 
-        the desired or undesired state, along with the possible variables that can be controlled. This process involves 
-        interpreting various parameters such as observer states, query types, and logical modalities.
+        Reads the query from the widgets (main thread) and starts the computation of the control actions
+        in the background worker thread.
 
         :return: None
         """
-        self.row = None
-        theboon = self.parent.boon
-        variables = list(theboon.variables)
-
-        #STEP: Get the observers
+        #STEP: Get the observers: unobserved variables are controllable
         controlledvars = set()
-        for row in range(self.Observers.rowCount()):
-            item = self.Observers.item(row, 0)
-            if item.checkState() == Qt.Checked:
-                pass                                                                        #Observed: not controllable
-            else:
-                controlledvars.add(variables[row])                                          #Unobserved: controllable
+        for row, var in enumerate(self.variables):
+            if self.Observers.item(row, 0).checkState() != Qt.Checked:
+                controlledvars.add(var)
 
         #STEP: Build the goal query from Destiny table selections
         query = {}
-        for row in range(self.Destiny.rowCount()):
-            combobox = self.Destiny.cellWidget(row, 1)
-            match combobox.currentText():
-                case "None":
-                    pass
+        for row, var in enumerate(self.variables):
+            match self.Destiny.cellWidget(row, 1).currentText():
                 case "True":
-                    query.update({variables[row]: True})
+                    query[var] = True
                 case "False":
-                    query.update({variables[row]: False})
+                    query[var] = False
 
-        #STEP: Convert the query state profiles into minterm formula
-        formula = SOPform(query.keys(), [query])
+        if not query:
+            QMessageBox.warning(self, "No destiny", "Please set the Boolean value of at least one variable in the Destiny page.")
+            return
 
-        #STEP: Check whether the query must be reached or avoid
-        match self.QueryType.currentText():
-            case "Reach":
-                pass                                                                        #Keep formula as-is for reachability
-            case "Avoid":
+        querytype = self.QueryType.currentText()
+        possibility = self.Possibility.isChecked()
+        necessity = self.Necessity.isChecked()
+        theboon = self.parent.boon.copy()                                                   #Snapshot: the BooN may be edited during the computation
+
+        #STEP: Run the computation in the worker thread (no Qt widget access there)
+        self.ControlButton.setEnabled(False)
+        self.statusBar().showMessage("Computing control actions...")
+        self.parent.worker.start(lambda: self.controllability(theboon, controlledvars, query, querytype, possibility, necessity))
+
+    def controllability(self, theboon, controlledvars, query, querytype, possibility, necessity):
+        """
+        The method calculates control actions required to achieve or avoid a defined goal (or state) in a system represented
+        by the BooN model. The method determines the applicable control actions by analyzing a user-specified query defining
+        the desired or undesired state, along with the possible variables that can be controlled.
+        The result is stored in self.actions (or the error in self.error).
+
+        #WARNING: No Qt widget calls here - this runs in a background thread.
+        display_controllability() handles all Qt updates on the main thread via the finished signal.
+
+        :param theboon: The BooN to control.
+        :param controlledvars: The controllable variables.
+        :param query: The target marking profile {variable: bool}.
+        :param querytype: "Reach" or "Avoid".
+        :param possibility: True if the possibility modality is required.
+        :param necessity: True if the necessity modality is required.
+        :return: None
+        """
+        self.actions = None
+        self.error = None
+        try:
+            #STEP: Convert the query state profiles into minterm formula
+            formula = SOPform(list(query.keys()), [query])
+
+            #STEP: Check whether the query must be reached or avoided
+            if querytype == "Avoid":
                 formula = Not(formula)                                                      #Negate for avoidance
 
-        #STEP: Create a controlled copy of the BooN for analysis
-        boonctrl = theboon.copy()
-        boonctrl.control(controlledvars, controlledvars)
+            #STEP: Create a controlled copy of the BooN for analysis
+            boonctrl = theboon.copy()
+            boonctrl.control(controlledvars, controlledvars)
 
-        #STEP: Evaluate possibility and/or necessity modalities
-        if self.Possibility.isChecked():                                                    #Possibility modality
-            possibility = boonctrl.possibly(formula)
-        else:
-            possibility = True
-        if self.Necessity.isChecked():                                                      #Necessity modality
-            necessity = boonctrl.necessary(formula, trace=False)
-        else:
-            necessity = True
-        destiny = And(possibility, necessity)                                               #Combine modalities into final destiny formula
+            #STEP: Evaluate possibility and/or necessity modalities
+            possible = boonctrl.possibly(formula) if possibility else True
+            necessary = boonctrl.necessary(formula, trace=False) if necessity else True
+            destiny = And(possible, necessary)                                              #Combine modalities into final destiny formula
 
-        #STEP: Compute control actions from the destiny formula
-        #WARNING: No Qt widget calls here - this runs in a background thread.
-        #         display_controllability() handles all Qt updates on the main thread via the finished signal.
-        core = boonctrl.destify(destiny, trace=False, solver=LPSOLVER)
-        self.actions = boon.core2actions(core)
+            #STEP: Compute control actions from the destiny formula
+            core = boonctrl.destify(destiny, trace=False, solver=LPSOLVER)
+            self.actions = boon.core2actions(core)
+        except Exception as e:
+            self.error = e
 
     def display_controllability(self):
         """
@@ -3762,11 +3863,21 @@ class Controllability(QMainWindow):
 
         :return: None
         """
+        self.ControlButton.setEnabled(True)
+        self.statusBar().clearMessage()
+        self.row = None
+
+        if self.error is not None:
+            QMessageBox.critical(self, "Controllability error", f"The computation of the control actions failed:\n{self.error}")
+            return
+        if self.actions is None:                                                            #Nothing computed
+            return
+
         #STEP: Rebuild the tree model from self.actions on the main thread
         treemodel = QStandardItemModel(0, 2)                                                #Add 2 columns: Variable + Boolean value
         treemodel.setHeaderData(0, Qt.Horizontal, "Variable")
         treemodel.setHeaderData(1, Qt.Horizontal, "Boolean value")
- 
+
         root = treemodel.invisibleRootItem()
         match self.actions:
             case []:
@@ -3780,12 +3891,9 @@ class Controllability(QMainWindow):
                     rootactions = QStandardItem("Solution {:2d}".format(i))                 #Root node for each solution
 
                     #Add each control action: variable + Boolean icon + Boolean value
-                    for action in actions:
-                        variable = QStandardItem(str(action[0]))
-                        icon = QIcon(ICON01[action[1]])
-                        icon.pixmap(QSize(64, 64))
-                        value = QStandardItem(icon, str(action[1]))
-                        rootactions.appendRow([variable, value])
+                    for variable, value in actions:
+                        value_item = QStandardItem(QIcon(ICON01[value]), str(value))
+                        rootactions.appendRow([QStandardItem(str(variable)), value_item])
                     root.appendRow(rootactions)                                             #Append the solution to the tree model
         self.ControlActions.setModel(treemodel)                                             #Set the data model to tree widget enabling its display
         self.ControlActions.expandAll()
@@ -3806,16 +3914,16 @@ class Controllability(QMainWindow):
         :return: None
         """
         #STEP: Apply each control action of the selected solution to the BooN descriptor
-        if self.row is not None and self.actions:
-            for action in self.actions[self.row]:
-                (variable, value) = action
-                self.parent.boon.desc[variable] = value                                     #Override variable formula with the control value
+        if self.row is None or not self.actions or self.row >= len(self.actions) or not self.actions[self.row]:
+            QMessageBox.warning(self, "No solution selected", "Please select a solution to apply.")
+            return
 
-            #STEP: Record change in history, rebuild graph, and close dialog
-            self.parent.add_history()
-            self.parent.graph_editor.setup_design(self.parent.boon)                          #Rebuild graph after applying control actions
-            self.parent.refresh()
-            self.close()
+        for variable, value in self.actions[self.row]:
+            self.parent.boon.desc[variable] = value                                         #Override variable formula with the control value
+
+        #STEP: Record change in history, rebuild graph, refresh views and close dialog
+        self.close()
+        self.parent.update_from_formulas()
 
 
 
@@ -3833,10 +3941,11 @@ class Threader(QObject):
     :ivar app: The callable application to be executed within the thread.
     :type app: Callable
 
-    :ivar thread: The QThread instance used to run the application in a separate thread.
-    :type thread: QThread
+    :ivar qthread: The QThread instance used to run the application in a separate thread.
+    :type qthread: QThread
     """
     finished = pyqtSignal()
+    requested = pyqtSignal()                                                                #Internal: queued request to run the callable in the worker thread
 
     def __init__(self, app=lambda: None):
         """
@@ -3844,27 +3953,24 @@ class Threader(QObject):
         This class initializes with a callable app function, assigns it to an internal
         property, and starts a new thread for its execution.
 
-        Attributes:
-            app (Callable[[], Any]): A callable function assigned to the class instance.
-            thread (QThread): The thread in which the object operates.
-
         :param app: A callable function that serves as the application's main function.
             Defaults to a no-op lambda function.
-
         :type app: Callable[[], Any]
         """
         super().__init__()
         self.app = app
 
-        # Create the thread
-        self.thread = QThread()
-        self.moveToThread(self.thread)
-        self.thread.start()
+        #STEP: Create the thread (named qthread so as not to shadow QObject.thread())
+        self.qthread = QThread()
+        self.moveToThread(self.qthread)
+        self.requested.connect(self.run)                                                    #Queued connection: run() executes in the worker thread
+        self.qthread.start()
 
+    @pyqtSlot()
     def run(self):
         """
-        Defines the run function to execute the primary application logic and signal completion. 
-        The function encompasses two main operations: invoking the application logic and signaling the end of the process.
+        Executes the application callable and signals completion.
+        Must be triggered through start() to run in the worker thread; a direct call runs in the caller's thread.
         """
         #STEP: Execute the app callable and always emit finished, even on error
         try:
@@ -3874,25 +3980,36 @@ class Threader(QObject):
 
     def apply(self, app):
         """
-        Handles the application of a given app instance to a particular object by assigning the provided 
-        app to the instance attribute.
+        Sets the callable executed by the worker.
 
-        :param app: The application instance to be applied.
+        :param app: The callable to be executed.
 
         :return: None
         """
         self.app = app                                                                      #Replace current callable with new one
 
+    def start(self, app=None):
+        """
+        Runs a callable in the worker thread (asynchronously). The finished signal is emitted at the end.
+
+        :param app: The callable to execute; if None, the current callable is used.
+
+        :return: None
+        """
+        if app is not None:
+            self.app = app
+        self.requested.emit()
+
     def quit(self):
         """
-        Attempts to terminate the thread execution in an orderly manner. This method leverages the `quit` function of 
-        the thread instance to signal and ensure termination of its event loop.
+        Terminates the thread execution in an orderly manner: the event loop is stopped once the
+        current computation, if any, is finished.
 
         :return: None
         """
         #STEP: Signal the thread to stop and block until it finishes
-        self.thread.quit()
-        self.thread.wait()                                                                  #Block until thread has fully stopped
+        self.qthread.quit()
+        self.qthread.wait()                                                                 #Block until thread has fully stopped
 
 
 

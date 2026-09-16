@@ -236,6 +236,20 @@ def hypercube_layout(arg: int | nx.Digraph) -> dict:
     return {state2int(node): pos[node] for node in pos}
 
 
+def circular_positions(ig: nx.DiGraph) -> dict:
+    """
+    Compute a circular layout of the interaction graph nodes fitting in the box [0.1, 0.9] x [0.15, 0.95].
+
+    :param ig: The interaction graph.
+    :type ig: networkx DiGraph
+
+    :return: The positions {node: (x, y)}.
+    :rtype: dict
+    """
+    layout = nx.circular_layout(ig, center=(0.5, 0.55), scale=0.4)
+    return {node: (float(x), float(y)) for node, (x, y) in layout.items()}  # Plain tuples: numpy arrays cannot be compared with ==.
+
+
 # noinspection PyMethodFirstArgAssignment
 class BooN:
     """
@@ -244,7 +258,8 @@ class BooN:
     :param descriptor: The descriptor of a Boolean Network {variable: formula, …} (Default: None).
     :param style: The output style of formulas (Default: LOGICAL).
     :param pos: Positions of the variable in the interaction graph drawing.
-        If empty, the positions are generated during the drawing (Default: {}).
+        If None or empty, the positions are generated during the drawing (Default: None).
+    :param meta: Display state used by the GUI (Default: None).
 
     :ivar desc: Boolean network descriptor {variable: formula, …}.
     :vartype desc: Dict
@@ -252,22 +267,30 @@ class BooN:
     :vartype style: dict
     :ivar pos: Positions of the nodes in the interaction graph.
     :vartype pos: dict
+    :ivar meta: Display state used by the GUI (edge_family_colors, node_sizes, node_label_top).
+    :vartype meta: dict
     """
-    desc: dict = {}
-    style: dict = {}
-    pos: dict = {}
+    # WARNING: annotations only. A mutable class-level default ({}) would be shared by all the instances.
+    desc: dict
+    style: dict
+    pos: dict
+    meta: dict
 
-    def __init__(self, descriptor=None, style=LOGICAL, pos: dict = {}, meta: dict = None):
+    def __init__(self, descriptor: dict | None = None, style: dict = LOGICAL, pos: dict | None = None, meta: dict | None = None):
         """Initialize the BooN object."""
 
-        if descriptor:
-            self.desc = descriptor
-        else:
-            self.desc = {}
+        # WARNING: None is used as default instead of {} since a mutable default value is shared by all the calls.
+        self.desc = descriptor if descriptor else {}
         self.style = style
-        self.pos = pos
+        self.pos = pos if pos is not None else {}
         self.meta = meta if meta is not None else {}                                        #Stores GUI display state (edge_family_colors, node_sizes, node_label_top)
-        return
+
+    def __setstate__(self, state: dict) -> None:
+        """Restore a pickled BooN; attributes missing in files saved by older versions get their default value."""
+        self.__dict__.update(state)
+        for attribute, default in (('desc', dict), ('pos', dict), ('meta', dict), ('style', lambda: LOGICAL)):
+            if getattr(self, attribute, None) is None:
+                setattr(self, attribute, default())
 
     def __copy__(self) -> BooN:
         b = BooN(self.desc, self.style, self.pos)
@@ -602,12 +625,7 @@ class BooN:
             errmsg("No such file or directory, no changes are made", fullfilename, "WARNING")
             return boon
 
-        ig = boon.interaction_graph
-        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
-                                                    , origin=(0.1, 0.15)
-                                                    , scale=(0.8, 0.8)
-                                                    , reduce_edge_crossings=False)
-        boon.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+        boon.pos = circular_positions(boon.interaction_graph)
         return boon
 
     @classmethod
@@ -689,12 +707,7 @@ class BooN:
 
         # STEP: define the BooN with a circular layout for nodes
         boon.desc = desc
-        ig = boon.interaction_graph
-        circular_positions = ng.get_circular_layout([(str(src), str(tgt)) for src, tgt in ig.edges()]
-                                                    , origin=(0.1, 0.15)
-                                                    , scale=(0.8, 0.8)
-                                                    , reduce_edge_crossings=False)
-        boon.pos = {symbols(var): pos for var, pos in circular_positions.items()}
+        boon.pos = circular_positions(boon.interaction_graph)
         return boon
 
     # DEF: NORMAL FORM CONVERSION
@@ -825,47 +838,66 @@ class BooN:
         :type IG: networkx DiGraph
         :param modular: Boolean indicating whether the modular structure of interactions is displayed if True (Default: False)
         :type modular: bool
-        :param kwargs: additional keyword arguments to pass to the interaction graph drawing
+        :param kwargs: additional keyword arguments of nx.draw_networkx (e.g., ax)
         :type kwargs: dict
 
         :return: interaction graph
         :rtype: Networkx DiGraph
         """
 
-        ig = copy.deepcopy(IG) if IG else self.interaction_graph
+        ig = copy.deepcopy(IG) if IG is not None else self.interaction_graph
 
         if not ig.nodes():
             errmsg("The interaction graph has no nodes", "", "WARNING")
             return ig  # The Graph must have nodes to be drawn.
 
-        signs = nx.get_edge_attributes(ig, 'sign')
-        sign_color = {edge: SIGNCOLOR[signs[edge]] for edge in signs}
-        if modular:  # add module specification in edges.
-            modules = {edge: module.pop() if len(module) == 1 else module
-                       for edge, module in nx.get_edge_attributes(ig, 'module').items()}
-            module_args = dict(
-                edge_labels=modules,
-                edge_label_position=0.8,
-                edge_label_fontdict=dict(fontweight='bold', fontsize=8, color='darkgray')
-            )
-        else:
-            module_args = dict()
+        # STEP: Node positions: stored positions are kept, the missing ones are computed.
+        pos = {node: self.pos[node] for node in ig.nodes() if node in self.pos}
+        if not pos:
+            pos = circular_positions(ig)
+        elif len(pos) < ig.number_of_nodes():
+            pos = nx.spring_layout(ig, pos=pos, fixed=list(pos), seed=0)
 
-        ng.Graph(ig,
-                 node_layout=self.pos,
-                 node_color='antiquewhite',
-                 node_labels=True,
-                 node_size=6,
-                 node_label_fontdict=dict(family='sans-serif', color='black', weight='semibold'),
-                 arrows=True,
-                 edge_width=1,
-                 edge_color=sign_color,
-                 **module_args,
-                 **kwargs)
+        ax = kwargs.pop('ax', None)
+        connectionstyle = 'arc3,rad=0.1'  # Curved edges so that the two edges of a bidirectional interaction are distinct.
+        edges = list(ig.edges())
+        signs = nx.get_edge_attributes(ig, 'sign')
+
+        # STEP: Draw the interaction graph; the edge colors depend on the interaction signs.
+        nx.draw_networkx(ig, pos,
+                         ax=ax,
+                         edgelist=edges,
+                         node_color='antiquewhite',
+                         edgecolors='black',
+                         node_size=600,
+                         with_labels=True,
+                         font_family='sans-serif',
+                         font_color='black',
+                         font_weight='bold',
+                         arrows=True,
+                         arrowstyle='-|>',
+                         arrowsize=15,
+                         width=1,
+                         edge_color=[SIGNCOLOR[signs.get(edge, 0)] for edge in edges],
+                         connectionstyle=connectionstyle,
+                         **kwargs)
+
+        # STEP: Add the module specification on edges.
+        if modular:
+            modules = {edge: next(iter(module)) if len(module) == 1 else module
+                       for edge, module in nx.get_edge_attributes(ig, 'module').items()}
+            nx.draw_networkx_edge_labels(ig, pos,
+                                         ax=ax,
+                                         edge_labels=modules,
+                                         label_pos=0.2,  # 0 = head: labels close to the target node.
+                                         font_size=8,
+                                         font_weight='bold',
+                                         font_color='darkgray',
+                                         connectionstyle=connectionstyle)
         return ig
 
     @classmethod
-    def from_ig(cls, IG: nx.DiGraph) -> Boon:
+    def from_ig(cls, IG: nx.DiGraph) -> BooN:
         """
         Define the descriptor of a BooN from an interaction graph.
         The method is a class method.

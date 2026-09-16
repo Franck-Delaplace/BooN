@@ -301,14 +301,23 @@ def supercnf(formula, trace: bool = False):
         solver.add(z3.Or(block))  # if x=True, y= False, then add x != True or y != False as constraint disabling the selection of the datamodel.
 
     # Convert the models into a CNF by negating the datamodel: x=True → ~x, x=False → x
+    # WARNING: explicit loop (not a comprehension) so that the global counter trc_cnf is updated;
+    # a comprehension variable is local to the comprehension.
     if trace:
         tqdm.write('')
-        cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
-                    for trc_cnf in tqdm(range(len(models)), file=sys.stdout, ascii=False, desc='BooN CNF >> CNF formatting', ncols=80,
-                                        bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')])
+        models_iterator = tqdm(models, file=sys.stdout, ascii=False, desc='BooN CNF >> CNF formatting', ncols=80,
+                               bar_format='{desc}: {percentage:3.0f}% |{bar}[{n_fmt:5s} - {elapsed} - {rate_fmt}]')
     else:
-        cnf = And(*[Or(*map(lambda sol: Not(symbols(str(sol))) if models[trc_cnf][sol] else symbols(str(sol)), models[trc_cnf]))
-                    for trc_cnf in range(len(models))])
+        models_iterator = models
+
+    clauses = []
+    trc_cnf = 0
+    for model in models_iterator:
+        clauses.append(Or(*[Not(symbols(str(sol))) if model[sol] else symbols(str(sol)) for sol in model]))
+        trc_cnf += 1
+    if trace: tqdm.write(f'BooN CNF >> # CNF clauses:[{trc_cnf:5d}]')
+
+    cnf = And(*clauses)
     return cnf
 
 # DEF:  prime implicants computation.
