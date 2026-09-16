@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   sodipodi:docname="edge_plus_sign.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.34431467"
+     inkscape:cx="87.129602"
+     inkscape:cy="903.24354"
+     inkscape:window-width="1572"
+     inkscape:window-height="1020"
+     inkscape:window-x="330"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 148.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="210 : 148.5 : 1"
+       inkscape:persp3d-origin="105 : 99 : 1"
+       id="perspective2" />
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:6.55438;stroke-dasharray:none;stroke-opacity:1"
+       id="path17"
+       cx="104.94405"
+       cy="153.76218"
+       rx="96.722717"
+       ry="96.7229" />
+    <path
+       style="fill:#000000;stroke-width:0.578059"
+       d="m 180.61993,154.1833 c 2.25248,-7.52758 0,0 0,0 z"
+       id="path14" />
+    <rect
+       style="fill:#30a32d;stroke-width:1.19875;fill-opacity:1"
+       id="rect15"
+       width="25"
+       height="100"
+       x="91.267296"
+       y="100.90298" />
+    <rect
+       style="fill:#30a32d;stroke-width:1.19875;fill-opacity:1"
+       id="rect15-8"
+       width="25"
+       height="100"
+       x="-165.15846"
+       y="53.40284"
+       transform="rotate(-90)" />
+  </g>
+</svg>

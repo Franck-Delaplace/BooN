@@ -515,6 +515,7 @@ class BooN:
             with open(fullfilename, 'rb') as f:
                 boon = pickle.load(f)
                 f.close()
+            boon.and_or_not()  # Formulas with other operators than And, Or, Not (e.g., Xor) are converted to DNF.
         except FileNotFoundError:
             errmsg("No such file or directory", fullfilename, "WARNING")
         return boon
@@ -620,6 +621,7 @@ class BooN:
                         desc.update({var: trueformula})  # Finally, update the descriptor with the parsed formula.
 
                 boon.desc = desc  # update the descriptor when all lines are filled.
+                boon.and_or_not()  # Formulas with other operators than And, Or, Not (e.g., Xor) are converted to DNF.
                 f.close()
         except FileNotFoundError:
             errmsg("No such file or directory, no changes are made", fullfilename, "WARNING")
@@ -707,6 +709,7 @@ class BooN:
 
         # STEP: define the BooN with a circular layout for nodes
         boon.desc = desc
+        boon.and_or_not()  # Formulas with other operators than And, Or, Not (e.g., Xor) are converted to DNF.
         boon.pos = circular_positions(boon.interaction_graph)
         return boon
 
@@ -760,6 +763,19 @@ class BooN:
         else:
             for var in self.desc:
                 self.desc[var] = to_dnf(self.desc[var], simplify=simplify, force=force)
+        return self
+
+    def and_or_not(self) -> BooN:
+        """
+        Convert to DNF the formulas using other operators than And, Or, Not (e.g., Xor, Implies, Equivalent).
+        The formulas already written with And, Or, Not are kept unchanged.
+
+        :return: modified BooN
+        :rtype: BooN
+        """
+        for var, formula in self.desc.items():
+            if not logic.is_and_or_not(formula):
+                self.desc[var] = to_dnf(formula, simplify=True, force=True)
         return self
 
     # DEF: INTERACTION GRAPH

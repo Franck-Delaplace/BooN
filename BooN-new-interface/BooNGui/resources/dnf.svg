@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="255.99998"
+   viewBox="0 0 67.733334 67.733329"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       id="rect1"
+       width="64.749413"
+       height="60.778938"
+       x="1.4919604"
+       y="3.4771974"
+       ry="8.0140581" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       id="rect2"
+       width="3.1260052"
+       height="1.7050937"
+       x="45.042892"
+       y="16.056299" />
+    <g
+       id="g5"
+       transform="matrix(0.82726854,0,0,0.86806234,5.3517236,3.9081715)"
+       style="stroke-width:1.18006">
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:11.8006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         d="m 10.377095,12.431016 12.418988,46.215547 -0.203591,-0.58011"
+         id="path4" />
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:11.8006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         d="m 36.181491,12.431016 -12.418988,46.215547 0.203591,-0.58011"
+         id="path4-9" />
+    </g>
+    <g
+       id="g5-9"
+       transform="matrix(0.60564496,0,0,-0.65032535,34.069911,63.312937)"
+       style="stroke-width:1.59341">
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:15.9341;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         d="m 10.377095,12.431016 12.418988,46.215547 -0.203591,-0.58011"
+         id="path4-2" />
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:15.9341;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         d="m 36.181491,12.431016 -12.418988,46.215547 0.203591,-0.58011"
+         id="path4-9-3" />
+    </g>
+  </g>
+</svg>

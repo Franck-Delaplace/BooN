@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+        fill="#000000"
+        height="1000"
+        width="1000"
+        version="1.1"
+        viewBox="0 0 282.69125 282.69125"
+        enable-background="new 0 0 226.153 226.153"
+        id="svg1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg">
+    <defs
+            id="defs1"/>
+    <g
+            id="g10">
+        <path
+                style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:42.4037;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                d="m 68.722447,75.723385 49.857843,53.782005 v 0"
+                id="path9"/>
+        <path
+                style="fill:#010101;fill-opacity:1;stroke:#000000;stroke-width:0.282691;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                id="path10"
+                d="M 46.616635,23.931536 24.81714,47.4861 15.318036,16.829902 Z"
+                transform="matrix(4.0100442,0.11703652,-0.10638941,3.4326568,-57.616549,-40.125594)"/>
+    </g>
+    <g
+            id="g11">
+        <path
+                style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:41.728;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                d="m 203.22138,76.795441 -1.601,40.612199 v 0"
+                id="path9-7"/>
+        <path
+                style="fill:#010101;fill-opacity:1;stroke:#000000;stroke-width:42.4037;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                id="path11"
+                d="m 161.41547,26.893655 h -13.71531 l 6.85766,-11.877804 z"
+                transform="translate(47.863065,30.662278)"/>
+    </g>
+    <g
+            id="g11-5"
+            transform="rotate(-103.96351,202.01251,205.83381)">
+        <path
+                style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:41.728;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                d="m 203.22138,76.795441 -1.601,40.612199 v 0"
+                id="path9-7-4"/>
+        <path
+                style="fill:#010101;fill-opacity:1;stroke:#000000;stroke-width:42.4037;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+                id="path11-0"
+                d="m 161.41547,26.893655 h -13.71531 l 6.85766,-11.877804 z"
+                transform="translate(47.863065,30.662278)"/>
+    </g>
+    <ellipse
+            style="fill:#010101;fill-opacity:1;stroke:#000000;stroke-width:44.5277;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+            id="path12"
+            cx="191.95087"
+            cy="192.948"
+            rx="67.242577"
+            ry="65.746857"/>
+    <path
+            style="-inkscape-font-specification:'Lucida Sans Typewriter, Semi-Bold Oblique Semi-Condensed';fill:#ffd42a;stroke:#000000;stroke-width:0;stroke-linecap:square"
+            d="m 201.16795,176.68378 q 12.88308,-15.73576 25.39807,-15.73576 9.93837,0 19.60068,6.44154 9.6623,6.44154 15.36767,17.48418 5.79738,11.04263 5.79738,24.56986 0,14.35543 -6.90165,22.72943 -6.80962,8.46602 -18.8645,8.46602 -9.84635,0 -19.78473,-6.53356 -9.84635,-6.53356 -18.31237,-22.1773 -10.39848,11.50275 -18.49641,16.37992 -8.09794,4.87716 -16.19587,4.87716 -10.85859,0 -21.53314,-7.36176 -10.67455,-7.36176 -16.84002,-19.60068 -6.07345,-12.23892 -6.07345,-28.43479 0,-18.58844 8.18995,-28.34276 8.28198,-9.75433 22.82145,-9.75433 14.26341,0 26.41031,10.95061 12.23892,11.04264 19.41663,26.04222 z m 13.06712,25.02998 q 12.51499,12.97509 23.37358,12.97509 5.52132,0 8.55805,-3.03672 3.03672,-3.03673 3.03672,-8.00591 0,-6.80963 -4.6011,-11.41073 -4.50907,-4.50907 -9.93837,-4.50907 -8.00591,0 -20.42888,13.98734 z m -24.10975,-14.99959 q -14.17139,-17.66821 -30.45928,-17.66821 -7.72984,0 -12.51498,4.32503 -4.69312,4.41705 -4.69312,11.22668 0,9.01815 6.16547,14.53947 6.25749,5.52132 13.71127,5.52132 3.31279,0 6.71761,-1.28831 3.40481,-1.19628 8.8341,-5.70536 5.52132,-4.41706 7.72985,-6.62558 z"
+            id="text12"
+            aria-label="8"/>
+</svg>

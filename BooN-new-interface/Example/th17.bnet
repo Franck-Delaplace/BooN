@@ -1,0 +1,25 @@
+# model in BoolNet format
+# the header targets, factors is mandatory to be importable in the R package BoolNet
+
+targets, factors
+GATA3,    !Tbet_b1&STAT6
+IFNb,     0
+IFNbR,    IFNb
+IFNgR_b1, !IFNg_b1&IFNgR_b1&IFNgR_b2 | IFNg_b1
+IFNgR_b2, IFNg_b1&IFNg_b2&IFNgR_b1&!SOCS1
+IFNg_b1,  !IFNg_b1&!Tbet_b1&STAT4 | !IFNg_b1&Tbet_b1 | IFNg_b1&!IFNg_b2&!Tbet_b1&STAT4 | IFNg_b1&!IFNg_b2&Tbet_b1 | IFNg_b1&IFNg_b2
+IFNg_b2,  IFNg_b1&!Tbet_b1&IRAK&STAT4 | IFNg_b1&Tbet_b1&!Tbet_b2&IRAK&STAT4 | IFNg_b1&Tbet_b1&Tbet_b2
+IL12,     0
+IL12R,    IL12&!STAT6
+IL18,     0
+IL18R,    IL18&!STAT6
+IL4,      !STAT1_b1&GATA3
+IL4R,     !SOCS1&IL4
+IRAK,     IL18R
+SOCS1,    !STAT1_b1&Tbet_b1 | STAT1_b1
+STAT1_b1, !IFNgR_b1&!STAT1_b1&IFNbR | !IFNgR_b1&STAT1_b1&!STAT1_b2&IFNbR | !IFNgR_b1&STAT1_b1&STAT1_b2 | IFNgR_b1
+STAT1_b2, IFNgR_b1&IFNgR_b2&STAT1_b1
+STAT4,    IL12R&!GATA3
+STAT6,    IL4R
+Tbet_b1,  !STAT1_b1&Tbet_b1&!Tbet_b2&!GATA3 | !STAT1_b1&Tbet_b1&Tbet_b2 | STAT1_b1&!STAT1_b2&!Tbet_b1&!GATA3 | STAT1_b1&!STAT1_b2&Tbet_b1 | STAT1_b1&STAT1_b2&!Tbet_b1&!GATA3 | STAT1_b1&STAT1_b2&Tbet_b1&!Tbet_b2&!GATA3 | STAT1_b1&STAT1_b2&Tbet_b1&Tbet_b2
+Tbet_b2,  !STAT1_b1&Tbet_b1&Tbet_b2&!GATA3 | STAT1_b1&!STAT1_b2&Tbet_b1&Tbet_b2 | STAT1_b1&STAT1_b2&Tbet_b1&!GATA3

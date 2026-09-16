@@ -27,7 +27,7 @@ import networkx as nx
 
 from sympy import SOPform, symbols
 from sympy.core.symbol import Symbol
-from sympy.logic.boolalg import is_cnf, is_dnf, is_nnf
+from sympy.logic.boolalg import is_cnf, is_dnf, is_nnf, to_dnf
 from sympy.logic.boolalg import And, Not
 from sympy.parsing.sympy_parser import parse_expr
 from pulp import PULP_CBC_CMD
@@ -3397,6 +3397,9 @@ class View(QDialog):
         if diff:                                                                            #Show error: unknown variables
             QMessageBox.critical(self, "VARIABLES ERROR", f"The following variables do not exist:\n{diff}\nThe formula is not changed.")
             return
+
+        if not logic.is_and_or_not(formula):                                                #Xor, Implies, Equivalent... are excluded from the BooN formulas: convert to DNF
+            formula = to_dnf(formula, simplify=True, force=True)
 
         if formula == theboon.desc[variable]:                                               #Unchanged (editingFinished is also emitted on focus loss)
             return
