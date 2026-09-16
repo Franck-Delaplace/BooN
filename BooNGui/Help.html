@@ -81,7 +81,7 @@
       <dd>
         <i>Left click on the mouse</i> will add a new node to the graph at the
         current mouse position. This node is labelled by default
-        (<code>x1</code>, <code>x2</code>, etc), and can be renamed after.
+        (<code>x1</code>, <code>x2</code>, etc.), and can be renamed after.
       </dd>
       <dt><b>Create an edge:</b></dt>
       <dd>
@@ -120,6 +120,15 @@
       </dd>
       <dt><b>Assign Family Color to an Edge:</b></dt>
       <dd>
+        A family color is a color assigned to an edge to identify a group of nodes acting jointly to trigger a targes.
+        Two nodes with distinct colors are considered to act alternatively to trigger a target. Therefore, if x1 and x2 belong to the same family corresponding to the same color the related formula is:
+        <i>x</i><sub>1</sub> &and; <i>x</i><sub>2</sub>. While if x1 and x2 belong to distinct families corresponding to distinct colors the related formula is:
+        <i>x</i><sub>1</sub> &or; <i>x</sub><sub>2</sub>.
+      </dd>
+      <dd>
+
+
+         The family colors are available in the palette of the <code> Assign Family Color</code> button.
         Select an edge and click on the button <code>Set Family color</code> to
         assign a family color to the edge from the palette. More colors are
         availaible when pressing the <span class="cmd">+</span> button in the
@@ -174,17 +183,6 @@
     </p>
 
     <ul class="info">
-      <li>
-        The graph editor is based on the
-        <code>EditableGraph</code> functionality from the Netgraph library.
-      </li>
-
-      <li>
-        The network design is based on <code>EditableGraph</code> function of
-        <code>Netgraph</code> Python module. Please refer to the documentation
-        of this function for the commands related to the graph design.
-      </li>
-
       <li>
         Node positions are preserved when converting between graph and BooN
         representations.
